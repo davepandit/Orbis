@@ -83,4 +83,11 @@ export const loginUser = asyncHandler(async (req, res) => {
 //@route           POST /api/user/logout
 //@access          Public
 
-export const logoutUser = asyncHandler(async () => {});
+export const logoutUser = asyncHandler(async (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    expires: new Date(0),
+  });
+
+  res.status(200).json({ message: "User logged out successfully" });
+});
