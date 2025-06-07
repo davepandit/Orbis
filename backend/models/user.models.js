@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+// match password while login
+userSchema.methods.matchPassword = async function (enteredPassword) {
+  return bcrypt.compare(enteredPassword, this.password);
+};
+
 // hash the password before saving to the db
 userSchema.pre("save", async function (next) {
   if (!this.password) {
