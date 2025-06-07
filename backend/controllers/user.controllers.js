@@ -24,7 +24,6 @@ export const registerUser = asyncHandler(async (req, res) => {
   });
 
   // NOTE - Password will be hashed before saving to the db
-  // TODO - Implement the password hashing function
   user.save();
 
   // after sign in we need to generate a token for the user and store it in a cookie
@@ -53,7 +52,32 @@ export const registerUser = asyncHandler(async (req, res) => {
 //@route           POST /api/user/login
 //@access          Public
 
-export const loginUser = asyncHandler(async () => {});
+export const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = User.findOne({ email: email });
+
+  // TODO - Implement the match password function
+  if (user && (await user.matchPassword(password))) {
+    const token = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "15d",
+    });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== "development",
+      sameSite: "strict",
+      maxAge: 15 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      message: "User logged in successfully!!!",
+    });
+  }
+});
 
 //@description     Logout a user
 //@route           POST /api/user/logout
