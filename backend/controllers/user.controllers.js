@@ -55,7 +55,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 export const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  const user = User.findOne({ email: email });
+  const user = await User.findOne({ email: email });
 
   // TODO - Implement the match password function
   if (user && (await user.matchPassword(password))) {
