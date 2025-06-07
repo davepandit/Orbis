@@ -3,13 +3,19 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 
+// functions
+import connectToDatabase from "./config/db.js";
+
 // routes
 import userRouter from "./routes/user.routes.js";
+
+connectToDatabase();
 
 const app = express();
 
 // default middlewares
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // TESTING - This needs to be removed later
 app.get("/", (req, res) => {
@@ -31,8 +37,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-
-const PORT = process.env.PORT
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server is up and running at: ${PORT}`);
 });
