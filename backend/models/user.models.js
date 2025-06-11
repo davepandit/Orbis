@@ -16,17 +16,18 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["Admin", "User"],
-      default: "User",
+      enum: ["admin", "user"],
+      default: "user",
     },
     status: {
       type: String,
       enum: ["banned", "active", "pending"],
       default: "active",
     },
-    provider:{
+    provider: {
       type: String, // this will be used to track whether the user is google login or email based login
-    }
+      enum: ["email-password", "google"],
+    },
   },
   {
     timestamps: true,

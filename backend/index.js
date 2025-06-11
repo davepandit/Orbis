@@ -2,12 +2,17 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
+import passport from "passport";
+
+// middlewares
+import "./middlewares/passport.middlewares.js";
 
 // functions
 import connectToDatabase from "./config/db.js";
 
 // routes
 import userRouter from "./routes/user.routes.js";
+import passportRouter from "./routes/passport.routes.js";
 
 connectToDatabase();
 
@@ -16,6 +21,7 @@ const app = express();
 // default middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(passport.initialize());
 
 // TESTING - This needs to be removed later
 app.get("/", (req, res) => {
@@ -24,6 +30,7 @@ app.get("/", (req, res) => {
 
 // custom routes
 app.use("/api/user", userRouter);
+app.use("/api/auth", passportRouter);
 
 // error handling middleware
 // NOTE - This middleware will be hit if anything goes wrong inside the express-async-handler

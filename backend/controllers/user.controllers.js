@@ -21,13 +21,13 @@ export const registerUser = asyncHandler(async (req, res) => {
     username: username,
     email: email,
     password: password,
-    provider: provider
+    provider: provider,
   });
 
-  // NOTE - Password will be hashed before saving to the db
   user.save();
 
   // after sign in we need to generate a token for the user and store it in a cookie
+  // NOTE - Later we can set the email into the token as well
   const token = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET, {
     expiresIn: "15d",
   });
@@ -59,8 +59,8 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   const user = await User.findOne({ email: email });
 
-  // TODO - Implement the match password function
   if (user && (await user.matchPassword(password))) {
+    // NOTE - Later we can set the email into the token as well
     const token = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "15d",
     });
