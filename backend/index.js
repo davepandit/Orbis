@@ -30,7 +30,7 @@ app.get("/", (req, res) => {
 
 // custom routes
 app.use("/api/user", userRouter);
-app.use("/api/auth", passportRouter);
+app.use("/api/auth", passportRouter); // this specific route is for sign in with google 
 
 // error handling middleware
 // NOTE - This middleware will be hit if anything goes wrong inside the express-async-handler

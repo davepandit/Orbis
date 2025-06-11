@@ -1,0 +1,1 @@
+![Skills and proficiency handling in the frontend](image.png)
