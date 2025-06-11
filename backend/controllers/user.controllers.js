@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 //@access          Public
 
 export const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, provider } = req.body;
 
   // check whether the user already exists
   const userExists = await User.findOne({ email: email });
@@ -21,6 +21,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     username: username,
     email: email,
     password: password,
+    provider: provider
   });
 
   // NOTE - Password will be hashed before saving to the db
@@ -44,6 +45,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     _id: user._id,
     username: user.username,
     email: user.email,
+    provider: provider,
     message: "User created successfully!!!",
   });
 });

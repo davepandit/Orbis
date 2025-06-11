@@ -24,6 +24,9 @@ const userSchema = new mongoose.Schema(
       enum: ["banned", "active", "pending"],
       default: "active",
     },
+    provider:{
+      type: String, // this will be used to track whether the user is google login or email based login
+    }
   },
   {
     timestamps: true,
