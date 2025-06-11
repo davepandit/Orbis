@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import passport from "passport";
+import cookieParser from "cookie-parser";
 
 // middlewares
 import "./middlewares/passport.middlewares.js";
@@ -21,6 +22,7 @@ const app = express();
 // default middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(passport.initialize());
 
 // TESTING - This needs to be removed later
@@ -30,7 +32,7 @@ app.get("/", (req, res) => {
 
 // custom routes
 app.use("/api/user", userRouter);
-app.use("/api/auth", passportRouter); // this specific route is for sign in with google 
+app.use("/api/auth", passportRouter); // this specific route is for sign in with google
 
 // error handling middleware
 // NOTE - This middleware will be hit if anything goes wrong inside the express-async-handler

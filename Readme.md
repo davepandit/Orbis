@@ -1,1 +1,1 @@
-![Skills and proficiency handling in the frontend](image.png)
+![Skills and proficiency handling in the frontend](./images/image.png)
