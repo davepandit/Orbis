@@ -50,3 +50,7 @@ const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server is up and running at: ${PORT}`);
 });
+
+
+
+// TODO - In none of the profiles i have mentioned a field as required and all, need to do that later
