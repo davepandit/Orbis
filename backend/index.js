@@ -14,6 +14,7 @@ import connectToDatabase from "./config/db.js";
 // routes
 import userRouter from "./routes/user.routes.js";
 import passportRouter from "./routes/passport.routes.js";
+import eventRouter from "./routes/event.routes.js";
 
 connectToDatabase();
 
@@ -33,6 +34,7 @@ app.get("/", (req, res) => {
 // custom routes
 app.use("/api/user", userRouter);
 app.use("/api/auth", passportRouter); // this specific route is for sign in with google
+app.use("/api/event", eventRouter);
 
 // error handling middleware
 // NOTE - This middleware will be hit if anything goes wrong inside the express-async-handler
@@ -50,7 +52,5 @@ const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server is up and running at: ${PORT}`);
 });
-
-
 
 // TODO - In none of the profiles i have mentioned a field as required and all, need to do that later
