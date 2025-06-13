@@ -27,6 +27,7 @@ const eventSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["upcoming", "ended", "ongoing"],
+      default: "upcoming",
     },
   },
   { timestamps: true }
