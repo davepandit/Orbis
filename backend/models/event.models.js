@@ -29,6 +29,11 @@ const eventSchema = new mongoose.Schema(
       enum: ["upcoming", "ended", "ongoing"],
       default: "upcoming",
     },
+    publicationStatus: {
+      type: String,
+      enum: ["draft", "published"],
+      default: "draft",
+    },
   },
   { timestamps: true }
 );
