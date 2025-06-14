@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+@theme {
+  /* This sets InterVariable as the primary sans-serif font */
+  --font-inter: "InterVariable", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
