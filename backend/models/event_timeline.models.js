@@ -8,7 +8,7 @@ const eventTimelineSchema = new mongoose.Schema(
     },
     timezone: {
       type: String,
-      default: "India",
+      default: "Asia/Kolkata",
     },
     application_start: {
       type: Date,

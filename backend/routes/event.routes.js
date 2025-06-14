@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.post("/create-event", validateToken, createEvent); 
 router.post(
-  "/complete-event-details",
+  "/complete-event-details/:eventId",
   validateToken,
   eventAdminCheck,
   completeEventDetails

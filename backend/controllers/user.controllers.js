@@ -62,7 +62,14 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   const user = await User.findOne({ email: email });
 
-  if (user && (await user.matchPassword(password))) {
+  // when user is not found
+  if (!user || !(await user.matchPassword(password))) {
+    res.status(401);
+    throw new Error("Invalid email or password");
+  }
+
+  // when user is found
+  else if (user && (await user.matchPassword(password))) {
     // NOTE - Later we can set the email into the token as well
     const token = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "15d",
@@ -100,7 +107,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
 //@description     Complete user profile
 //@route           POST /api/user/complete-profile
 //@access          Public
-export const completeUserProfile = asyncHandler(async(req, res) => {
+export const completeUserProfile = asyncHandler(async (req, res) => {
   // TODO - Avatar URL in the user_profile schema will be coming from cloudinary so we need to write a function that takes the user avatar and uploads the image to cloudinary and saves the url to the database
 
   // TODO - Skills and proficiency will be sent as a map from the frontend and in the backend later we need to do some sort of parsing may be loop into the map and keep on creating a document for each of the skills and filling the user id as the user who is logged in, because according to the current schema every skill of the user needs to be stored as a separate document

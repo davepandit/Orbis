@@ -14,10 +14,10 @@ const eventSponsorsSchema = new mongoose.Schema(
       enum: ["gold", "silver", "bronze"],
     },
     logo_url: {
-      type: String, // TODO - This needs to come from cloudinary so uoload this asset to cloudinary first
+      type: String, // TODO - This needs to come from cloudinary so upload this asset to cloudinary first
     },
     cover_image_url: {
-      type: String, // TODO - This needs to come from cloudinary so uoload this asset to cloudinary first
+      type: String, // TODO - This needs to come from cloudinary so upload this asset to cloudinary first
     },
     website_url: {
       type: String,
