@@ -3,8 +3,8 @@ import { Button, createTheme, ThemeProvider } from "flowbite-react";
 export const customTheme = createTheme({
   button: {
     color: {
-      headerRedButton: "bg-red-500 hover:bg-red-600",
-      secondary: "bg-blue-500 hover:bg-blue-600",
+      tealButton: "bg-teal-600 hover:bg-teal-700",
+      whiteButton: "bg-white",
     },
     size: {
       lg: "px-6 py-3 text-lg",

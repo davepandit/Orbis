@@ -95,15 +95,15 @@ const Header = () => {
                 <Button
                   pill
                   size="sm"
-                  color="alternative"
-                  className="hover:cursor-pointer active:ring-0 focus:ring-0 text-white"
+                  color="whiteButton"
+                  className="hover:cursor-pointer active:ring-0 focus:ring-0 text-black"
                 >
                   LogIn
                 </Button>
                 <Button
                   pill
                   size="sm"
-                  color="headerRedButton"
+                  color="tealButton"
                   className="hover:cursor-pointer active:ring-0 focus:ring-0 text-white"
                 >
                   SignUp
