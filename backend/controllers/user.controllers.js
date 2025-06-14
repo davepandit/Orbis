@@ -27,7 +27,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     provider: provider,
   });
 
-  user.save();
+  await user.save();
 
   // after sign in we need to generate a token for the user and store it in a cookie
   // NOTE - Later we can set the email into the token as well
@@ -100,7 +100,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
 //@description     Complete user profile
 //@route           POST /api/user/complete-profile
 //@access          Public
-export const completeUserProfile = asyncHandler((req, res) => {
+export const completeUserProfile = asyncHandler(async(req, res) => {
   // TODO - Avatar URL in the user_profile schema will be coming from cloudinary so we need to write a function that takes the user avatar and uploads the image to cloudinary and saves the url to the database
 
   // TODO - Skills and proficiency will be sent as a map from the frontend and in the backend later we need to do some sort of parsing may be loop into the map and keep on creating a document for each of the skills and filling the user id as the user who is logged in, because according to the current schema every skill of the user needs to be stored as a separate document
@@ -154,9 +154,9 @@ export const completeUserProfile = asyncHandler((req, res) => {
   });
 
   // saving the created objects to the database
-  userEducation.save();
-  userProfile.save();
-  userSocialProfiles.save();
+  await userEducation.save();
+  await userProfile.save();
+  await userSocialProfiles.save();
 
   return res.status(200).json({
     message: "User profile updated successfully!!!",

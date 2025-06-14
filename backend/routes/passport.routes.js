@@ -43,6 +43,7 @@ router.get("/google/callback", (req, res, next) => {
     // TESTING - This is for testing only because we need to redirect the user to the home or dashboard
     res.status(200).json({
       message: "User sign in successfull with google!!!!",
+      token: token, // TESTING - This is for testing only and needs to be removed later
     });
   })(req, res, next);
 });

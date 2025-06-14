@@ -24,12 +24,11 @@ export const adminCheck = asyncHandler(async (req, res, next) => {
   }
 });
 
-
 // This checks whether the user is an event admin or not
 export const eventAdminCheck = asyncHandler(async (req, res, next) => {
   if (req.user) {
     // make a request to event people and check the role of the user
-    const eventPeople = EventPeople.findById(req?.user._id);
+    const eventPeople = await EventPeople.findOne({ user_id: req.user?._id });
     if (eventPeople?.role == "event-admin") {
       next();
     } else {

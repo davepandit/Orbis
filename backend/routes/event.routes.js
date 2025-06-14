@@ -11,7 +11,7 @@ import {
 
 const router = express.Router();
 
-router.post("/create-event", validateToken, eventAdminCheck, createEvent); // NOTE - This needs an event admin middleware
+router.post("/create-event", validateToken, createEvent); 
 router.post(
   "/complete-event-details",
   validateToken,

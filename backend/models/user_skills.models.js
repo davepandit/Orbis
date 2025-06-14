@@ -6,7 +6,7 @@ const userSkillsSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    skills: {
+    skill: {
       type: String,
     },
     proficiency: {
