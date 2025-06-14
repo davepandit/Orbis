@@ -6,4 +6,7 @@
   /* This sets InterVariable as the primary sans-serif font */
   --font-inter: "InterVariable", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  --color-header-blue: #0054a7; /* A custom blue */
+  --color-header-green: #00616E; 
 }
