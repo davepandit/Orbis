@@ -4,6 +4,7 @@ dotenv.config();
 import express from "express";
 import passport from "passport";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 // middlewares
 import "./middlewares/passport.middlewares.js";
@@ -21,6 +22,13 @@ connectToDatabase();
 const app = express();
 
 // default middlewares
+app.use(
+  cors({
+    origin: "http://localhost:5173", // frontend domain
+    credentials: true, // because i am using cookies
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
