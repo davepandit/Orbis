@@ -14,6 +14,7 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import { Button } from "flowbite-react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -41,7 +42,9 @@ const Header = () => {
 
             {/* Logo */}
             <div className="flex-shrink-0">
-              <div className="text-2xl font-bold text-red-500">Orbis</div>
+              <Link to="/">
+                <div className="text-2xl font-bold text-red-500">Orbis</div>
+              </Link>
             </div>
 
             {/* Desktop Search Bar */}
