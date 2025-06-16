@@ -140,3 +140,10 @@ export const completeEventDetails = asyncHandler(async (req, res) => {
     await eventTimeline.save();
   }
 });
+
+//@description     Get all events
+//@route           GET /api/event/get-all
+//@access          Public
+export const getAllEvents = asyncHandler(async (req, res) => {
+  res.status(201).json({ message: "This is working!!!!" });
+});

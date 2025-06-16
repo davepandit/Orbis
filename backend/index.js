@@ -40,9 +40,9 @@ app.get("/", (req, res) => {
 });
 
 // custom routes
-app.use("/api/user", userRouter);
+app.use("/api/users", userRouter);
 app.use("/api/auth", passportRouter); // this specific route is for sign in with google
-app.use("/api/event", eventRouter);
+app.use("/api/events", eventRouter);
 
 // error handling middleware
 // NOTE - This middleware will be hit if anything goes wrong inside the express-async-handler

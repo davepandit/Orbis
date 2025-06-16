@@ -2,6 +2,7 @@ import express from "express";
 import {
   createEvent,
   completeEventDetails,
+  getAllEvents,
 } from "../controllers/event.controllers.js";
 import {
   validateToken,
@@ -11,7 +12,8 @@ import {
 
 const router = express.Router();
 
-router.post("/create-event", validateToken, createEvent); 
+router.get("/", getAllEvents);
+router.post("/create-event", validateToken, createEvent);
 router.post(
   "/complete-event-details/:eventId",
   validateToken,
