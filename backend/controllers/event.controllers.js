@@ -144,6 +144,6 @@ export const completeEventDetails = asyncHandler(async (req, res) => {
 //@description     Get all events
 //@route           GET /api/event/get-all
 //@access          Public
-export const getAllEvents = asyncHandler(async (req, res) => {
-  res.status(201).json({ message: "This is working!!!!" });
+export const getEvents = asyncHandler(async (req, res) => {
+  res.status(201).json({ message: "This is cool!!!!" });
 });

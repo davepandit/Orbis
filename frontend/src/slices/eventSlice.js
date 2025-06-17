@@ -1,14 +1,15 @@
-import { GET_ALL_EVENTS_URL } from "../constants";
+import { GET_EVENTS_URL } from "../constants";
 import { apiSlice } from "./apiSlice";
 
 const eventSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getAllEvents: builder.query({
+    // this is to fetch 4 latest events on the home page
+    getLatestEvents: builder.query({
       query: () => ({
-        url: GET_ALL_EVENTS_URL,
+        url: `${GET_EVENTS_URL}?limit=4&sort=latest`,
       }),
     }),
   }),
 });
 
-export const { useGetAllEventsQuery } = eventSlice;
+export const { useGetLatestEventsQuery } = eventSlice;

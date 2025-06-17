@@ -2,7 +2,7 @@ import express from "express";
 import {
   createEvent,
   completeEventDetails,
-  getAllEvents,
+  getEvents,
 } from "../controllers/event.controllers.js";
 import {
   validateToken,
@@ -12,7 +12,7 @@ import {
 
 const router = express.Router();
 
-router.get("/", getAllEvents);
+router.get("/", getEvents);
 router.post("/create-event", validateToken, createEvent);
 router.post(
   "/complete-event-details/:eventId",

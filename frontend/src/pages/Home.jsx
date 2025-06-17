@@ -3,10 +3,10 @@ import Hero from "../components/Hero";
 import UpcomingEvents from "../components/UpcomingEvents";
 
 // hooks from RTK
-import { useGetAllEventsQuery } from "../slices/eventSlice";
+import { useGetLatestEventsQuery } from "../slices/eventSlice";
 
 const Home = () => {
-  const { data: events, isLoading, error } = useGetAllEventsQuery();
+  const { data: events, isLoading, error } = useGetLatestEventsQuery();
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading events {error.message}</p>;
