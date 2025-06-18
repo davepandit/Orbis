@@ -1,7 +1,5 @@
-"use client";
-
-import React from "react";
-import { FiLink, FiUsers } from "react-icons/fi";
+"use client"
+import { FiLink, FiUsers } from "react-icons/fi"
 
 const EventCard = ({
   title,
@@ -22,12 +20,14 @@ const EventCard = ({
       className={`bg-white rounded-2xl hover:border-2 hover:border-red-500 hover:cursor-pointer p-6 max-w-xl w-full ${className}`}
     >
       {/* Header */}
-      <div className="flex justify-between items-start mb-6">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-6">
+        <div className="mb-4 sm:mb-0">
           <h2 className="text-2xl font-bold text-red-500 mb-1">{title}</h2>
           <p className="text-gray-500 text-sm">{subtitle}</p>
         </div>
-        <div className="flex gap-2">
+
+        {/* Action buttons - horizontal on mobile, top-right on desktop */}
+        <div className="flex gap-2 sm:flex-row">
           {showLinkIcon && (
             <button
               onClick={onLinkClick}
@@ -49,16 +49,14 @@ const EventCard = ({
 
       {/* Theme Section */}
       <div className="mb-8">
-        <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">
-          THEME
-        </p>
+        <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">THEME</p>
         <span className="inline-block bg-gray-100 text-gray-600 px-4 py-2 rounded-full text-sm font-medium">
           {theme}
         </span>
       </div>
 
-      {/* Participants Section */}
-      <div className="flex items-center justify-between mb-8">
+      {/* Participants Section - Hidden on mobile, shown on desktop */}
+      <div className="hidden sm:flex items-center justify-between mb-8">
         <div className="flex items-center">
           <div className="flex -space-x-2">
             {participants?.slice(0, 3)?.map((participant, index) => (
@@ -72,58 +70,34 @@ const EventCard = ({
             ))}
           </div>
         </div>
-        <div className="text-emerald-500 font-semibold text-sm">
-          +{participantCount} participating
-        </div>
+        <div className="text-emerald-500 font-semibold text-sm">+{participantCount} participating</div>
       </div>
 
-      {/* Status and Apply Section */}
-      <div className="flex items-center justify-between">
-        <div className="flex gap-3">
-          <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-md text-xs font-medium">
+      {/* Status Section - Responsive layout */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        {/* Status badges - vertical stack on mobile, horizontal on desktop */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <span className="bg-gray-100 text-gray-600 px-3 py-2 rounded-md text-xs font-medium text-center sm:text-left">
             {status?.mode}
           </span>
-          <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-md text-xs font-medium">
+          <span className="bg-gray-100 text-gray-600 px-3 py-2 rounded-md text-xs font-medium text-center sm:text-left">
             {status?.registration}
           </span>
-          <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-md text-xs font-medium">
+          <span className="bg-gray-100 text-gray-600 px-3 py-2 rounded-md text-xs font-medium text-center sm:text-left">
             {status?.startDate}
           </span>
         </div>
-        <button
-          onClick={onApplyClick}
-          className="bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white px-6 py-2 rounded-full font-medium transition-colors"
-        >
-          Apply now
-        </button>
       </div>
-    </div>
-  );
-};
 
-const ExampleUsage = () => {
-  
-
-  return (
-    <div className="p-8 bg-gray-50 min-h-screen flex items-center justify-center">
-      <HackathonCard
-        title="DeerHack 2025"
-        subtitle="Hackathon"
-        theme="NO RESTRICTIONS"
-        participants={sampleParticipants}
-        participantCount={1000}
-        status={{
-          mode: "OFFLINE",
-          registration: "OPEN",
-          startDate: "STARTS 11/07/25",
-        }}
-        onLinkClick={() => console.log("Link clicked")}
-        onGroupClick={() => console.log("Group clicked")}
-        onApplyClick={() => console.log("Apply clicked")}
-      />
+      {/* Apply Button - Full width on mobile */}
+      <button
+        onClick={onApplyClick}
+        className="w-full sm:w-auto bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white px-6 py-3 sm:py-2 rounded-full font-medium transition-colors sm:ml-auto sm:block"
+      >
+        Apply now
+      </button>
     </div>
   )
 }
 
-// export default ExampleUsage
-export default EventCard;
+export default EventCard

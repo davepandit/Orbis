@@ -87,6 +87,51 @@ const UpcomingEvents = () => {
       onGroupClick: () => console.log("Group clicked"),
       onApplyClick: () => console.log("Apply clicked"),
     },
+    {
+      title: "here we go",
+      subtitle: "here we go again",
+      theme: "artificial intelligence",
+      participants: sampleParticipants,
+      participantCount: 1000,
+      status: {
+        mode: "OFFLINE",
+        registration: "OPEN",
+        startDate: "STARTS 11/07/25",
+      },
+      onLinkClick: () => console.log("Link clicked"),
+      onGroupClick: () => console.log("Group clicked"),
+      onApplyClick: () => console.log("Apply clicked"),
+    },
+    {
+      title: "here we go",
+      subtitle: "here we go again",
+      theme: "artificial intelligence",
+      participants: sampleParticipants,
+      participantCount: 1000,
+      status: {
+        mode: "OFFLINE",
+        registration: "OPEN",
+        startDate: "STARTS 11/07/25",
+      },
+      onLinkClick: () => console.log("Link clicked"),
+      onGroupClick: () => console.log("Group clicked"),
+      onApplyClick: () => console.log("Apply clicked"),
+    },
+    {
+      title: "here we go",
+      subtitle: "here we go again",
+      theme: "artificial intelligence",
+      participants: sampleParticipants,
+      participantCount: 1000,
+      status: {
+        mode: "OFFLINE",
+        registration: "OPEN",
+        startDate: "STARTS 11/07/25",
+      },
+      onLinkClick: () => console.log("Link clicked"),
+      onGroupClick: () => console.log("Group clicked"),
+      onApplyClick: () => console.log("Apply clicked"),
+    },
   ];
 
   if (isLoading) {
