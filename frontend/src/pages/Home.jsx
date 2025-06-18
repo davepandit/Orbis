@@ -1,6 +1,7 @@
 import React from "react";
 import Hero from "../components/Hero";
 import LatestEvents from "../components/LatestEvents";
+import TopCategories from "../components/TopCat";
 
 // hooks from RTK
 
@@ -9,7 +10,7 @@ const Home = () => {
     <>
       <Hero />
       <LatestEvents />
-      <section className="bg-[#f9fafa] rounded-xl p-6 md:p-10 max-w-7xl mx-auto">
+      <section className="bg-[#f9fafa] rounded-xl max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Text Section */}
           <div className="flex-1">
@@ -34,6 +35,7 @@ const Home = () => {
           </div>
         </div>
       </section>
+      <TopCategories />
     </>
   );
 };
