@@ -1,6 +1,6 @@
 import React from "react";
 import Hero from "../components/Hero";
-import UpcomingEvents from "../components/UpcomingEvents";
+import LatestEvents from "../components/LatestEvents";
 
 // hooks from RTK
 
@@ -8,7 +8,7 @@ const Home = () => {
   return (
     <>
       <Hero />
-      <UpcomingEvents />
+      <LatestEvents />
     </>
   );
 };

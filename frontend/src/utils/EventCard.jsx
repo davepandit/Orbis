@@ -1,20 +1,35 @@
-"use client"
-import { FiLink, FiUsers } from "react-icons/fi"
+import { FaTwitter, FaDiscord  } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 
 const EventCard = ({
+  id,
   title,
   subtitle,
   theme,
   participants,
   participantCount,
-  status,
-  onLinkClick,
-  onGroupClick,
-  onApplyClick,
-  showLinkIcon = true,
-  showGroupIcon = true,
+  mode,
+  registration, 
+  startDate,
+  twitterLink,
+  discordLink,
+  showInstaIcon = true,
+  showDiscordIcon = true,
   className = "",
 }) => {
+  const navigate = useNavigate();
+
+  const handleTwitterClick = () => {
+    window.location.href = twitterLink;
+  }
+
+  const handleDiscordClick = () => {
+    window.location.href = discordLink;
+  }
+
+  const handleApplyClick = () => {
+    navigate(`/apply/${id}`);
+  }
   return (
     <div
       className={`bg-white rounded-2xl hover:border-2 hover:border-red-500 hover:cursor-pointer p-6 max-w-xl w-full ${className}`}
@@ -28,20 +43,20 @@ const EventCard = ({
 
         {/* Action buttons - horizontal on mobile, top-right on desktop */}
         <div className="flex gap-2 sm:flex-row">
-          {showLinkIcon && (
+          {showInstaIcon && (
             <button
-              onClick={onLinkClick}
+              onClick={handleTwitterClick}
               className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 hover:cursor-pointer transition-colors"
             >
-              <FiLink className="w-5 h-5 text-gray-600" />
+              <FaTwitter className="w-5 h-5 text-gray-600" />
             </button>
           )}
-          {showGroupIcon && (
+          {showDiscordIcon && (
             <button
-              onClick={onGroupClick}
+              onClick={handleDiscordClick}
               className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 hover:cursor-pointer transition-colors"
             >
-              <FiUsers className="w-5 h-5 text-gray-600" />
+              <FaDiscord className="w-5 h-5 text-gray-600" />
             </button>
           )}
         </div>
@@ -78,20 +93,20 @@ const EventCard = ({
         {/* Status badges - vertical stack on mobile, horizontal on desktop */}
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <span className="bg-gray-100 text-gray-600 px-3 py-2 rounded-md text-xs font-medium text-center sm:text-left">
-            {status?.mode}
+            {mode}
           </span>
           <span className="bg-gray-100 text-gray-600 px-3 py-2 rounded-md text-xs font-medium text-center sm:text-left">
-            {status?.registration}
+            {registration}
           </span>
           <span className="bg-gray-100 text-gray-600 px-3 py-2 rounded-md text-xs font-medium text-center sm:text-left">
-            {status?.startDate}
+            {startDate}
           </span>
         </div>
       </div>
 
       {/* Apply Button - Full width on mobile */}
       <button
-        onClick={onApplyClick}
+        onClick={handleApplyClick}
         className="w-full sm:w-auto bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white px-6 py-3 sm:py-2 rounded-full font-medium transition-colors sm:ml-auto sm:block"
       >
         Apply now

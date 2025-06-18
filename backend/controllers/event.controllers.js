@@ -168,7 +168,26 @@ export const getEvents = asyncHandler(async (req, res) => {
     sortOptions.createdAt = -1; // this will sort the events in the descending order based on the created at field
   }
 
-  const events = await Event.find({}).sort(sortOptions).limit(limit);
+  // TESTING - This is for testing only, later we need to change the publication status to published
+  const events = await Event.find({ publicationStatus: "draft" })
+    .sort(sortOptions)
+    .limit(limit);
 
-  return res.status(200).json(events);
+  // we also want the event theme and all those stuffs
+  const enrichedEvents = await Promise.all(
+    events?.map(async (event) => {
+      const eventTheme = await EventTheme.findOne({
+        event_id: event._id,
+      }).populate("theme_id");
+
+      // TODO - Here we need to send the start date such that we can display that on the card
+
+      return {
+        ...event.toObject(),
+        theme: eventTheme,
+      };
+    })
+  );
+
+  return res.status(200).json(enrichedEvents);
 });

@@ -3,7 +3,7 @@ import EventCard from "../utils/EventCard";
 // hooks from RTK query
 import { useGetLatestEventsQuery } from "../slices/eventSlice";
 
-const UpcomingEvents = () => {
+const LatestEvents = () => {
   const { data: latestEvents, isLoading, error } = useGetLatestEventsQuery();
   const eventsData = [
     {
@@ -159,18 +159,21 @@ const UpcomingEvents = () => {
 
         {/* Events Grid */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          {sampleEvents?.map((sampleEvent, index) => (
+          {latestEvents?.map((event, index) => (
             <EventCard
               key={index}
-              title={sampleEvent.title}
-              subtitle={sampleEvent.subtitle}
-              theme={sampleEvent.theme}
+              id={event._id}
+              title={event.name}
+              subtitle={event.about}
+              theme={event.theme.theme_id.name}
               participants={sampleParticipants}
-              participantCount={sampleEvent.participantCount}
-              status={sampleEvent.status}
-              onLinkClick={sampleEvent.onLinkClick}
-              onGroupClick={sampleEvent.onGroupClick}
-              onApplyClick={sampleEvent.onApplyClick}
+              participantCount={1000}
+              mode = {event.type}
+              registration={event.status}
+              startDate={"08/12/2005"}
+              twitterLink={"https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_slice_array"}
+              discordLink={"https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_slice_array"}
+
             />
           ))}
         </div>
@@ -188,4 +191,4 @@ const UpcomingEvents = () => {
   );
 };
 
-export default UpcomingEvents;
+export default LatestEvents;
