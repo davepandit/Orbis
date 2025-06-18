@@ -1,59 +1,129 @@
-import React from "react";
-import { FaCalendarAlt, FaUsers, FaTag, FaVideo } from "react-icons/fa";
+"use client";
 
-// EventCard Component
-const EventCard = ({ event }) => {
+import React from "react";
+import { FiLink, FiUsers } from "react-icons/fi";
+
+const EventCard = ({
+  title,
+  subtitle,
+  theme,
+  participants,
+  participantCount,
+  status,
+  onLinkClick,
+  onGroupClick,
+  onApplyClick,
+  showLinkIcon = true,
+  showGroupIcon = true,
+  className = "",
+}) => {
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden hover:cursor-pointer">
-      {/* Event Image */}
-      <div className="relative h-48 overflow-hidden">
-        <img
-          src={event.image}
-          alt={event.title}
-          className="w-full h-full object-cover"
-        />
-        {/* Online Event Badge */}
-        <div className="absolute top-3 left-3 bg-gray-800 bg-opacity-80 text-white px-2 py-1 rounded flex items-center text-sm">
-          <FaVideo className="w-3 h-3 mr-1" />
-          Online Event
+    <div
+      className={`bg-white rounded-2xl hover:border-2 hover:border-red-500 hover:cursor-pointer p-6 max-w-xl w-full ${className}`}
+    >
+      {/* Header */}
+      <div className="flex justify-between items-start mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-red-500 mb-1">{title}</h2>
+          <p className="text-gray-500 text-sm">{subtitle}</p>
+        </div>
+        <div className="flex gap-2">
+          {showLinkIcon && (
+            <button
+              onClick={onLinkClick}
+              className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 hover:cursor-pointer transition-colors"
+            >
+              <FiLink className="w-5 h-5 text-gray-600" />
+            </button>
+          )}
+          {showGroupIcon && (
+            <button
+              onClick={onGroupClick}
+              className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 hover:cursor-pointer transition-colors"
+            >
+              <FiUsers className="w-5 h-5 text-gray-600" />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Event Content */}
-      <div className="p-4">
-        {/* Event Title */}
-        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
-          {event.title}
-        </h3>
-
-        {/* Host Information */}
-        <p className="text-gray-600 text-sm mb-3">
-          Hosted by: <span className="font-medium">{event.host}</span>
+      {/* Theme Section */}
+      <div className="mb-8">
+        <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">
+          THEME
         </p>
+        <span className="inline-block bg-gray-100 text-gray-600 px-4 py-2 rounded-full text-sm font-medium">
+          {theme}
+        </span>
+      </div>
 
-        {/* Event Date & Time */}
-        <div className="flex items-center text-gray-600 text-sm mb-3">
-          <FaCalendarAlt className="w-4 h-4 mr-2" />
-          <span>
-            {event.date} • {event.time}
+      {/* Participants Section */}
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center">
+          <div className="flex -space-x-2">
+            {participants?.slice(0, 3)?.map((participant, index) => (
+              <img
+                key={participant.id}
+                src={participant.avatar || "/placeholder.svg"}
+                alt={participant.name}
+                className="w-8 h-8 rounded-full border-2 border-white object-cover"
+                style={{ zIndex: 10 - index }}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="text-emerald-500 font-semibold text-sm">
+          +{participantCount} participating
+        </div>
+      </div>
+
+      {/* Status and Apply Section */}
+      <div className="flex items-center justify-between">
+        <div className="flex gap-3">
+          <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-md text-xs font-medium">
+            {status?.mode}
+          </span>
+          <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-md text-xs font-medium">
+            {status?.registration}
+          </span>
+          <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-md text-xs font-medium">
+            {status?.startDate}
           </span>
         </div>
-
-        {/* Attendees and Price */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center text-gray-600 text-sm">
-            <FaUsers className="w-4 h-4 mr-1" />
-            <span>{event.attendees} going</span>
-          </div>
-
-          <div className="flex items-center text-gray-600 text-sm">
-            <FaTag className="w-4 h-4 mr-1" />
-            <span className="font-medium">{event.price}</span>
-          </div>
-        </div>
+        <button
+          onClick={onApplyClick}
+          className="bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white px-6 py-2 rounded-full font-medium transition-colors"
+        >
+          Apply now
+        </button>
       </div>
     </div>
   );
 };
 
+const ExampleUsage = () => {
+  
+
+  return (
+    <div className="p-8 bg-gray-50 min-h-screen flex items-center justify-center">
+      <HackathonCard
+        title="DeerHack 2025"
+        subtitle="Hackathon"
+        theme="NO RESTRICTIONS"
+        participants={sampleParticipants}
+        participantCount={1000}
+        status={{
+          mode: "OFFLINE",
+          registration: "OPEN",
+          startDate: "STARTS 11/07/25",
+        }}
+        onLinkClick={() => console.log("Link clicked")}
+        onGroupClick={() => console.log("Group clicked")}
+        onApplyClick={() => console.log("Apply clicked")}
+      />
+    </div>
+  )
+}
+
+// export default ExampleUsage
 export default EventCard;

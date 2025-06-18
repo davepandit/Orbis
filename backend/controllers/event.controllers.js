@@ -55,18 +55,31 @@ export const createEvent = asyncHandler(async (req, res) => {
   // save to the database
   await eventPeople.save();
 
-  // NOTE - We first create the theme object here and them make the event theme schema
-  const theme = new Theme({
+  // NOTE - We first create the theme object here and then make the event theme schema
+  // NOTE - As of now we are just asuming that an event can have only one theme but the thing is like an event can have multiple themes
+  // NOTE - Before creating a theme we need to check whether taht theme already exists in the database or not
+
+  const themeExists = await Theme.findOne({
     name: themeName,
-    description: themeDescription,
   });
 
-  await theme.save();
+  let theme;
+
+  // if theme doesnot exist
+  if (!themeExists) {
+    theme = new Theme({
+      name: themeName,
+      description: themeDescription,
+    });
+
+    // save the theme
+    await theme.save();
+  }
 
   // now we can get the theme._id
   const eventTheme = new EventTheme({
     event_id: event._id,
-    theme_id: theme._id,
+    theme_id: themeExists ? themeExists._id : theme._id,
   });
 
   await eventTheme.save();
@@ -145,5 +158,17 @@ export const completeEventDetails = asyncHandler(async (req, res) => {
 //@route           GET /api/event/get-all
 //@access          Public
 export const getEvents = asyncHandler(async (req, res) => {
-  res.status(201).json({ message: "This is cool!!!!" });
+  let { limit, sort } = req.query;
+
+  // NOTE - The query parameters are tranferred as strings to the backend so we need to parse them into the required form
+  limit = parseInt(limit) || 10;
+
+  let sortOptions = {};
+  if (sort == "latest") {
+    sortOptions.createdAt = -1; // this will sort the events in the descending order based on the created at field
+  }
+
+  const events = await Event.find({}).sort(sortOptions).limit(limit);
+
+  return res.status(200).json(events);
 });

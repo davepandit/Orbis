@@ -1,7 +1,10 @@
 import EventCard from "../utils/EventCard";
 
+// hooks from RTK query
+import { useGetLatestEventsQuery } from "../slices/eventSlice";
+
 const UpcomingEvents = () => {
-  // Dummy data array
+  const { data: latestEvents, isLoading, error } = useGetLatestEventsQuery();
   const eventsData = [
     {
       id: 1,
@@ -50,14 +53,57 @@ const UpcomingEvents = () => {
     },
   ];
 
+  const sampleParticipants = [
+    {
+      id: "1",
+      avatar: "/placeholder.webp?height=32&width=32",
+      name: "John Doe",
+    },
+    {
+      id: "2",
+      avatar: "/placeholder.webp?height=32&width=32",
+      name: "Jane Smith",
+    },
+    {
+      id: "3",
+      avatar: "/placeholder.webp?height=32&width=32",
+      name: "Mike Johnson",
+    },
+  ];
+
+  const sampleEvents = [
+    {
+      title: "here we go",
+      subtitle: "here we go again",
+      theme: "artificial intelligence",
+      participants: sampleParticipants,
+      participantCount: 1000,
+      status: {
+        mode: "OFFLINE",
+        registration: "OPEN",
+        startDate: "STARTS 11/07/25",
+      },
+      onLinkClick: () => console.log("Link clicked"),
+      onGroupClick: () => console.log("Group clicked"),
+      onApplyClick: () => console.log("Apply clicked"),
+    },
+  ];
+
+  if (isLoading) {
+    return <p>Loading....</p>;
+  }
+  if (error) {
+    return <p>{error.message}</p>;
+  }
+
+  console.log("latest events:", latestEvents);
+
   return (
     <section className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">
-            Upcoming online events
-          </h2>
+          <h2 className="text-3xl font-bold text-gray-900">Upcoming events</h2>
           <a
             href="#"
             className="hidden md:flex text-teal-600 hover:text-teal-700 font-medium text-lg hover:underline"
@@ -67,9 +113,20 @@ const UpcomingEvents = () => {
         </div>
 
         {/* Events Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {eventsData.map((event) => (
-            <EventCard key={event.id} event={event} />
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          {sampleEvents?.map((sampleEvent, index) => (
+            <EventCard
+              key={index}
+              title={sampleEvent.title}
+              subtitle={sampleEvent.subtitle}
+              theme={sampleEvent.theme}
+              participants={sampleParticipants}
+              participantCount={sampleEvent.participantCount}
+              status={sampleEvent.status}
+              onLinkClick={sampleEvent.onLinkClick}
+              onGroupClick={sampleEvent.onGroupClick}
+              onApplyClick={sampleEvent.onApplyClick}
+            />
           ))}
         </div>
 
