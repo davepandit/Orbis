@@ -1,4 +1,6 @@
 import React from "react";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 import Hero from "../components/Hero";
 import LatestEvents from "../components/LatestEvents";
 import TopCategories from "../components/TopCat";
@@ -8,6 +10,7 @@ import TopCategories from "../components/TopCat";
 const Home = () => {
   return (
     <>
+      <Header />
       <Hero />
       <LatestEvents />
       <section className="bg-[#f9fafa] rounded-xl max-w-7xl mx-auto">
@@ -36,6 +39,7 @@ const Home = () => {
         </div>
       </section>
       <TopCategories />
+      <Footer />
     </>
   );
 };

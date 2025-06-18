@@ -103,14 +103,16 @@ const Header = () => {
                 >
                   LogIn
                 </Button>
-                <Button
-                  pill
-                  size="sm"
-                  color="tealButton"
-                  className="hover:cursor-pointer active:ring-0 focus:ring-0 text-white"
-                >
-                  SignUp
-                </Button>
+                <Link to={"/signup"}>
+                  <Button
+                    pill
+                    size="sm"
+                    color="tealButton"
+                    className="hover:cursor-pointer active:ring-0 focus:ring-0 text-white"
+                  >
+                    SignUp
+                  </Button>
+                </Link>
               </div>
             )}
 
@@ -129,14 +131,16 @@ const Header = () => {
                 >
                   LogIn
                 </Button>
-                <Button
-                  pill
-                  size="sm"
-                  color="tealButton"
-                  className="hover:cursor-pointer active:ring-0 focus:ring-0 text-white"
-                >
-                  SignUp
-                </Button>
+                <Link to={"/signup"}>
+                  <Button
+                    pill
+                    size="sm"
+                    color="tealButton"
+                    className="hover:cursor-pointer active:ring-0 focus:ring-0 text-white"
+                  >
+                    SignUp
+                  </Button>
+                </Link>
               </div>
             )}
           </div>
