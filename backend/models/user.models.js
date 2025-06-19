@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema(
     provider: {
       type: String, // this will be used to track whether the user is google login or email based login
       enum: ["email-password", "google"],
+      default: "email-password",
     },
   },
   {

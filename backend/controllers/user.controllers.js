@@ -10,7 +10,7 @@ import UserEducation from "../models/user_education.models.js";
 //@access          Public
 
 export const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password, provider } = req.body;
+  const { username, email, password } = req.body;
 
   // check whether the user already exists
   const userExists = await User.findOne({ email: email });
@@ -24,7 +24,6 @@ export const registerUser = asyncHandler(async (req, res) => {
     username: username,
     email: email,
     password: password,
-    provider: provider,
   });
 
   await user.save();
