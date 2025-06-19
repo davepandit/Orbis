@@ -8,9 +8,11 @@ import {
   FaLock,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmpassword, setShowConfirmpassword] = useState(false);
   const [email, setEmail] = useState("");
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
@@ -22,7 +24,13 @@ export default function SignupPage() {
     console.log("email:", email);
     console.log("password:", password);
     console.log("confirm password:", confirmPass);
-    // Handle form submission logic here
+
+    // check whether pass and confirm pass are same or not
+    if (password != confirmPass) {
+      toast.error("Password and Confirm Password doesnot match", {
+        autoClose: 2000,
+      });
+    }
   };
 
   const handleGoogleSignup = () => {
@@ -150,7 +158,7 @@ export default function SignupPage() {
                 <input
                   id="confirm password"
                   name="confirm password"
-                  type={showPassword ? "text" : "password"}
+                  type={showConfirmpassword ? "text" : "password"}
                   required
                   value={confirmPass}
                   onChange={(e) => setConfirmPass(e.target.value)}
@@ -160,9 +168,9 @@ export default function SignupPage() {
                 <button
                   type="button"
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowConfirmpassword(!showConfirmpassword)}
                 >
-                  {showPassword ? (
+                  {showConfirmpassword ? (
                     <FaEyeSlash className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                   ) : (
                     <FaEye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
@@ -212,12 +220,12 @@ export default function SignupPage() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{" "}
-              <a
-                href="#"
+              <Link
+                to="/login"
                 className="font-medium text-red-500 hover:text-red-600 transition duration-200"
               >
                 Sign in here
-              </a>
+              </Link>
             </p>
           </div>
         </div>
