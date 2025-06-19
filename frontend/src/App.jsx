@@ -1,8 +1,16 @@
 import { Routes, Route } from "react-router-dom";
+
+// pages import
 import Home from "./pages/Home";
 import Signup from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
-import { ToastContainer } from 'react-toastify';
+import DashboardLayout from "./pages/DashboardLayout";
+import Profile from "./pages/Profile";
+import Education from "./pages/Education";
+import MyEvents from "./pages/MyEvents";
+
+// toast import
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -10,8 +18,21 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
+
+        {/* Dashboard  */}
+        <Route element={<DashboardLayout />}>
+          {/* Profile  */}
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/education" element={<Education />} />
+
+          {/* Events  */}
+          <Route path="/my-registered-events" element={<MyEvents />} />
+        </Route>
+
+        {/* Not found  */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+
       <ToastContainer />
     </>
   );
