@@ -43,11 +43,11 @@ export const registerUser = asyncHandler(async (req, res) => {
   });
 
   // send the data to the frontend
-  res.status(200).json({
+  return res.status(200).json({
     _id: user._id,
     username: user.username,
     email: user.email,
-    provider: provider,
+    provider: user.provider,
     message: "User created successfully!!!",
   });
 });

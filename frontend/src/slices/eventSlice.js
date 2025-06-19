@@ -1,4 +1,4 @@
-import { GET_EVENTS_URL } from "../constants";
+import { EVENTS_URL } from "../constants";
 import { apiSlice } from "./apiSlice";
 
 const eventSlice = apiSlice.injectEndpoints({
@@ -6,7 +6,7 @@ const eventSlice = apiSlice.injectEndpoints({
     // this is to fetch 4 latest events on the home page
     getLatestEvents: builder.query({
       query: () => ({
-        url: `${GET_EVENTS_URL}?limit=4&sort=latest`,
+        url: `${EVENTS_URL}?limit=4&sort=latest`,
       }),
     }),
   }),

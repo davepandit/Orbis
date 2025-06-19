@@ -10,6 +10,9 @@ import {
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
+// RTK query hooks
+import { useRegisterMutation } from "../slices/userSlice";
+
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmpassword, setShowConfirmpassword] = useState(false);
@@ -18,18 +21,40 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
 
-  const handleSubmit = (e) => {
+  const [register, { isLoading }] = useRegisterMutation();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("username:", username);
-    console.log("email:", email);
-    console.log("password:", password);
-    console.log("confirm password:", confirmPass);
 
     // check whether pass and confirm pass are same or not
     if (password != confirmPass) {
       toast.error("Password and Confirm Password doesnot match", {
         autoClose: 2000,
       });
+
+      // set all the fields empty
+      setUserName("");
+      setEmail("");
+      setConfirmPass("");
+      setPassword("");
+
+      return;
+    } else {
+      try {
+        const res = await register({
+          username: username,
+          email: email,
+          password: password,
+        }).unwrap();
+
+        toast.success(`${res.message}`, {
+          autoClose: 2000,
+        });
+      } catch (error) {
+        toast.error(`${error.data.message}`, {
+          autoClose: 2000,
+        });
+      }
     }
   };
 
@@ -181,12 +206,16 @@ export default function SignupPage() {
 
             {/* Submit Button */}
             <div>
-              <button
-                type="submit"
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-500 hover:bg-red-600 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200 transform hover:scale-105"
-              >
-                Create Account
-              </button>
+              {isLoading ? (
+                <p>Loading..</p>
+              ) : (
+                <button
+                  type="submit"
+                  className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-500 hover:bg-red-600 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200 transform hover:scale-105"
+                >
+                  Create Account
+                </button>
+              )}
             </div>
           </form>
 

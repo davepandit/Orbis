@@ -52,3 +52,6 @@ app.use(express.urlencoded({ limit: "5mb", extended: true }));
 
 - Flow of event creation -
 ![Flow of event creation](./images/image3.png)
+
+- Flow of sign up -
+![Flow of sign up](./images/image4.png)
