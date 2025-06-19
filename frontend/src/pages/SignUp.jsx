@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import SpinnerAnimation from "../utils/Spinner";
 
 // RTK query hooks
 import { useRegisterMutation } from "../slices/userSlice";
@@ -207,7 +208,7 @@ export default function SignupPage() {
             {/* Submit Button */}
             <div>
               {isLoading ? (
-                <p>Loading..</p>
+                <SpinnerAnimation size="xl" color="failure" />
               ) : (
                 <button
                   type="submit"
