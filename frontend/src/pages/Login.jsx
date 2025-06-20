@@ -10,11 +10,11 @@ import {
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import SpinnerAnimation from "../utils/Spinner";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 // RTK query hooks
-import { useRegisterMutation } from "../slices/userSlice";
+import { useLoginMutation } from "../slices/userSlice";
 
 // slices
 import { setCredentials } from "../slices/authSlice";
@@ -23,14 +23,31 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [login, { isLoading }] = useLoginMutation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { userInfo } = useSelector((state) => state.auth);
-  const isLoading = false;
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    try {
+      const res = await login({
+        email: email,
+        password: password,
+      }).unwrap();
+
+      // save the result to the redux store
+      dispatch(setCredentials({ ...res }));
+      navigate('/profile', { replace: true });
+      toast.success(`${res.message}`, {
+        autoClose: 2000,
+      });
+    } catch (error) {
+      toast.error(`${error.data.message}`, {
+        autoClose: 2000,
+      });
+    }
   };
 
   const handleGoogleSignup = () => {
@@ -124,7 +141,7 @@ export default function LoginPage() {
                   type="submit"
                   className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-500 hover:bg-red-600 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200 transform hover:scale-105"
                 >
-                  Create Account
+                  Login
                 </button>
               )}
             </div>
@@ -138,7 +155,7 @@ export default function LoginPage() {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-white text-gray-500">
-                  Or continue with
+                  Or login with
                 </span>
               </div>
             </div>
@@ -152,7 +169,7 @@ export default function LoginPage() {
               className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200"
             >
               <FaGoogle className="h-5 w-5 text-red-500 mr-3" />
-              Sign up with Google
+              Login with Google
             </button>
           </div>
 

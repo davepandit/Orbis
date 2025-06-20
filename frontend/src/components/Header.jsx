@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   FaSearch,
   FaHome,
@@ -14,20 +14,57 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import { Button, Avatar } from "flowbite-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 // redux import
 import { useDispatch, useSelector } from "react-redux";
+import { removeCredentials } from "../slices/authSlice";
+
+// RTK query hooks
+import { useLogoutMutation } from "../slices/userSlice";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false); // this one is for modal opening
+  const dropdownRef = useRef(null);
   // NOTE - This flag is for testing only and needs to be replaced by the atual api call
 
-  const dispatch = useDispatch();
+  const [logout, { isLoading }] = useLogoutMutation();
+
   const { userInfo } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      const res = await logout().unwrap();
+
+      // remove the user credentials from the store
+      dispatch(removeCredentials());
+      toast.success(`${res.message}`, {
+        autoClose: 2000,
+      });
+      navigate("/login");
+    } catch (error) {
+      toast.error(`${error.data.message}`, {
+        autoClose: 2000,
+      });
+    }
   };
 
   return (
@@ -112,13 +149,41 @@ const Header = () => {
                   </Button>
                 </Link>
 
-                <Link to="/profile">
-                  <Avatar
-                    placeholderInitials={userInfo.username.slice(0, 3)}
-                    rounded
+                <div className="relative inline-block" ref={dropdownRef}>
+                  <div
+                    onClick={() => setOpen(!open)}
                     className="hover:cursor-pointer"
-                  />
-                </Link>
+                  >
+                    <Avatar
+                      placeholderInitials={userInfo.username.slice(0, 3)}
+                      rounded
+                    />
+                  </div>
+
+                  {open && (
+                    <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-md z-50">
+                      <ul className="py-1 text-sm text-gray-700">
+                        <li>
+                          <Link
+                            to="/profile"
+                            className="block px-4 py-2 hover:bg-red-100 text-red-500 hover:cursor-pointer"
+                            onClick={() => setOpen(false)}
+                          >
+                            My Profile
+                          </Link>
+                        </li>
+                        <li>
+                          <button
+                            className="w-full text-left px-4 py-2 hover:bg-red-100 text-red-500 hover:cursor-pointer"
+                            onClick={handleLogout}
+                          >
+                            Logout
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="hidden md:flex items-center space-x-4">
@@ -268,15 +333,21 @@ const Header = () => {
             {userInfo ? (
               <div className="absolute bottom-0 left-0 right-0 border-t bg-white p-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-semibold mr-3">
-                      E
-                    </div>
+                  <div className="flex items-center gap-3">
+                    <Avatar
+                      placeholderInitials={userInfo.username.slice(0, 3)}
+                      rounded
+                      className="hover:cursor-pointer"
+                    />
                     <div>
                       <div className="font-medium text-gray-900">
-                        extralargecode
+                        {userInfo.email}
                       </div>
-                      <div className="text-sm text-blue-600">View profile</div>
+                      <Link to="/profile">
+                        <div className="text-sm text-blue-600">
+                          View profile
+                        </div>
+                      </Link>
                     </div>
                   </div>
                   <button className="text-gray-600 hover:text-gray-900">
