@@ -10,9 +10,14 @@ import {
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import SpinnerAnimation from "../utils/Spinner";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 // RTK query hooks
 import { useRegisterMutation } from "../slices/userSlice";
+
+// slices
+import { setCredentials } from "../slices/authSlice";
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,6 +26,10 @@ export default function SignupPage() {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
+
+  const { userInfo } = useSelector((state) => state.auth);
 
   const [register, { isLoading }] = useRegisterMutation();
 
@@ -47,6 +56,11 @@ export default function SignupPage() {
           email: email,
           password: password,
         }).unwrap();
+
+        // set the data to the redux store
+        dispatch(setCredentials({ ...res }));
+        // reedirect the user to the profile page
+        navigate('/profile', { replace: true }); // replace true because i dont want the user to be able to go back to the sign up page
 
         toast.success(`${res.message}`, {
           autoClose: 2000,
