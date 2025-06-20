@@ -19,58 +19,18 @@ import { useRegisterMutation } from "../slices/userSlice";
 // slices
 import { setCredentials } from "../slices/authSlice";
 
-export default function SignupPage() {
+export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmpassword, setShowConfirmpassword] = useState(false);
   const [email, setEmail] = useState("");
-  const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPass, setConfirmPass] = useState("");
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const { userInfo } = useSelector((state) => state.auth);
-
-  const [register, { isLoading }] = useRegisterMutation();
+  const isLoading = false;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // check whether pass and confirm pass are same or not
-    if (password != confirmPass) {
-      toast.error("Password and Confirm Password doesnot match", {
-        autoClose: 2000,
-      });
-
-      // set all the fields empty
-      setUserName("");
-      setEmail("");
-      setConfirmPass("");
-      setPassword("");
-
-      return;
-    } else {
-      try {
-        const res = await register({
-          username: username,
-          email: email,
-          password: password,
-        }).unwrap();
-
-        // set the data to the redux store
-        dispatch(setCredentials({ ...res }));
-        // reedirect the user to the profile page
-        navigate('/profile', { replace: true }); // replace true because i dont want the user to be able to go back to the sign up page
-
-        toast.success(`${res.message}`, {
-          autoClose: 2000,
-        });
-      } catch (error) {
-        toast.error(`${error.data.message}`, {
-          autoClose: 2000,
-        });
-      }
-    }
   };
 
   const handleGoogleSignup = () => {
@@ -87,41 +47,13 @@ export default function SignupPage() {
             Orbis
           </Link>
           <h2 className="mt-6 text-3xl font-bold text-gray-900">
-            Create your account
+            Login to your account
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Join us today and get started
-          </p>
         </div>
 
-        {/* Signup Form */}
+        {/* Login Form */}
         <div className="bg-white py-8 px-6 shadow-lg rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* Username Field */}
-            <div>
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Username
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaUser className="h-4 w-4 text-gray-400" />
-                </div>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  required
-                  value={username}
-                  onChange={(e) => setUserName(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-200"
-                  placeholder="Enter your username"
-                />
-              </div>
-            </div>
-
             {/* Email Field */}
             <div>
               <label
@@ -183,42 +115,6 @@ export default function SignupPage() {
               </div>
             </div>
 
-            {/* Confirm Password Field */}
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Confirm Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaLock className="h-4 w-4 text-gray-400" />
-                </div>
-                <input
-                  id="confirm password"
-                  name="confirm password"
-                  type={showConfirmpassword ? "text" : "password"}
-                  required
-                  value={confirmPass}
-                  onChange={(e) => setConfirmPass(e.target.value)}
-                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-200"
-                  placeholder="Enter your password"
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowConfirmpassword(!showConfirmpassword)}
-                >
-                  {showConfirmpassword ? (
-                    <FaEyeSlash className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-                  ) : (
-                    <FaEye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-                  )}
-                </button>
-              </div>
-            </div>
-
             {/* Submit Button */}
             <div>
               {isLoading ? (
@@ -263,12 +159,12 @@ export default function SignupPage() {
           {/* Login Link */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Already have an account?{" "}
+              Don't have an account?{" "}
               <Link
-                to="/login"
+                to="/signup"
                 className="font-medium text-red-500 hover:text-red-600 transition duration-200"
               >
-                Sign in here
+                Sign up here
               </Link>
             </p>
           </div>

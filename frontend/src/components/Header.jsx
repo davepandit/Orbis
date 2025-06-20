@@ -13,13 +13,18 @@ import {
   FaBars,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { Button } from "flowbite-react";
+import { Button, Avatar } from "flowbite-react";
 import { Link } from "react-router-dom";
+
+// redux import
+import { useDispatch, useSelector } from "react-redux";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // NOTE - This flag is for testing only and needs to be replaced by the atual api call
-  const [loggedIn, setLoggedIn] = useState(false);
+
+  const dispatch = useDispatch();
+  const { userInfo } = useSelector((state) => state.auth);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -31,7 +36,7 @@ const Header = () => {
       <nav className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {loggedIn ? (
+            {userInfo ? (
               <button
                 onClick={toggleMenu}
                 className="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
@@ -72,37 +77,61 @@ const Header = () => {
             </div>
 
             {/* Desktop Right Menu */}
-            {loggedIn ? (
-              <div className="hidden md:flex items-center space-x-4">
-                <button className="flex flex-col items-center text-gray-600 hover:text-gray-900">
+            {userInfo ? (
+              <div className="hidden md:flex items-center space-x-11">
+                {/* not sure whether i need this connection thing or not  */}
+
+                {/* <button className="flex flex-col items-center text-gray-600 hover:text-gray-900">
                   <FaUserFriends className="h-5 w-5" />
                   <span className="text-xs">Connections</span>
-                </button>
+                </button> */}
 
-                <button className="flex flex-col items-center text-gray-600 hover:text-gray-900">
-                  <FaComments className="h-5 w-5" />
-                  <span className="text-xs">Messages</span>
-                </button>
+                {/* not sure whether i need this message thing or not  */}
+                <Link to="/my-messages">
+                  <button className="flex flex-col items-center text-gray-600 hover:text-gray-900 hover:cursor-pointer">
+                    <FaComments className="h-5 w-5" />
+                    <span className="text-xs">Messages</span>
+                  </button>
+                </Link>
 
-                <button className="flex flex-col items-center text-gray-600 hover:text-gray-900">
+                {/* not sure whether i need this notifications thing or not  */}
+                {/* <button className="flex flex-col items-center text-gray-600 hover:text-gray-900">
                   <FaBell className="h-5 w-5" />
                   <span className="text-xs">Notifications</span>
-                </button>
+                </button> */}
 
-                <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center text-white font-semibold">
-                  E
-                </div>
+                {/* host an event button  */}
+                <Link to={"/create-event"}>
+                  <Button
+                    pill
+                    size="sm"
+                    color="redButton"
+                    className="hover:cursor-pointer active:ring-0 focus:ring-0 text-white"
+                  >
+                    + Host
+                  </Button>
+                </Link>
+
+                <Link to="/profile">
+                  <Avatar
+                    placeholderInitials={userInfo.username.slice(0, 3)}
+                    rounded
+                    className="hover:cursor-pointer"
+                  />
+                </Link>
               </div>
             ) : (
               <div className="hidden md:flex items-center space-x-4">
-                <Button
-                  pill
-                  size="sm"
-                  color="whiteButton"
-                  className="hover:cursor-pointer active:ring-0 focus:ring-0 text-black"
-                >
-                  LogIn
-                </Button>
+                <Link to="/login">
+                  <Button
+                    pill
+                    size="sm"
+                    color="whiteButton"
+                    className="hover:cursor-pointer active:ring-0 focus:ring-0 text-black"
+                  >
+                    LogIn
+                  </Button>
+                </Link>
                 <Link to={"/signup"}>
                   <Button
                     pill
@@ -117,20 +146,22 @@ const Header = () => {
             )}
 
             {/* Mobile Search Icon */}
-            {loggedIn ? (
+            {userInfo ? (
               <button className="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
                 <FaSearch className="h-6 w-6" />
               </button>
             ) : (
               <div className="flex gap-3 justify-center items-center md:hidden">
-                <Button
-                  pill
-                  size="sm"
-                  color="whiteButton"
-                  className="hover:cursor-pointer active:ring-0 focus:ring-0 text-black"
-                >
-                  LogIn
-                </Button>
+                <Link to="/login">
+                  <Button
+                    pill
+                    size="sm"
+                    color="whiteButton"
+                    className="hover:cursor-pointer active:ring-0 focus:ring-0 text-black"
+                  >
+                    LogIn
+                  </Button>
+                </Link>
                 <Link to={"/signup"}>
                   <Button
                     pill
@@ -234,7 +265,7 @@ const Header = () => {
               </a>
             </div>
 
-            {loggedIn ? (
+            {userInfo ? (
               <div className="absolute bottom-0 left-0 right-0 border-t bg-white p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">

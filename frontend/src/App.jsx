@@ -8,6 +8,7 @@ import DashboardLayout from "./pages/DashboardLayout";
 import Profile from "./pages/Profile";
 import Education from "./pages/Education";
 import MyEvents from "./pages/MyEvents";
+import Login from "./pages/Login";
 
 // toast import
 import { ToastContainer } from "react-toastify";
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
 
         {/* Dashboard  */}
         <Route element={<DashboardLayout />}>
