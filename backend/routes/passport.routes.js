@@ -21,9 +21,7 @@ router.get("/google/callback", (req, res, next) => {
   passport.authenticate("google", { session: false }, (err, user, info) => {
     if (err || !user) {
       // TESTING - This is for testing because we need to redirect the user to login screen
-      return res.status(500).json({
-        message: info?.message || `Something went wrong - ${err}`,
-      });
+      return res.redirect(`${process.env.CLIENT_URL}/google-redirect?error=${info?.message}`);
     }
 
     // TESTING - This is for testing, this gave a lot of troubles man🐣

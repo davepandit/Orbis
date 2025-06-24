@@ -15,8 +15,16 @@ const GoogleRedirect = () => {
 
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
+  const err = queryParams.get("error");
   const message = queryParams.get("message");
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (err) {
+      toast.error(err, { autoClose: 2000 });
+      navigate("/signup"); // or "/login" if this is login flow
+    }
+  }, [err, navigate]);
 
   useEffect(() => {
     if (registerationData) {
