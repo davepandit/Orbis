@@ -6,7 +6,7 @@ import UserProfile from "../models/user_profile.models.js";
 import UserEducation from "../models/user_education.models.js";
 
 //@description     Register a user
-//@route           POST /api/user/register
+//@route           POST /api/users/register
 //@access          Public
 
 export const registerUser = asyncHandler(async (req, res) => {
@@ -49,12 +49,12 @@ export const registerUser = asyncHandler(async (req, res) => {
     email: user.email,
     role: user.role,
     provider: user.provider,
-    message: "User created successfully!!!",
+    message: "User sign up successful!!!",
   });
 });
 
 //@description     Login a user
-//@route           POST /api/user/login
+//@route           POST /api/users/login
 //@access          Public
 
 export const loginUser = asyncHandler(async (req, res) => {
@@ -94,7 +94,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 });
 
 //@description     Logout a user
-//@route           POST /api/user/logout
+//@route           POST /api/users/logout
 //@access          Public
 
 export const logoutUser = asyncHandler(async (req, res) => {
@@ -107,7 +107,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
 });
 
 //@description     Complete user profile
-//@route           POST /api/user/complete-profile
+//@route           POST /api/users/complete-profile
 //@access          Public
 export const completeUserProfile = asyncHandler(async (req, res) => {
   // TODO - Avatar URL in the user_profile schema will be coming from cloudinary so we need to write a function that takes the user avatar and uploads the image to cloudinary and saves the url to the database
@@ -169,5 +169,18 @@ export const completeUserProfile = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     message: "User profile updated successfully!!!",
+  });
+});
+
+//@description     Get user profile
+//@route           POST /api/users/my-profile
+//@access          Public
+export const getMyProfile = asyncHandler((req, res) => {
+  return res.status(200).json({
+    _id: req.user?._id,
+    username: req.user?.username,
+    email: req.user?.email,
+    role: req.user?.role,
+    provider: req.user?.provider,
   });
 });

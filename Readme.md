@@ -7,6 +7,37 @@
 
 In order to persist state in redux we can use a package called as `redux persist`
 
+- When calling register with google from google i was getting this error 
+![Register width google CORS error](./images/image7.png)
+
+#### Fix to the above problem -
+
+- Understanding the problem
+The error message "Access to fetch at 'https://accounts.google.com/o/oauth2/v2/auth...' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource" indicates that your web application running on http://localhost:5173 is trying to make a request directly to Google's OAuth 2.0 authorization endpoint at https://accounts.google.com.
+
+- This is a Cross-Origin Resource Sharing (CORS) error. Google's OAuth 2.0 authorization endpoint does not support direct AJAX/Fetch requests from a different origin due to security reasons. The browser is blocking the request because the response from Google's server does not include the necessary Access-Control-Allow-Origin header that would permit your origin (http://localhost:5173) to access the resource.
+
+- Suggested fix
+Instead of directly fetching or using AJAX/Fetch to call Google's OAuth 2.0 authorization endpoint, you need to initiate the authorization flow by redirecting the user's browser to the Google authorization URL. This is the standard and recommended approach for client-side OAuth 2.0 flows.
+
+This can be achieved this by creating a link or a button that, when clicked, sets the window.location.href to the Google authorization URL.
+
+Here's an example using JavaScript:
+```js
+function handleGoogleSignIn() {
+  const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' +
+                  'response_type=code&' +
+                  'redirect_uri=' + encodeURIComponent('http://localhost:5000/api/auth/google?intent=signup') + '&' +
+                  'scope=openid%20email%20profile&' + // Add necessary scopes
+                  'client_id=YOUR_CLIENT_ID'; // Replace with your actual client ID
+
+  window.location.href = authUrl;
+}
+
+// You would then call this function when a user clicks a "Sign in with Google" button, for example:
+// <button onclick="handleGoogleSignIn()">Sign in with Google</button>
+```
+
 #### Backend🐣
 
 - When the user creates an event then a basic info about the event needs to be uploaded, but that should be saved as a draft, and should only be published when all the necessary details about the event has been added by the event admin
@@ -55,3 +86,12 @@ app.use(express.urlencoded({ limit: "5mb", extended: true }));
 
 - Flow of sign up -
 ![Flow of sign up](./images/image4.png)
+
+- Problems faced when passing state while using passport?
+![Problems faced while setting state](./images/image5.png)
+
+- Soln to the above problem 
+![Soln to the above problem](./images/image6.png)
+
+- Google sign up flow 
+![Google sign up flow](./images/image8.png)

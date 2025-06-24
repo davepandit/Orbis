@@ -11,28 +11,59 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
+      passReqToCallback: true, //  required to access req because passport donot send the req to the middleware
     },
-    async (accessToken, refreshToken, profile, done) => {
+    async (req, accessToken, refreshToken, profile, done) => {
       try {
+        const encodedState = req.query.state;
+        const intent = JSON.parse(
+          Buffer.from(encodedState, "base64url").toString()
+        );
+
+        // TESTING - This is for testing only and needs to be removed later
+        // console.log("request query:", req.query);
+        // console.log("intent from middleware:", intent);
+
         const existingUser = await User.findOne({
           email: profile.emails[0].value,
         });
 
-        if (existingUser) {
-          return done(null, existingUser); // sets the existingUser into the req object
+        if (intent === "signup") {
+          if (existingUser) {
+            // prevent sign up
+            return done(null, false, { message: "User already exists" });
+          }
+
+          const newUser = new User({
+            email: profile.emails[0].value,
+            username: profile.displayName,
+            password: null,
+            role: "user",
+            status: "active",
+            provider: "google",
+          });
+
+          await newUser.save();
+
+          return done(null, {
+            ...newUser,
+            message: "User sign up successful!!!",
+          });
+        } else if (intent === "login") {
+          if (!existingUser) {
+            // prevent login if user does not exist
+            return done(null, false, {
+              message: "User not found. Please sign up first.",
+            });
+          }
+
+          return done(null, {
+            ...existingUser,
+            message: "User logged in successfully!!!",
+          });
         }
 
-        // create a new user
-        const newUser = await User.create({
-          email: profile.emails[0].value,
-          username: profile.displayName,
-          password: null, // since it's a Google account
-          role: "user",
-          status: "active",
-          provider: "google",
-        });
-
-        return done(null, newUser);
+        return done(null, false, { message: "Unknown intent" });
       } catch (err) {
         return done(err, null);
       }

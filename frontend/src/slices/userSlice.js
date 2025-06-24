@@ -1,5 +1,5 @@
 import { apiSlice } from "./apiSlice";
-import { USERS_URL } from "../constants";
+import { USERS_URL, PASSPORT_URL } from "../constants";
 
 const userSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -23,8 +23,18 @@ const userSlice = apiSlice.injectEndpoints({
         method: "POST",
       }),
     }),
+    getMyBasicProfileWithGoogle: builder.query({
+      query: () => ({
+        url: `${USERS_URL}/my-profile`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation, useLogoutMutation } =
-  userSlice;
+export const {
+  useRegisterMutation,
+  useLoginMutation,
+  useLogoutMutation,
+  useGetMyBasicProfileWithGoogleQuery
+} = userSlice;

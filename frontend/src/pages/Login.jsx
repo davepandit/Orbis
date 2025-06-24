@@ -39,7 +39,7 @@ export default function LoginPage() {
 
       // save the result to the redux store
       dispatch(setCredentials({ ...res }));
-      navigate('/profile', { replace: true });
+      navigate("/profile", { replace: true });
       toast.success(`${res.message}`, {
         autoClose: 2000,
       });
@@ -50,9 +50,8 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleSignup = () => {
-    console.log("Google signup clicked");
-    // Handle Google signup logic here
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:5000/api/auth/google?intent=login";
   };
 
   return (
@@ -165,7 +164,7 @@ export default function LoginPage() {
           <div className="mt-6">
             <button
               type="button"
-              onClick={handleGoogleSignup}
+              onClick={handleGoogleLogin}
               className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200"
             >
               <FaGoogle className="h-5 w-5 text-red-500 mr-3" />

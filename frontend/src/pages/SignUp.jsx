@@ -27,7 +27,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const { userInfo } = useSelector((state) => state.auth);
 
@@ -60,7 +60,7 @@ export default function SignupPage() {
         // set the data to the redux store
         dispatch(setCredentials({ ...res }));
         // reedirect the user to the profile page
-        navigate('/profile', { replace: true }); // replace true because i dont want the user to be able to go back to the sign up page
+        navigate("/profile", { replace: true }); // replace true because i dont want the user to be able to go back to the sign up page
 
         toast.success(`${res.message}`, {
           autoClose: 2000,
@@ -73,9 +73,9 @@ export default function SignupPage() {
     }
   };
 
-  const handleGoogleSignup = () => {
-    console.log("Google signup clicked");
-    // Handle Google signup logic here
+  const handleGoogleSignup = async () => {
+    window.location.href =
+      "http://localhost:5000/api/auth/google?intent=signup";
   };
 
   return (

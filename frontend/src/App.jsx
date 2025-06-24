@@ -9,6 +9,7 @@ import Profile from "./pages/Profile";
 import Education from "./pages/Education";
 import MyEvents from "./pages/MyEvents";
 import Login from "./pages/Login";
+import GoogleRedirect from "./pages/GoogleRedirect";
 
 // toast import
 import { ToastContainer } from "react-toastify";
@@ -24,6 +25,7 @@ function App() {
         {/* Dashboard  */}
         <Route element={<DashboardLayout />}>
           {/* Profile  */}
+          <Route path="/google-redirect" element={<GoogleRedirect />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/education" element={<Education />} />
 
