@@ -10,7 +10,7 @@ const userSkillsSchema = new mongoose.Schema(
       type: String,
     },
     proficiency: {
-      type: Number,
+      type: String,
     },
   },
   {
