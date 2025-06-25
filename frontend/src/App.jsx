@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import GoogleRedirect from "./pages/GoogleRedirect";
 import PrivatePage from "./pages/PrivatePage";
 import Experience from "./pages/Experience";
+import Links from "./pages/Links";
 
 // toast import
 import { ToastContainer } from "react-toastify";
@@ -31,6 +32,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/education" element={<Education />} />
           <Route path="/profile/experience" element={<Experience />} />
+          <Route path="/profile/links" element={<Links />} />
 
           {/* Events  */}
           <Route path="/my-registered-events" element={<MyEvents />} />
