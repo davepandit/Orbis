@@ -27,8 +27,12 @@ const userProfileSchema = new mongoose.Schema(
     },
     country: {
       type: String,
+      default: "India",
     },
     city: {
+      type: String,
+    },
+    state: {
       type: String,
     },
   },
