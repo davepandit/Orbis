@@ -32,7 +32,7 @@ const Header = () => {
 
   const [logout, { isLoading }] = useLogoutMutation();
 
-  const { userInfo } = useSelector((state) => state.auth);
+  const { userBasicInfo } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -73,7 +73,7 @@ const Header = () => {
       <nav className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {userInfo ? (
+            {userBasicInfo ? (
               <button
                 onClick={toggleMenu}
                 className="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
@@ -114,7 +114,7 @@ const Header = () => {
             </div>
 
             {/* Desktop Right Menu */}
-            {userInfo ? (
+            {userBasicInfo ? (
               <div className="hidden md:flex items-center space-x-11">
                 {/* not sure whether i need this connection thing or not  */}
 
@@ -155,7 +155,7 @@ const Header = () => {
                     className="hover:cursor-pointer"
                   >
                     <Avatar
-                      placeholderInitials={userInfo.username.slice(0, 3)}
+                      placeholderInitials={userBasicInfo.username.slice(0, 3)}
                       rounded
                     />
                   </div>
@@ -211,7 +211,7 @@ const Header = () => {
             )}
 
             {/* Mobile Search Icon */}
-            {userInfo ? (
+            {userBasicInfo ? (
               <button className="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
                 <FaSearch className="h-6 w-6" />
               </button>
@@ -330,18 +330,18 @@ const Header = () => {
               </a>
             </div>
 
-            {userInfo ? (
+            {userBasicInfo ? (
               <div className="absolute bottom-0 left-0 right-0 border-t bg-white p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Avatar
-                      placeholderInitials={userInfo.username.slice(0, 3)}
+                      placeholderInitials={userBasicInfo.username.slice(0, 3)}
                       rounded
                       className="hover:cursor-pointer"
                     />
                     <div>
                       <div className="font-medium text-gray-900">
-                        {userInfo.email}
+                        {userBasicInfo.email}
                       </div>
                       <Link to="/profile">
                         <div className="text-sm text-blue-600">

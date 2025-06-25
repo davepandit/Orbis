@@ -29,7 +29,7 @@ export default function SignupPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { userInfo } = useSelector((state) => state.auth);
+  const { userBasicInfo } = useSelector((state) => state.auth);
 
   const [register, { isLoading }] = useRegisterMutation();
 

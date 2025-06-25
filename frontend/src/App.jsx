@@ -10,6 +10,7 @@ import Education from "./pages/Education";
 import MyEvents from "./pages/MyEvents";
 import Login from "./pages/Login";
 import GoogleRedirect from "./pages/GoogleRedirect";
+import PrivatePage from "./pages/PrivatePage";
 
 // toast import
 import { ToastContainer } from "react-toastify";
@@ -22,7 +23,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
 
-        {/* Dashboard  */}
+        {/* Dashboard - This is a private route */}
         <Route element={<DashboardLayout />}>
           {/* Profile  */}
           <Route path="/google-redirect" element={<GoogleRedirect />} />
