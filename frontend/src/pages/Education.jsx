@@ -83,6 +83,9 @@ export default function EducationForm() {
                   onChange={(e) => setDegree(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white appearance-none disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
+                  <option value="" disabled>
+                    -- Select Degree --
+                  </option>
                   {degreeTypes.map((degree) => (
                     <option key={degree} value={degree}>
                       {degree}
@@ -150,6 +153,9 @@ export default function EducationForm() {
                   onChange={(e) => setYearOfGraduation(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white appearance-none disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
+                  <option value="" disabled>
+                    -- Select Year of Graduation --
+                  </option>
                   {years.map((year) => (
                     <option key={year} value={year}>
                       {year}

@@ -29,11 +29,13 @@ const userSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
-    createUserProfile: builder.mutation({
+    completeUserProfile: builder.mutation({
       query: (data) => ({
-        url: `${USERS_URL}/`
-      })
-    })
+        url: `${USERS_URL}/complete-profile`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -41,5 +43,6 @@ export const {
   useRegisterMutation,
   useLoginMutation,
   useLogoutMutation,
-  useGetMyBasicProfileWithGoogleQuery
+  useGetMyBasicProfileWithGoogleQuery,
+  useCompleteUserProfileMutation,
 } = userSlice;

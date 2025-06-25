@@ -28,35 +28,37 @@ const authSlice = createSlice({
       localStorage.setItem("userBasicInfo", JSON.stringify(action.payload));
     },
     setUserProfileCredentials: (state, action) => {
-      (state.userProfileInfo = action.payload),
-        // set the data to the local storage
-        localStorage.setItem("userProfileInfo", JSON.stringify(action.payload));
+      state.userProfileInfo = action.payload;
+      // set the data to the local storage
+      localStorage.setItem("userProfileInfo", JSON.stringify(action.payload));
     },
     setUserEducationCredentials: (state, action) => {
-      (state.userEducationInfo = action.payload),
-        // set the data to the local storage
-        localStorage.setItem(
-          "userEducationInfo",
-          JSON.stringify(action.payload)
-        );
+      state.userEducationInfo = action.payload;
+      // set the data to the local storage
+      localStorage.setItem("userEducationInfo", JSON.stringify(action.payload));
     },
     setUserSkills: (state, action) => {
-      (state.userSkills = action.payload),
-        // set the data to the local storage
-        localStorage.setItem("userSkills", JSON.stringify(action.payload));
+      state.userSkills = action.payload;
+      // set the data to the local storage
+      localStorage.setItem("userSkills", JSON.stringify(action.payload));
     },
     setUserSocialCredentials: (state, action) => {
-      (state.userSocialLinks = action.payload),
-        // set the data to the local storage
-        localStorage.setItem("userSocialLinks", JSON.stringify(action.payload));
+      state.userSocialLinks = action.payload;
+      // set the data to the local storage
+      localStorage.setItem("userSocialLinks", JSON.stringify(action.payload));
     },
     removeCredentials: (state, action) => {
       state.userBasicInfo = null;
-      (state.userProfileInfo = null),
-        // remove the info from the local storage
-        localStorage.removeItem("userBasicInfo");
+      state.userProfileInfo = null;
+      state.userEducationInfo = null;
+      state.userSkills = null;
+      state.userSocialLinks = null;
+      // remove the info from the local storage
+      localStorage.removeItem("userBasicInfo");
       localStorage.removeItem("userProfileInfo");
       localStorage.removeItem("userEducationInfo");
+      localStorage.removeItem("userSkills");
+      localStorage.removeItem("userSocialLinks");
     },
   },
 });

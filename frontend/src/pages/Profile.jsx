@@ -29,6 +29,8 @@ export default function RegistrationForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("gender:", gender);
+    console.log("first_name:", firstName);
 
     const res = {
       first_name: firstName,
@@ -99,6 +101,9 @@ export default function RegistrationForm() {
                   onChange={(e) => setGender(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white"
                 >
+                  <option value="" disabled>
+                    -- Select Gender --
+                  </option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                   <option value="Others">Others</option>

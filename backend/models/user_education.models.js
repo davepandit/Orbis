@@ -24,5 +24,5 @@ const userEducationSchema = new mongoose.Schema(
   }
 );
 
-const UserEducation = mongoose.model("UUserEducation", userEducationSchema);
+const UserEducation = mongoose.model("UserEducation", userEducationSchema);
 export default UserEducation;

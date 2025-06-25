@@ -12,7 +12,7 @@ export default function SkillsForm() {
   const [skills, setSkills] = useState(userSkills ? userSkills : []);
 
   const [newSkill, setNewSkill] = useState("");
-  const [newProficiency, setNewProficiency] = useState("Beginner");
+  const [newProficiency, setNewProficiency] = useState("");
 
   const proficiencyLevels = [
     { value: "Beginner", label: "Beginner", color: "bg-red-200", width: "25%" },
@@ -36,7 +36,7 @@ export default function SkillsForm() {
       };
       setSkills([...skills, skill]);
       setNewSkill("");
-      setNewProficiency("Beginner");
+      setNewProficiency("");
 
       // NOTE - Here if i try to print the skills(array of objects) then i will get the stale copy of that because react state updates are asynchronous and react batches updates, so immediately the skills is not updated
       // console.log("Skills:", skills);
@@ -102,6 +102,9 @@ export default function SkillsForm() {
                   onChange={(e) => setNewProficiency(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white"
                 >
+                  <option value="" disabled>
+                    -- Select Proficiency --
+                  </option>
                   {proficiencyLevels.map((level) => (
                     <option key={level.value} value={level.value}>
                       {level.label}

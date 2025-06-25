@@ -3,10 +3,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUserSocialCredentials } from "../slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useCompleteUserProfileMutation } from "../slices/userSlice";
+import SpinnerAnimation from "../utils/Spinner";
 
 export default function OnlineProfilesForm() {
+  const [completeUserProfile, { isLoading }] = useCompleteUserProfileMutation();
+  // get all the states from redux
+  const { userProfileInfo, userEducationInfo, userSkills, userSocialLinks } =
+    useSelector((state) => state.auth);
+
   const dispatch = useDispatch();
-  const { userSocialLinks } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
   const [profiles, setProfiles] = useState(
@@ -26,12 +32,31 @@ export default function OnlineProfilesForm() {
     // save profiles to the redux store
     dispatch(setUserSocialCredentials({ ...profiles }));
 
-    toast.success("User details saved successfully!!!", {
-      autoClose: 2000,
-    });
-    // navigate
+    // send all the user details to the backend
+    try {
+      const res = await completeUserProfile({
+        userProfileInfo: userProfileInfo,
+        userEducationInfo: userEducationInfo,
+        userSkills: userSkills,
+        userSocialLinks: userSocialLinks,
+      }).unwrap();
+
+      toast.success(`${res.message}`, {
+        autoClose: 2000,
+      });
+    } catch (error) {
+      console.log("Error:", error);
+      toast.error(`${error.data.message}`, {
+        autoClose: 2000,
+      });
+    }
   };
 
+  if(isLoading){
+    return (
+      <SpinnerAnimation size="xl" color="failure" />
+    )
+  }
   // Simple icons using SVG since we can't import react-icons
   const LinkedInIcon = () => (
     <svg
