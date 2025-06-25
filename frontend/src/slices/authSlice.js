@@ -13,6 +13,9 @@ const initialState = {
   userSkills: localStorage.getItem("userSkills")
     ? JSON.parse(localStorage.getItem("userSkills"))
     : null,
+  userSocialLinks: localStorage.getItem("userSocialLinks")
+    ? JSON.parse(localStorage.getItem("userSocialLinks"))
+    : null,
 };
 
 const authSlice = createSlice({
@@ -42,6 +45,11 @@ const authSlice = createSlice({
         // set the data to the local storage
         localStorage.setItem("userSkills", JSON.stringify(action.payload));
     },
+    setUserSocialCredentials: (state, action) => {
+      (state.userSocialLinks = action.payload),
+        // set the data to the local storage
+        localStorage.setItem("userSocialLinks", JSON.stringify(action.payload));
+    },
     removeCredentials: (state, action) => {
       state.userBasicInfo = null;
       (state.userProfileInfo = null),
@@ -58,6 +66,7 @@ export const {
   setUserProfileCredentials,
   setUserEducationCredentials,
   setUserSkills,
+  setUserSocialCredentials,
   removeCredentials,
 } = authSlice.actions;
 export default authSlice.reducer;

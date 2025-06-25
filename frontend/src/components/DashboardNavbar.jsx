@@ -25,7 +25,6 @@ const DashboardNavbar = () => {
     { title: "Education", link: "/profile/education" },
     { title: "Experience", link: "/profile/experience" },
     { title: "Links", link: "/profile/links" },
-    { title: "Contact", link: "/profile/contact" },
   ];
 
   const toggleMobileMenu = () => {
@@ -42,8 +41,6 @@ const DashboardNavbar = () => {
         setActiveSecondaryTab("Experience");
       } else if (location.pathname.includes("/links")) {
         setActiveSecondaryTab("Links");
-      } else if (location.pathname.includes("/contact")) {
-        setActiveSecondaryTab("Contact");
       }
     } else if (location.pathname === "/my-registered-events") {
       setShowSecondaryTab(false);

@@ -1,9 +1,17 @@
-"use client";
-
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserSocialCredentials } from "../slices/authSlice";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function OnlineProfilesForm() {
-  const [profiles, setProfiles] = useState({});
+  const dispatch = useDispatch();
+  const { userSocialLinks } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  const [profiles, setProfiles] = useState(
+    userSocialLinks ? userSocialLinks : {}
+  );
 
   const handleInputChange = (platform, value) => {
     setProfiles((prev) => ({ ...prev, [platform]: value }));
@@ -15,7 +23,13 @@ export default function OnlineProfilesForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Profiles:", profiles);
+    // save profiles to the redux store
+    dispatch(setUserSocialCredentials({ ...profiles }));
+
+    toast.success("User details saved successfully!!!", {
+      autoClose: 2000,
+    });
+    // navigate
   };
 
   // Simple icons using SVG since we can't import react-icons
