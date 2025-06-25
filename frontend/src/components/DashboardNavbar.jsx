@@ -23,7 +23,7 @@ const DashboardNavbar = () => {
   const secondaryNavItems = [
     { title: "About", link: "/profile" },
     { title: "Education", link: "/profile/education" },
-    { title: "Experience", link: "/profile/expericence" },
+    { title: "Experience", link: "/profile/experience" },
     { title: "Links", link: "/profile/links" },
     { title: "Contact", link: "/profile/contact" },
   ];

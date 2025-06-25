@@ -178,7 +178,7 @@ export default function RegistrationForm() {
               type="submit"
               className="bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white px-8 py-2 rounded-md font-medium transition-colors"
             >
-              Next
+              Save And Next
             </button>
           </div>
         </form>
