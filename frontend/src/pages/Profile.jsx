@@ -1,19 +1,52 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserProfileCredentials } from "../slices/authSlice";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function RegistrationForm() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [bio, setBio] = useState("");
-  const [gender, setGender] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
+  const dispatch = useDispatch();
+  const { userProfileInfo } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  const [firstName, setFirstName] = useState(
+    userProfileInfo ? userProfileInfo.first_name : ""
+  );
+  const [lastName, setLastName] = useState(
+    userProfileInfo ? userProfileInfo.last_name : ""
+  );
+  const [bio, setBio] = useState(userProfileInfo ? userProfileInfo.bio : "");
+  const [gender, setGender] = useState(
+    userProfileInfo ? userProfileInfo.gender : ""
+  );
+  const [phoneNumber, setPhoneNumber] = useState(
+    userProfileInfo ? userProfileInfo.phone_number : ""
+  );
+  const [city, setCity] = useState(userProfileInfo ? userProfileInfo.city : "");
+  const [state, setState] = useState(
+    userProfileInfo ? userProfileInfo.state : ""
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("this is a form");
-    console.log("first name:", firstName);
+    const res = {
+      first_name: firstName,
+      last_name: lastName,
+      bio: bio,
+      gender: gender,
+      phone_number: phoneNumber,
+      city: city,
+      state: state,
+    };
+    // set the details to the redux store
+    dispatch(setUserProfileCredentials({ ...res }));
+
+    toast.success("User details saved successfully!!!", {
+      autoClose: 2000,
+    });
+    // navigate to the next page
+    navigate("/profile/education");
   };
 
   return (
@@ -145,7 +178,7 @@ export default function RegistrationForm() {
               type="submit"
               className="bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white px-8 py-2 rounded-md font-medium transition-colors"
             >
-              Submit
+              Next
             </button>
           </div>
         </form>

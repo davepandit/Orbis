@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../slices/userSlice";
 
 // slices
-import { setCredentials } from "../slices/authSlice";
+import { setBasicUserCredentials } from "../slices/authSlice";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -38,7 +38,7 @@ export default function LoginPage() {
       }).unwrap();
 
       // save the result to the redux store
-      dispatch(setCredentials({ ...res }));
+      dispatch(setBasicUserCredentials({ ...res }));
       navigate("/profile", { replace: true });
       toast.success(`${res.message}`, {
         autoClose: 2000,

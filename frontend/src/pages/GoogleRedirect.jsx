@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import SpinnerAnimation from "../utils/Spinner";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setCredentials } from "../slices/authSlice";
+import { setBasicUserCredentials } from "../slices/authSlice";
 import { useGetMyBasicProfileWithGoogleQuery } from "../slices/userSlice";
 import { toast } from "react-toastify";
 
@@ -32,7 +32,7 @@ const GoogleRedirect = () => {
       toast.success(`${message}`, { autoClose: 2000 });
 
       // Save user to Redux
-      dispatch(setCredentials({ ...registerationData }));
+      dispatch(setBasicUserCredentials({ ...registerationData }));
 
       // Redirect
       navigate("/profile");

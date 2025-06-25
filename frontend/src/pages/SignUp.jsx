@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { useRegisterMutation } from "../slices/userSlice";
 
 // slices
-import { setCredentials } from "../slices/authSlice";
+import { setBasicUserCredentials } from "../slices/authSlice";
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -58,7 +58,7 @@ export default function SignupPage() {
         }).unwrap();
 
         // set the data to the redux store
-        dispatch(setCredentials({ ...res }));
+        dispatch(setBasicUserCredentials({ ...res }));
         // reedirect the user to the profile page
         navigate("/profile", { replace: true }); // replace true because i dont want the user to be able to go back to the sign up page
 

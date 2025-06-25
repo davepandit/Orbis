@@ -29,6 +29,11 @@ const userSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    createUserProfile: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/`
+      })
+    })
   }),
 });
 

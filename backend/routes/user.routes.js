@@ -5,7 +5,8 @@ import {
   loginUser,
   logoutUser,
   completeUserProfile,
-  getMyProfile
+  getMyProfile,
+  createUserProfile
 } from "../controllers/user.controllers.js";
 import { validateToken } from "../middlewares/auth.middlewares.js";
 
@@ -16,7 +17,8 @@ router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 
 // NOTE - The user needs to be logged in to access the below routes
-router.post("/complete-profile", validateToken, completeUserProfile);
+router.post("/complete-profile", validateToken, completeUserProfile); 
 router.get('/my-profile', validateToken, getMyProfile)
+// router.post("/create-user-profile", validateToken, createUserProfile); // not sure whether i will use this or not 
 
 export default router;

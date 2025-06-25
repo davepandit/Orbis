@@ -184,3 +184,24 @@ export const getMyProfile = asyncHandler((req, res) => {
     provider: req.user?.provider,
   });
 });
+
+export const createUserProfile = asyncHandler(async (req, res) => {
+  const { first_name, last_name, bio, gender, phone_number, city } = req.body();
+
+  // creating the user profile object
+  const userProfile = new UserProfile({
+    user_id: req.user._id,
+    first_name: first_name,
+    last_name: last_name,
+    bio: bio,
+    gender: gender,
+    phone_number: phone_number,
+    city: city,
+  });
+
+  await userProfile.save();
+
+  res.status(200).json({
+    message: "User Profile created!!!",
+  });
+});
