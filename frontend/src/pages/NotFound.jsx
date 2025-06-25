@@ -26,7 +26,7 @@ export default function NotFound() {
         <div className="space-y-4">
           <Link
             to="/"
-            className="inline-flex items-center justify-center w-full px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors duration-200 shadow-lg hover:shadow-xl"
+            className="inline-flex items-center justify-center w-full px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 hover:cursor-pointer transition-colors duration-200 shadow-lg hover:shadow-xl"
           >
             <FaHome className="mr-2" />
             Go Back Home
@@ -34,7 +34,7 @@ export default function NotFound() {
 
           <button
             onClick={() => window.history.back()}
-            className="inline-flex items-center justify-center w-full px-6 py-3 bg-white text-red-600 font-semibold rounded-lg border-2 border-red-600 hover:bg-red-50 transition-colors duration-200"
+            className="inline-flex items-center justify-center w-full px-6 py-3 bg-white text-red-600 font-semibold rounded-lg border-2 border-red-600 hover:cursor-pointer hover:bg-red-50 transition-colors duration-200"
           >
             <FaArrowLeft className="mr-2" />
             Go Back

@@ -1,7 +1,15 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserSkills } from "../slices/authSlice";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function SkillsForm() {
-  const [skills, setSkills] = useState([]);
+  const dispatch = useDispatch();
+  const { userSkills } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  const [skills, setSkills] = useState(userSkills ? userSkills : []);
 
   const [newSkill, setNewSkill] = useState("");
   const [newProficiency, setNewProficiency] = useState("Beginner");
@@ -45,6 +53,14 @@ export default function SkillsForm() {
 
   const handleSaveSkills = async (e) => {
     console.log("All skills:", skills);
+    // save to the redux store
+    dispatch(setUserSkills([...skills]));
+
+    toast.success("User details saved successfully!!!", {
+      autoClose: 2000,
+    });
+    // navigate to the next page
+    navigate("/profile/links");
   };
 
   return (
