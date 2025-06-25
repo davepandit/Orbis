@@ -33,13 +33,22 @@ const DashboardNavbar = () => {
   };
 
   useEffect(() => {
-    if (location.pathname === "/profile") {
+    if (location.pathname.includes("/profile")) {
       setShowSecondaryTab(true);
       setActiveTab("Profile");
+      if (location.pathname.includes("/education")) {
+        setActiveSecondaryTab("Education");
+      } else if (location.pathname.includes("/experience")) {
+        setActiveSecondaryTab("Experience");
+      } else if (location.pathname.includes("/links")) {
+        setActiveSecondaryTab("Links");
+      } else if (location.pathname.includes("/contact")) {
+        setActiveSecondaryTab("Contact");
+      }
     } else if (location.pathname === "/my-registered-events") {
       setShowSecondaryTab(false);
       setActiveTab("Events");
-    } else if(location.pathname === "/my-projects") {
+    } else if (location.pathname === "/my-projects") {
       setShowSecondaryTab(false);
       setActiveTab("Projects");
     }
