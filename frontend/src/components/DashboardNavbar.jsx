@@ -1,13 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaUser, FaBars, FaTimes, FaArrowRight, FaCheck } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const DashboardNavbar = () => {
+  const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Profile");
+  const [showSecondaryTab, setShowSecondaryTab] = useState(
+    location.pathname === "/profile" ? true : false
+  );
   const [activeSecondaryTab, setActiveSecondaryTab] = useState("About");
   const navigate = useNavigate();
+  const { userBasicInfo } = useSelector((state) => state.auth);
 
   const primaryNavItems = [
     { title: "Profile", link: "/profile" },
@@ -25,6 +31,19 @@ const DashboardNavbar = () => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+  useEffect(() => {
+    if (location.pathname === "/profile") {
+      setShowSecondaryTab(true);
+      setActiveTab("Profile");
+    } else if (location.pathname === "/my-registered-events") {
+      setShowSecondaryTab(false);
+      setActiveTab("Events");
+    } else if(location.pathname === "/my-projects") {
+      setShowSecondaryTab(false);
+      setActiveTab("Projects");
+    }
+  }, [location]);
 
   return (
     <div className="bg-white shadow-sm border-b border-gray-200">
@@ -63,7 +82,9 @@ const DashboardNavbar = () => {
 
           {/* User Info - Desktop */}
           <div className="hidden md:flex items-center space-x-3">
-            <span className="text-gray-700 font-medium">dave08</span>
+            <span className="text-gray-700 font-medium">
+              {userBasicInfo ? userBasicInfo.username : null}
+            </span>
             <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
               <FaUser className="text-gray-600 text-sm" />
             </div>
@@ -106,7 +127,9 @@ const DashboardNavbar = () => {
                 <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                   <FaUser className="text-gray-600 text-sm" />
                 </div>
-                <span className="text-gray-700 font-medium">dave08</span>
+                <span className="text-gray-700 font-medium">
+                  {userBasicInfo ? userBasicInfo.username : null}
+                </span>
               </div>
             </div>
           </div>
@@ -114,37 +137,39 @@ const DashboardNavbar = () => {
       </div>
 
       {/* Secondary Navigation */}
-      <div className="bg-gray-50 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-12">
-            {/* Secondary Nav Items */}
-            <div className="flex items-center space-x-1 overflow-x-auto">
-              {secondaryNavItems.map((item) => (
-                <button
-                  key={item.title}
-                  onClick={() => {
-                    setActiveSecondaryTab(item)
-                    navigate(`${item.link}`)
-                  }}
-                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors duration-200 hover:cursor-pointer ${
-                    activeSecondaryTab === item.title
-                      ? "text-red-500 border-b-2 border-red-500"
-                      : "text-gray-600 hover:text-red-500"
-                  }`}
-                >
-                  {item.title}
-                </button>
-              ))}
+      {showSecondaryTab ? (
+        <div className="bg-gray-50 border-t border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-12">
+              {/* Secondary Nav Items */}
+              <div className="flex items-center space-x-1 overflow-x-auto">
+                {secondaryNavItems.map((item) => (
+                  <button
+                    key={item.title}
+                    onClick={() => {
+                      setActiveSecondaryTab(item.title);
+                      navigate(`${item.link}`);
+                    }}
+                    className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors duration-200 hover:cursor-pointer ${
+                      activeSecondaryTab === item.title
+                        ? "text-red-500 border-b-2 border-red-500"
+                        : "text-gray-600 hover:text-red-500"
+                    }`}
+                  >
+                    {item.title}
+                  </button>
+                ))}
 
-              {/* My Devfolio Link */}
-              <button className="flex items-center space-x-1 px-4 py-2 text-sm font-medium text-red-500 hover:text-red-600 transition-colors duration-200 whitespace-nowrap">
-                <span>MY DEVFOLIO</span>
-                <FaArrowRight className="text-xs" />
-              </button>
+                {/* My Devfolio Link */}
+                <button className="flex items-center space-x-1 px-4 py-2 text-sm font-medium text-red-500 hover:text-red-600 transition-colors duration-200 whitespace-nowrap">
+                  <span>MY Orbis</span>
+                  <FaArrowRight className="text-xs" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 };
