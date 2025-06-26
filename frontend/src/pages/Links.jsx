@@ -107,15 +107,15 @@ export default function OnlineProfilesForm() {
                 </div>
                 <input
                   type="url"
-                  value={profiles.github}
-                  onChange={(e) => handleInputChange("github", e.target.value)}
+                  value={profiles.github_url}
+                  onChange={(e) => handleInputChange("github_url", e.target.value)}
                   placeholder="https://github.com/yourusername"
                   className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 />
-                {profiles.github && (
+                {profiles.github_url && (
                   <button
                     type="button"
-                    onClick={() => clearField("github")}
+                    onClick={() => clearField("github_url")}
                     className="absolute right-3 p-1 text-red-500 hover:text-red-700 transition-colors"
                   >
                     <svg
@@ -147,17 +147,17 @@ export default function OnlineProfilesForm() {
                 </div>
                 <input
                   type="url"
-                  value={profiles.linkedin}
+                  value={profiles.linkedin_url}
                   onChange={(e) =>
-                    handleInputChange("linkedin", e.target.value)
+                    handleInputChange("linkedin_url", e.target.value)
                   }
                   placeholder="https://www.linkedin.com/in/yourusername"
                   className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 />
-                {profiles.linkedin && (
+                {profiles.linkedin_url && (
                   <button
                     type="button"
-                    onClick={() => clearField("linkedin")}
+                    onClick={() => clearField("linkedin_url")}
                     className="absolute right-3 p-1 text-red-500 hover:text-red-700 transition-colors"
                   >
                     <svg
@@ -189,15 +189,15 @@ export default function OnlineProfilesForm() {
                 </div>
                 <input
                   type="url"
-                  value={profiles.twitter}
-                  onChange={(e) => handleInputChange("twitter", e.target.value)}
+                  value={profiles.twitter_url}
+                  onChange={(e) => handleInputChange("twitter_url", e.target.value)}
                   placeholder="https://x.com/yourusername"
                   className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 />
-                {profiles.twitter && (
+                {profiles.twitter_url && (
                   <button
                     type="button"
-                    onClick={() => clearField("twitter")}
+                    onClick={() => clearField("twitter_url")}
                     className="absolute right-3 p-1 text-red-500 hover:text-red-700 transition-colors"
                   >
                     <svg
@@ -224,14 +224,14 @@ export default function OnlineProfilesForm() {
                 Profile Summary
               </h3>
               <div className="space-y-2">
-                {profiles.github && (
+                {profiles.github_url && (
                   <div className="flex items-center space-x-2 text-sm">
                     <GitHubIcon />
                     <span className="text-gray-700">GitHub profile added</span>
                     <span className="text-green-600">✓</span>
                   </div>
                 )}
-                {profiles.linkedin && (
+                {profiles.linkedin_url && (
                   <div className="flex items-center space-x-2 text-sm">
                     <LinkedInIcon />
                     <span className="text-gray-700">
@@ -240,7 +240,7 @@ export default function OnlineProfilesForm() {
                     <span className="text-green-600">✓</span>
                   </div>
                 )}
-                {profiles.twitter && (
+                {profiles.twitter_url && (
                   <div className="flex items-center space-x-2 text-sm">
                     <TwitterIcon />
                     <span className="text-gray-700">
@@ -249,9 +249,9 @@ export default function OnlineProfilesForm() {
                     <span className="text-green-600">✓</span>
                   </div>
                 )}
-                {!profiles.github &&
-                  !profiles.linkedin &&
-                  !profiles.twitter && (
+                {!profiles.github_url &&
+                  !profiles.linkedin_url &&
+                  !profiles.twitter_url && (
                     <p className="text-sm text-red-600">
                       No profiles added yet
                     </p>

@@ -37,9 +37,11 @@ export default function LoginPage() {
         password: password,
       }).unwrap();
 
+      const { message, ...cleanRes } = res;
+
       // save the result to the redux store
-      dispatch(setBasicUserCredentials({ ...res }));
-      navigate("/profile", { replace: true });
+      dispatch(setBasicUserCredentials({ ...cleanRes }));
+      navigate("/login-redirect", { replace: true });
       toast.success(`${res.message}`, {
         autoClose: 2000,
       });

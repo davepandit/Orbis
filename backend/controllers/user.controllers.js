@@ -5,6 +5,7 @@ import UserSocialProfiles from "../models/user_social_profiles.models.js";
 import UserProfile from "../models/user_profile.models.js";
 import UserEducation from "../models/user_education.models.js";
 import UserSkills from "../models/user_skills.models.js";
+import mongoose from "mongoose";
 
 //@description     Register a user
 //@route           POST /api/users/register
@@ -96,7 +97,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 
 //@description     Logout a user
 //@route           POST /api/users/logout
-//@access          Public
+//@access          Private
 
 export const logoutUser = asyncHandler(async (req, res) => {
   res.clearCookie("token", {
@@ -109,7 +110,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
 //@description     Complete user profile
 //@route           POST /api/users/complete-profile
-//@access          Public
+//@access          Private
 export const completeUserProfile = asyncHandler(async (req, res) => {
   // TODO - Avatar URL in the user_profile schema will be coming from cloudinary so we need to write a function that takes the user avatar and uploads the image to cloudinary and saves the url to the database
 
@@ -144,9 +145,9 @@ export const completeUserProfile = asyncHandler(async (req, res) => {
   // creating the user's social profile object
   const userSocialProfiles = new UserSocialProfiles({
     user_id: req.user._id,
-    github_url: userSocialLinks.github,
-    twitter_url: userSocialLinks.twitter,
-    linkedIn_url: userSocialLinks.linkedin,
+    github_url: userSocialLinks.github_url,
+    twitter_url: userSocialLinks.twitter_url,
+    linkedin_url: userSocialLinks.linkedin_url,
   });
 
   // map over userSkills and keep on creating userSkill objects
@@ -170,7 +171,7 @@ export const completeUserProfile = asyncHandler(async (req, res) => {
 
 //@description     Get user profile
 //@route           POST /api/users/my-profile
-//@access          Public
+//@access          Private
 export const getMyProfile = asyncHandler((req, res) => {
   return res.status(200).json({
     _id: req.user?._id,
@@ -181,23 +182,29 @@ export const getMyProfile = asyncHandler((req, res) => {
   });
 });
 
-export const createUserProfile = asyncHandler(async (req, res) => {
-  const { first_name, last_name, bio, gender, phone_number, city } = req.body();
+//@description     Get user extended profile
+//@route           POST /api/users/my-extended-profile
+//@access          Private
+export const getMyExtendedProfile = asyncHandler(async (req, res) => {
+  const userId = new mongoose.Types.ObjectId(req.user._id);
 
-  // creating the user profile object
-  const userProfile = new UserProfile({
-    user_id: req.user._id,
-    first_name: first_name,
-    last_name: last_name,
-    bio: bio,
-    gender: gender,
-    phone_number: phone_number,
-    city: city,
-  });
+  const userProfileInfo = await UserProfile.findOne({ user_id: userId }).select(
+    "first_name last_name bio gender phone_number country city state -_id"
+  );
+  const userEducationInfo = await UserEducation.findOne({
+    user_id: userId,
+  }).select("institution_name degree field_of_study graduation_year -_id");
+  const userSkills = await UserSkills.find({ user_id: userId }).select(
+    "skill proficiency -_id"
+  );
+  const userSocialLinks = await UserSocialProfiles.findOne({
+    user_id: userId,
+  }).select("github_url twitter_url linkedin_url -_id");
 
-  await userProfile.save();
-
-  res.status(200).json({
-    message: "User Profile created!!!",
+  return res.status(200).json({
+    userProfileInfo: userProfileInfo,
+    userEducationInfo: userEducationInfo,
+    userSkills: userSkills,
+    userSocialLinks: userSocialLinks,
   });
 });

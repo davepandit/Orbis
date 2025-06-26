@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import SpinnerAnimation from "../utils/Spinner";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, replace } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setBasicUserCredentials } from "../slices/authSlice";
 import { useGetMyBasicProfileWithGoogleQuery } from "../slices/userSlice";
@@ -35,7 +35,13 @@ const GoogleRedirect = () => {
       dispatch(setBasicUserCredentials({ ...registerationData }));
 
       // Redirect
-      navigate("/profile");
+      if (message.includes("sign up")) {
+        // user has just signed up no need to send the user to the login redirect screen
+        navigate("/profle");
+      } else if (message.includes("logged in") || message.includes("log in")) {
+        // then we can send the user to login redirect screen
+        navigate("/login-redirect");
+      }
     }
   }, [registerationData, dispatch, navigate]);
 

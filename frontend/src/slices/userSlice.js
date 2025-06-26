@@ -36,6 +36,12 @@ const userSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    getMyExtendedProfile: builder.query({
+      query: (data) => ({
+        url: `${USERS_URL}/my-extended-profile`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -45,4 +51,5 @@ export const {
   useLogoutMutation,
   useGetMyBasicProfileWithGoogleQuery,
   useCompleteUserProfileMutation,
+  useGetMyExtendedProfileQuery,
 } = userSlice;

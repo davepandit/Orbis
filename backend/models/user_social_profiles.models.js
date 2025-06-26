@@ -12,7 +12,7 @@ const userSocialProfilesSchema = new mongoose.Schema(
     twitter_url: {
       type: String,
     },
-    linkedIn_url: {
+    linkedin_url: {
       type: String,
     },
   },
