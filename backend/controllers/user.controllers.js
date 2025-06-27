@@ -153,7 +153,7 @@ export const completeUserProfile = asyncHandler(async (req, res) => {
   // map over userSkills and keep on creating userSkill objects
   const skillsData = userSkills.map((skill) => ({
     user_id: req.user._id,
-    skill: skill.name,
+    skill: skill.skill,
     proficiency: skill.proficiency,
   }));
 
@@ -264,7 +264,22 @@ export const updateEducationInfo = asyncHandler(async (req, res) => {
 //@description     Update education info
 //@route           POST /api/users/update-education-info
 //@access          Private
-export const updateSkills = asyncHandler(async (req, res) => {});
+export const updateSkills = asyncHandler(async (req, res) => {
+  // Note - Here i will first delete all the existing skills of the user and then insert the new skills that the user is sending me from the frotnend
+  await UserSkills.deleteMany({ user_id: req.user._id });
+  const skillsData = req.body?.userSkills.map((skill) => ({
+    user_id: req.user._id,
+    skill: skill.skill,
+    proficiency: skill.proficiency,
+  }));
+
+  await UserSkills.insertMany(skillsData);
+
+  return res.status(200).json({
+    userSkills: skillsData,
+    message: "User skills updated successfully!!!",
+  });
+});
 
 //@description     Update social links
 //@route           POST /api/users/update-social-links

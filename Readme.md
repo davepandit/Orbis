@@ -37,6 +37,15 @@ function handleGoogleSignIn() {
 // You would then call this function when a user clicks a "Sign in with Google" button, for example:
 // <button onclick="handleGoogleSignIn()">Sign in with Google</button>
 ```
+#### While i was making the feature to allow the user to update his skills then i had to check how to detect that the user has actually changed his current skills or not, so earlier i was using this approach -
+![Update user skills approach 1](./images/image9.png)
+
+#### But then i came across the package called `loadash` which can help me do a deep comparison and here is how it works 
+```js
+import _ from 'lodash';
+
+const changed = !_.isEqual(userSkills, skills);
+```
 
 #### Backend🐣
 

@@ -63,6 +63,13 @@ const userSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    updateUserSKills: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/update-skills`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -76,4 +83,5 @@ export const {
   useUpdateProfileInfoMutation,
   useUpdateEducationInfoMutation,
   useUpdateSocialLinksMutation,
+  useUpdateUserSKillsMutation,
 } = userSlice;

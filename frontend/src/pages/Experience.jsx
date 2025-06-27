@@ -3,11 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUserSkills } from "../slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useUpdateUserSKillsMutation } from "../slices/userSlice";
+import _ from "lodash";
 
 export default function SkillsForm() {
   const dispatch = useDispatch();
-  const { userSkills } = useSelector((state) => state.auth);
+  let { userSkills } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const [updateUserSKills, { isLoading }] = useUpdateUserSKillsMutation();
 
   const [skills, setSkills] = useState(userSkills ? userSkills : []);
 
@@ -30,7 +33,6 @@ export default function SkillsForm() {
     e.preventDefault();
     if (newSkill.trim()) {
       const skill = {
-        id: Date.now(),
         skill: newSkill.trim(),
         proficiency: newProficiency,
       };
@@ -43,8 +45,8 @@ export default function SkillsForm() {
     }
   };
 
-  const removeSkill = (id) => {
-    setSkills(skills.filter((skill) => skill.id !== id));
+  const removeSkill = (skillName) => {
+    setSkills(skills.filter((skill) => skill.skill !== skillName));
   };
 
   const getProficiencyConfig = (proficiency) => {
@@ -61,6 +63,34 @@ export default function SkillsForm() {
     });
     // navigate to the next page
     navigate("/profile/links");
+  };
+
+  const handleUpdateSkills = async () => {
+    if (!_.isEqual(userSkills, skills)) {
+      // then the user has added some skill or he has removed some skill
+      userSkills = skills.map((skill) => ({ ...skill }));
+
+      try {
+        const res = await updateUserSKills({
+          userSkills: userSkills,
+        }).unwrap();
+
+        const { message, ...cleanRes } = res;
+        const updatedUserSkills = cleanRes.userSkills;
+        dispatch(setUserSkills([...updatedUserSkills]));
+        toast.success(`${res.message}`, {
+          autoClose: 2000,
+        });
+      } catch (error) {
+        toast.error(`${error.data.message}`, {
+          autoClose: 2000,
+        });
+      }
+    } else {
+      toast.error("No field changed!!!", {
+        autoClose: 2000,
+      });
+    }
   };
 
   return (
@@ -148,7 +178,7 @@ export default function SkillsForm() {
                           {skill.skill}
                         </h4>
                         <button
-                          onClick={() => removeSkill(skill.id)}
+                          onClick={() => removeSkill(skill.skill)}
                           className="text-gray-400 hover:text-red-500 hover:cursor-pointer transition-colors p-1"
                           title="Remove skill"
                         >
@@ -221,13 +251,23 @@ export default function SkillsForm() {
 
           {/* Save Button */}
           <div className="mt-8 flex justify-end">
-            <button
-              type="button"
-              className="px-8 py-3 bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-              onClick={handleSaveSkills}
-            >
-              Save Skills
-            </button>
+            {userSkills ? (
+              <button
+                type="button"
+                className="px-8 py-3 bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                onClick={handleUpdateSkills}
+              >
+                Update
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="px-8 py-3 bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                onClick={handleSaveSkills}
+              >
+                Save Skills
+              </button>
+            )}
           </div>
         </div>
       </div>
