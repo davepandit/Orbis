@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserSocialCredentials } from "../slices/authSlice";
-import { useNavigate } from "react-router-dom";
+import { resolvePath, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useCompleteUserProfileMutation } from "../slices/userSlice";
 import SpinnerAnimation from "../utils/Spinner";
+import { useUpdateSocialLinksMutation } from "../slices/userSlice";
 
 export default function OnlineProfilesForm() {
   const [completeUserProfile, { isLoading }] = useCompleteUserProfileMutation();
@@ -14,6 +15,8 @@ export default function OnlineProfilesForm() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [updateSocialLinks, { isLoading: updateSocialLinksLoading }] =
+    useUpdateSocialLinksMutation();
 
   const [profiles, setProfiles] = useState(
     userSocialLinks ? userSocialLinks : {}
@@ -27,8 +30,7 @@ export default function OnlineProfilesForm() {
     setProfiles((prev) => ({ ...prev, [platform]: "" }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSave = async () => {
     // save profiles to the redux store
     dispatch(setUserSocialCredentials({ ...profiles }));
 
@@ -52,10 +54,38 @@ export default function OnlineProfilesForm() {
     }
   };
 
-  if(isLoading){
-    return (
-      <SpinnerAnimation size="xl" color="failure" />
-    )
+  const handleUpdate = async () => {
+    if (
+      userSocialLinks?.github_url != profiles.github_url ||
+      userSocialLinks?.twitter_url != profiles.twitter_url ||
+      userSocialLinks?.linkedin_url != profiles.linkedin_url
+    ) {
+      try {
+        const res = await updateSocialLinks({
+          github_url: profiles.github_url,
+          twitter_url: profiles.twitter_url,
+          linkedin_url: profiles.linkedin_url,
+        }).unwrap();
+
+        const { message, ...cleanRes } = res;
+        dispatch(setUserSocialCredentials({ ...cleanRes }));
+        toast.success(`${res.message}`, {
+          autoClose: 2000,
+        });
+      } catch (error) {
+        toast.error(`${error.data.message}`, {
+          autoClose: 2000,
+        });
+      }
+    } else {
+      toast.error("No field changed!!!", {
+        autoClose: 2000,
+      });
+    }
+  };
+
+  if (isLoading) {
+    return <SpinnerAnimation size="xl" color="failure" />;
   }
   // Simple icons using SVG since we can't import react-icons
   const LinkedInIcon = () => (
@@ -95,7 +125,7 @@ export default function OnlineProfilesForm() {
             </h1>
           </div>
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6">
             {/* GitHub URL */}
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-600 uppercase tracking-wide">
@@ -108,7 +138,9 @@ export default function OnlineProfilesForm() {
                 <input
                   type="url"
                   value={profiles.github_url}
-                  onChange={(e) => handleInputChange("github_url", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("github_url", e.target.value)
+                  }
                   placeholder="https://github.com/yourusername"
                   className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 />
@@ -190,7 +222,9 @@ export default function OnlineProfilesForm() {
                 <input
                   type="url"
                   value={profiles.twitter_url}
-                  onChange={(e) => handleInputChange("twitter_url", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("twitter_url", e.target.value)
+                  }
                   placeholder="https://x.com/yourusername"
                   className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 />
@@ -261,12 +295,23 @@ export default function OnlineProfilesForm() {
 
             {/* Save Button */}
             <div className="pt-6">
-              <button
-                type="submit"
-                className="w-full sm:w-auto bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white px-8 py-3 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-              >
-                Save
-              </button>
+              {userSocialLinks ? (
+                <button
+                  type="button"
+                  onClick={handleUpdate}
+                  className="w-full sm:w-auto bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white px-8 py-3 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                >
+                  Update
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  className="w-full sm:w-auto bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white px-8 py-3 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                >
+                  Save
+                </button>
+              )}
             </div>
           </form>
         </div>

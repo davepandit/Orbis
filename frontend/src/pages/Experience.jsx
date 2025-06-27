@@ -31,7 +31,7 @@ export default function SkillsForm() {
     if (newSkill.trim()) {
       const skill = {
         id: Date.now(),
-        name: newSkill.trim(),
+        skill: newSkill.trim(),
         proficiency: newProficiency,
       };
       setSkills([...skills, skill]);
@@ -145,7 +145,7 @@ export default function SkillsForm() {
                     >
                       <div className="flex items-start justify-between mb-3">
                         <h4 className="font-medium text-gray-800 text-lg">
-                          {skill.name}
+                          {skill.skill}
                         </h4>
                         <button
                           onClick={() => removeSkill(skill.id)}

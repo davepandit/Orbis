@@ -210,7 +210,7 @@ export const getMyExtendedProfile = asyncHandler(async (req, res) => {
 });
 
 //@description     Update education info
-//@route           POST /api/users/education
+//@route           POST /api/users/update-profile-info
 //@access          Private
 export const updateProfileInfo = asyncHandler(async (req, res) => {
   const user = await UserProfile.findOne({ user_id: req.user._id });
@@ -239,7 +239,7 @@ export const updateProfileInfo = asyncHandler(async (req, res) => {
 });
 
 //@description     Update education info
-//@route           POST /api/users/education
+//@route           POST /api/users/update-education-info
 //@access          Private
 export const updateEducationInfo = asyncHandler(async (req, res) => {
   const user = await UserEducation.findOne({ user_id: req.user._id });
@@ -258,5 +258,31 @@ export const updateEducationInfo = asyncHandler(async (req, res) => {
     field_of_study: updatedUser.field_of_study,
     graduation_year: updatedUser.graduation_year,
     message: "User education profile updated successfully!!!",
+  });
+});
+
+//@description     Update education info
+//@route           POST /api/users/update-education-info
+//@access          Private
+export const updateSkills = asyncHandler(async (req, res) => {});
+
+//@description     Update social links
+//@route           POST /api/users/update-social-links
+//@access          Private
+export const updateSocialLinks = asyncHandler(async (req, res) => {
+  const user = await UserSocialProfiles.findOne({ user_id: req.user._id });
+  if (user) {
+    user.github_url = req.body.github_url || user.github_url;
+    user.twitter_url = req.body.twitter_url || user.twitter_url;
+    user.linkedin_url = req.body.linkedin_url || user.linkedin_url;
+  }
+
+  const updatedUser = await user.save();
+
+  return res.status(200).json({
+    github_url: updatedUser.github_url,
+    twitter_url: updatedUser.twitter_url,
+    linkedin_url: updatedUser.linkedin_url,
+    message: "User social links updated successfully!!!",
   });
 });

@@ -9,6 +9,8 @@ import {
   getMyExtendedProfile,
   updateEducationInfo,
   updateProfileInfo,
+  updateSkills,
+  updateSocialLinks,
 } from "../controllers/user.controllers.js";
 import { validateToken } from "../middlewares/auth.middlewares.js";
 
@@ -26,5 +28,6 @@ router.get("/my-extended-profile", validateToken, getMyExtendedProfile); // this
 // update user details
 router.put("/update-profile-info", validateToken, updateProfileInfo);
 router.put("/update-education-info", validateToken, updateEducationInfo);
-
+router.put("/update-skills", validateToken, updateSkills);
+router.put("/update-social-links", validateToken, updateSocialLinks);
 export default router;
