@@ -16,9 +16,15 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["admin", "user"],
+      enum: ["super-admin", "user", "wec-admin", "ieee-admin", "acm-admin"],
       default: "user",
     },
+    clubs: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Club",
+      },
+    ],
     status: {
       type: String,
       enum: ["banned", "active", "pending"],
