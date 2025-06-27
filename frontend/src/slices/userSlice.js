@@ -42,6 +42,13 @@ const userSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    updateProfileInfo: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/update-profile-info`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -52,4 +59,5 @@ export const {
   useGetMyBasicProfileWithGoogleQuery,
   useCompleteUserProfileMutation,
   useGetMyExtendedProfileQuery,
+  useUpdateProfileInfoMutation,
 } = userSlice;

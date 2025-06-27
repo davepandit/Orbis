@@ -3,11 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUserProfileCredentials } from "../slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useUpdateProfileInfoMutation } from "../slices/userSlice";
 
 export default function RegistrationForm() {
   const dispatch = useDispatch();
   const { userProfileInfo } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const [updateProfileInfo, { isLoading }] = useUpdateProfileInfoMutation();
 
   const [firstName, setFirstName] = useState(
     userProfileInfo ? userProfileInfo.first_name : ""
@@ -27,11 +29,7 @@ export default function RegistrationForm() {
     userProfileInfo ? userProfileInfo.state : ""
   );
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("gender:", gender);
-    console.log("first_name:", firstName);
-
+  const handleCreateUserProfile = async () => {
     const res = {
       first_name: firstName,
       last_name: lastName,
@@ -51,13 +49,50 @@ export default function RegistrationForm() {
     navigate("/profile/education");
   };
 
+  const handleUpdateUserProfile = async () => {
+    // check if the user has updated any field or not
+    if (
+      userProfileInfo?.first_name != firstName ||
+      userProfileInfo?.last_name != lastName ||
+      userProfileInfo?.bio != bio ||
+      userProfileInfo?.gender != gender ||
+      userProfileInfo?.phone_number != phoneNumber ||
+      userProfileInfo?.city != city ||
+      userProfileInfo?.state != state
+    ) {
+      try {
+        const res = await updateProfileInfo({
+          first_name: firstName,
+          last_name: lastName,
+          bio: bio,
+          gender: gender,
+          phone_number: phoneNumber,
+          city: city,
+          state: state,
+        }).unwrap();
+
+        const { message, ...cleanRes } = res;
+        dispatch(setUserProfileCredentials({ ...cleanRes }));
+        toast.success(`${res.message}`, {
+          autoClose: 2000,
+        });
+      } catch (error) {
+        console.log("Error:", error);
+        toast.error(`${error.data.message}`, {
+          autoClose: 2000,
+        });
+      }
+    } else {
+      toast.error("No field changed!!!", {
+        autoClose: 2000,
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-6xl mx-auto">
-        <form
-          onSubmit={handleSubmit}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-6"
-        >
+        <form className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Basic Information Section */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-6">
@@ -179,12 +214,23 @@ export default function RegistrationForm() {
           </div>
           {/* Submit Button */}
           <div className="mt-6 flex justify-end">
-            <button
-              type="submit"
-              className="bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white px-8 py-2 rounded-md font-medium transition-colors"
-            >
-              Save And Next
-            </button>
+            {userProfileInfo ? (
+              <button
+                type="button"
+                onClick={handleUpdateUserProfile}
+                className="bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white px-8 py-2 rounded-md font-medium transition-colors"
+              >
+                Update
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleCreateUserProfile}
+                className="bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white px-8 py-2 rounded-md font-medium transition-colors"
+              >
+                Save And Next
+              </button>
+            )}
           </div>
         </form>
       </div>

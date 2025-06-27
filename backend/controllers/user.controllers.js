@@ -208,3 +208,55 @@ export const getMyExtendedProfile = asyncHandler(async (req, res) => {
     userSocialLinks: userSocialLinks,
   });
 });
+
+//@description     Update education info
+//@route           POST /api/users/education
+//@access          Private
+export const updateProfileInfo = asyncHandler(async (req, res) => {
+  const user = await UserProfile.findOne({ user_id: req.user._id });
+
+  if (user) {
+    user.first_name = req.body.first_name || user.first_name;
+    user.last_name = req.body.last_name || user.last_name;
+    user.bio = req.body.bio || user.bio;
+    user.gender = req.body.gender || user.gender;
+    user.phone_number = req.body.phone_number || user.phone_number;
+    user.city = req.body.city || user.city;
+    user.state = req.body.state || user.state;
+  }
+
+  const updatedUser = await user.save();
+  return res.status(200).json({
+    first_name: updatedUser.first_name,
+    last_name: updatedUser.last_name,
+    bio: updatedUser.bio,
+    gender: updatedUser.gender,
+    phone_number: updatedUser.phone_number,
+    city: updatedUser.city,
+    state: updatedUser.state,
+    message: "User profile updated successfully!!!",
+  });
+});
+
+//@description     Update education info
+//@route           POST /api/users/education
+//@access          Private
+export const updateEducationInfo = asyncHandler(async (req, res) => {
+  const user = await UserEducation.findOne({ user_id: req.user._id });
+  if (user) {
+    user.institution_name = req.body.institution_name || user.institution_name;
+    user.degree = req.body.degree || user.degree;
+    user.field_of_study = req.body.field_of_study || user.field_of_study;
+    user.graduation_year = req.body.graduation_year || user.graduation_year;
+  }
+
+  const updatedUser = await user.save();
+
+  return res.status(200).json({
+    institution_name: updatedUser.institution_name,
+    degree: updatedUser.degree,
+    field_of_study: updatedUser.field_of_study,
+    graduation_year: updatedUser.graduation_year,
+    message: "User education profile updated successfully!!!",
+  });
+});

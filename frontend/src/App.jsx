@@ -14,6 +14,7 @@ import PrivatePage from "./pages/PrivatePage";
 import Experience from "./pages/Experience";
 import Links from "./pages/Links";
 import LoginRedirect from "./pages/LoginRedirect";
+import Testing from "./pages/Testing";
 
 // toast import
 import { ToastContainer } from "react-toastify";
@@ -26,6 +27,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/login-redirect" element={<LoginRedirect />} />
+        <Route path="/testing" element={<Testing />} />
 
         {/* Dashboard - This is a private route */}
         <Route element={<DashboardLayout />}>

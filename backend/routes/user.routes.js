@@ -7,6 +7,8 @@ import {
   completeUserProfile,
   getMyProfile,
   getMyExtendedProfile,
+  updateEducationInfo,
+  updateProfileInfo,
 } from "../controllers/user.controllers.js";
 import { validateToken } from "../middlewares/auth.middlewares.js";
 
@@ -20,5 +22,9 @@ router.post("/logout", logoutUser);
 router.post("/complete-profile", validateToken, completeUserProfile);
 router.get("/my-profile", validateToken, getMyProfile); // this is used during the google sign in and sign up
 router.get("/my-extended-profile", validateToken, getMyExtendedProfile); // this is used during normal sign in
+
+// update user details
+router.put("/update-profile-info", validateToken, updateProfileInfo);
+router.put("/update-education-info", validateToken, updateEducationInfo);
 
 export default router;
