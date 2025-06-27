@@ -77,7 +77,6 @@ export default function RegistrationForm() {
           autoClose: 2000,
         });
       } catch (error) {
-        console.log("Error:", error);
         toast.error(`${error.data.message}`, {
           autoClose: 2000,
         });

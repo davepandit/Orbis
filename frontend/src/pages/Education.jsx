@@ -3,11 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUserEducationCredentials } from "../slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useUpdateEducationInfoMutation } from "../slices/userSlice";
 
 export default function EducationForm() {
-  const dispactch = useDispatch();
+  const dispatch = useDispatch();
   const { userEducationInfo } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const [updateEducationInfo, { isLoading }] = useUpdateEducationInfoMutation();
 
   const [instituteName, setInstituteName] = useState(
     userEducationInfo ? userEducationInfo.institution_name : ""
@@ -22,9 +24,7 @@ export default function EducationForm() {
     userEducationInfo ? userEducationInfo.graduation_year : ""
   );
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleCreateEducation = async () => {
     const res = {
       institution_name: instituteName,
       degree: degree,
@@ -33,13 +33,45 @@ export default function EducationForm() {
     };
 
     // save the details to redux store
-    dispactch(setUserEducationCredentials({ ...res }));
+    dispatch(setUserEducationCredentials({ ...res }));
     toast.success("User details saved successfully!!!", {
       autoClose: 2000,
     });
 
     // navigate to the next page
     navigate("/profile/experience");
+  };
+
+  const handleUpdateEducation = async () => {
+    if (
+      userEducationInfo?.institution_name != instituteName ||
+      userEducationInfo?.degree != degree ||
+      userEducationInfo?.field_of_study != fieldOfStudy ||
+      userEducationInfo?.graduation_year != yearOfGraduation
+    ) {
+      try {
+        const res = await updateEducationInfo({
+          institution_name: instituteName,
+          degree: degree,
+          field_of_study: fieldOfStudy,
+          graduation_year: yearOfGraduation,
+        }).unwrap();
+
+        const { message, ...cleanRes } = res;
+        dispatch(setUserEducationCredentials({ ...cleanRes }));
+        toast.success(`${res.message}`, {
+          autoClose: 2000,
+        });
+      } catch (error) {
+        toast.error(`${error.data.message}`, {
+          autoClose: 2000,
+        });
+      }
+    } else {
+      toast.error("No field changed!!!", {
+        autoClose: 2000,
+      });
+    }
   };
 
   const degreeTypes = [
@@ -69,7 +101,7 @@ export default function EducationForm() {
             </p>
           </div>
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6">
             {/* No Formal Education Checkbox */}
 
             {/* Degree Type */}
@@ -182,12 +214,23 @@ export default function EducationForm() {
 
             {/* Submit Button */}
             <div className="pt-6">
-              <button
-                type="submit"
-                className="w-full sm:w-auto bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white px-8 py-3 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-              >
-                Save And Next
-              </button>
+              {userEducationInfo ? (
+                <button
+                  type="button"
+                  onClick={handleUpdateEducation}
+                  className="w-full sm:w-auto bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white px-8 py-3 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                >
+                  Update
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleCreateEducation}
+                  className="w-full sm:w-auto bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white px-8 py-3 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                >
+                  Save And Next
+                </button>
+              )}
             </div>
           </form>
         </div>

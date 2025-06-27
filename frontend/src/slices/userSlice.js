@@ -49,6 +49,13 @@ const userSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    updateEducationInfo: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/update-education-info`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -60,4 +67,5 @@ export const {
   useCompleteUserProfileMutation,
   useGetMyExtendedProfileQuery,
   useUpdateProfileInfoMutation,
+  useUpdateEducationInfoMutation,
 } = userSlice;
