@@ -1,11 +1,11 @@
 import React from "react";
+import ProfileNavbar from "../components/ProfileNavbar";
 import { Outlet } from "react-router-dom";
-import DashboardNavbar from "../components/DashboardNavbar";
 
-const DashboardLayout = () => {
+const ProfileLayout = () => {
   return (
     <>
-      <DashboardNavbar />
+      <ProfileNavbar />
       <div className="mt-5">
         <Outlet />
       </div>
@@ -13,4 +13,4 @@ const DashboardLayout = () => {
   );
 };
 
-export default DashboardLayout;
+export default ProfileLayout;

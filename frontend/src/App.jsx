@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Signup from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
-import DashboardLayout from "./pages/DashboardLayout";
+import ProfileLayout from "./pages/ProfileLayout";
 import Profile from "./pages/Profile";
 import Education from "./pages/Education";
 import MyEvents from "./pages/MyEvents";
@@ -14,6 +14,8 @@ import PrivatePage from "./pages/PrivatePage";
 import Experience from "./pages/Experience";
 import Links from "./pages/Links";
 import LoginRedirect from "./pages/LoginRedirect";
+import DashboardLayout from "./pages/DashboardLayout";
+import Dashboard from "./pages/Dashboard";
 import Testing from "./pages/Testing";
 
 // toast import
@@ -29,9 +31,13 @@ function App() {
         <Route path="/login-redirect" element={<LoginRedirect />} />
         <Route path="/testing" element={<Testing />} />
 
-        {/* Dashboard - This is a private route */}
+        {/* DashBoard  */}
         <Route element={<DashboardLayout />}>
-          {/* Profile  */}
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
+
+        {/* Profile  */}
+        <Route element={<ProfileLayout />}>
           <Route path="/google-redirect" element={<GoogleRedirect />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/education" element={<Education />} />
