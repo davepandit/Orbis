@@ -104,3 +104,6 @@ app.use(express.urlencoded({ limit: "5mb", extended: true }));
 
 - Google sign up flow 
 ![Google sign up flow](./images/image8.png)
+
+- Event creation flow
+![Event creation flow](./images/image10.png)

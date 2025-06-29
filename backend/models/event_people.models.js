@@ -13,7 +13,7 @@ const eventPeopleSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      eum: ["event-admin", "judges", "speakers"],
+      eum: ["event-admin", "judge", "speaker"],
     },
     bio: {
       type: String,

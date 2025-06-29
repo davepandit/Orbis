@@ -17,11 +17,11 @@ export const validateToken = asyncHandler(async (req, res, next) => {
 });
 
 // This checks whether the user is an admin or not
-export const adminCheck = asyncHandler(async (req, res, next) => {
-  if (req.user && req.user?.role == "admin") {
+export const superAdminCheck = asyncHandler(async (req, res, next) => {
+  if (req.user && req.user?.role == "super-admin") {
     next();
   } else {
-    return res.status(401).json({ message: "Not authorized as admin" });
+    return res.status(401).json({ message: "Not authorized as super-admin" });
   }
 });
 

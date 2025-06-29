@@ -7,7 +7,7 @@ import {
 import {
   validateToken,
   eventAdminCheck,
-  adminCheck,
+  superAdminCheck,
 } from "../middlewares/auth.middlewares.js";
 
 const router = express.Router();
