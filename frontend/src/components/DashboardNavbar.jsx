@@ -3,6 +3,7 @@ import { FaUser, FaBars, FaTimes, FaArrowRight, FaCheck } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Avatar } from "flowbite-react";
 
 const DashboardNavbar = () => {
   const location = useLocation();
@@ -68,28 +69,12 @@ const DashboardNavbar = () => {
           </div>
 
           {/* User Info - Desktop */}
-          {userBasicInfo && userBasicInfo.role.includes("admin") ? (
-            <div
-              className="hidden md:flex items-center space-x-3 hover:cursor-pointer"
-              onClick={() => navigate("/dashboard")}
-            >
-              <span className="text-gray-700 font-medium">
-                {userBasicInfo ? userBasicInfo.username : null}
-              </span>
-              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                <FaUser className="text-gray-600 text-sm" />
-              </div>
-            </div>
-          ) : (
-            <div className="hidden md:flex items-center space-x-3">
-              <span className="text-gray-700 font-medium">
-                {userBasicInfo ? userBasicInfo.username : null}
-              </span>
-              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                <FaUser className="text-gray-600 text-sm" />
-              </div>
-            </div>
-          )}
+          <div className="hidden md:flex items-center space-x-3">
+            <Avatar
+              placeholderInitials={userBasicInfo?.username.slice(0, 3)}
+              rounded
+            />
+          </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
@@ -125,12 +110,10 @@ const DashboardNavbar = () => {
 
               {/* Mobile User Info */}
               <div className="flex items-center space-x-3 px-4 py-3 border-t border-gray-200 mt-2">
-                <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                  <FaUser className="text-gray-600 text-sm" />
-                </div>
-                <span className="text-gray-700 font-medium">
-                  {userBasicInfo ? userBasicInfo.username : null}
-                </span>
+                <Avatar
+                  placeholderInitials={userBasicInfo?.username.slice(0, 3)}
+                  rounded
+                />
               </div>
             </div>
           </div>

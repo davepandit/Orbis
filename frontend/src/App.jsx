@@ -33,7 +33,7 @@ function App() {
 
         {/* DashBoard  */}
         <Route element={<DashboardLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/:admin" element={<Dashboard />} />
         </Route>
 
         {/* Profile  */}
