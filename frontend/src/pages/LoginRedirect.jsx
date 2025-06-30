@@ -17,6 +17,7 @@ const LoginRedirect = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log("Data for extended profile:", data);
     if (data) {
       if (data?.userProfileInfo) {
         localStorage.setItem(
@@ -108,7 +109,10 @@ const LoginRedirect = () => {
         </div>
       </>
     );
-  if (error) return <p>Error loading profile</p>;
+  if (error) {
+    console.log("Error:", error);
+    return <>Error loading the page!!!</>;
+  }
 };
 
 export default LoginRedirect;

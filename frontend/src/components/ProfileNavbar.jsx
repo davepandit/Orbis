@@ -100,7 +100,8 @@ const ProfileNavbar = () => {
           </div>
 
           {/* User Info - Desktop */}
-          {userBasicInfo && userBasicInfo.role.includes("admin") ? (
+          {userBasicInfo &&
+          userBasicInfo.role.filter((role) => role !== "user").length > 0 ? (
             <div className="relative inline-block" ref={dropdownRef}>
               <div
                 onClick={() => setOpen(!open)}
@@ -113,34 +114,31 @@ const ProfileNavbar = () => {
               </div>
 
               {open && (
-                <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-md z-50">
+                <div className="absolute right-0 mt-2 w-60 bg-white border border-gray-200 rounded-lg shadow-md z-50">
                   <ul className="py-1 text-sm text-gray-700">
-                    <li>
-                      <Link
-                        to="/profile"
-                        className="block px-4 py-2 hover:bg-red-100 text-red-500 hover:cursor-pointer"
-                        onClick={() => setOpen(false)}
-                      >
-                        My Profile
-                      </Link>
-                    </li>
-                    <li>
-                      <button className="w-full text-left px-4 py-2 hover:bg-red-100 text-red-500 hover:cursor-pointer">
-                        Logout
-                      </button>
-                    </li>
+                    {/* Show admin options only for roles that are not "user" */}
+                    {userBasicInfo.role
+                      .filter((role) => role !== "user")
+                      .map((role) => (
+                        <li key={role}>
+                          <Link
+                            to={`/dashboard/${role}`} // example: /dashboard/wec-admin
+                            className="block px-4 py-2 hover:bg-red-100 text-red-500 hover:cursor-pointer capitalize"
+                            onClick={() => setOpen(false)}
+                          >
+                            {role.replace("-", " ")} Dashboard
+                          </Link>
+                        </li>
+                      ))}
                   </ul>
                 </div>
               )}
             </div>
           ) : (
             <div className="hidden md:flex items-center space-x-3">
-              <span className="text-gray-700 font-medium">
-                {userBasicInfo ? userBasicInfo.username : null}
-              </span>
               <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                 <Avatar
-                  placeholderInitials={userBasicInfo.username.slice(0, 3)}
+                  placeholderInitials={userBasicInfo?.username.slice(0, 3)}
                   rounded
                 />
               </div>

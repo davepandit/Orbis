@@ -37,7 +37,7 @@ const GoogleRedirect = () => {
       // Redirect
       if (message.includes("sign up")) {
         // user has just signed up no need to send the user to the login redirect screen
-        navigate("/profle");
+        navigate("/profile");
       } else if (message.includes("logged in") || message.includes("log in")) {
         // then we can send the user to login redirect screen
         navigate("/login-redirect");

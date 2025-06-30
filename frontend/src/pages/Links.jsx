@@ -40,7 +40,7 @@ export default function OnlineProfilesForm() {
         userProfileInfo: userProfileInfo,
         userEducationInfo: userEducationInfo,
         userSkills: userSkills,
-        userSocialLinks: userSocialLinks,
+        userSocialLinks: profiles,
       }).unwrap();
 
       toast.success(`${res.message}`, {

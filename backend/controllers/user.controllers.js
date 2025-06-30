@@ -122,17 +122,18 @@ export const completeUserProfile = asyncHandler(async (req, res) => {
   const { userProfileInfo, userEducationInfo, userSkills, userSocialLinks } =
     req.body;
 
+  console.log("user social links:", userSocialLinks);
   // creating the user education object
   const userEducation = new UserEducation({
     user_id: req.user._id,
-    institution_name: userEducationInfo.institution_name,
-    degree: userEducationInfo.degree,
-    field_of_study: userEducationInfo.field_of_study,
-    graduation_year: userEducationInfo.graduation_year,
+    institution_name: userEducationInfo?.institution_name || "",
+    degree: userEducationInfo?.degree || "",
+    field_of_study: userEducationInfo?.field_of_study || "",
+    graduation_year: userEducationInfo?.graduation_year,
   });
 
   // some pre-processing to generate the club object ids
-  const clubNames = userProfile.clubs.map((club) => club.label);
+  const clubNames = userProfileInfo.clubs.map((club) => club.label);
 
   const matchedClubs = await Club.find({ name: { $in: clubNames } }).select(
     "_id"
@@ -142,22 +143,22 @@ export const completeUserProfile = asyncHandler(async (req, res) => {
   // creating the user profile object
   const userProfile = new UserProfile({
     user_id: req.user._id,
-    first_name: userProfileInfo.first_name,
-    last_name: userProfileInfo.last_name,
-    bio: userProfileInfo.bio,
-    gender: userProfileInfo.gender,
-    phone_number: userProfileInfo.phone_number,
-    city: userProfileInfo.city,
-    state: userProfileInfo.state,
+    first_name: userProfileInfo?.first_name || "",
+    last_name: userProfileInfo?.last_name || "",
+    bio: userProfileInfo?.bio || "",
+    gender: userProfileInfo?.gender || "",
+    phone_number: userProfileInfo?.phone_number || "",
+    city: userProfileInfo?.city || "",
+    state: userProfileInfo?.state || "",
     clubs: clubObjectIds,
   });
 
   // creating the user's social profile object
   const userSocialProfiles = new UserSocialProfiles({
     user_id: req.user._id,
-    github_url: userSocialLinks.github_url,
-    twitter_url: userSocialLinks.twitter_url,
-    linkedin_url: userSocialLinks.linkedin_url,
+    github_url: userSocialLinks?.github_url || "",
+    twitter_url: userSocialLinks?.twitter_url || "",
+    linkedin_url: userSocialLinks?.linkedin_url || "",
   });
 
   // map over userSkills and keep on creating userSkill objects
@@ -198,9 +199,32 @@ export const getMyProfile = asyncHandler((req, res) => {
 export const getMyExtendedProfile = asyncHandler(async (req, res) => {
   const userId = new mongoose.Types.ObjectId(req.user._id);
 
-  const userProfileInfo = await UserProfile.findOne({ user_id: userId }).select(
-    "first_name last_name bio gender phone_number country city state -_id"
-  );
+  const userProfileInfo = await UserProfile.findOne({ user_id: userId })
+    .select(
+      "first_name last_name bio gender phone_number country city state clubs -_id"
+    )
+    .populate({
+      path: "clubs",
+      select: "_id name", // only get these from the Club model
+    });
+
+  console.log("Userprofile info:", userProfileInfo);
+
+  let userProfileObj = userProfileInfo;
+
+  if (userProfileInfo != null) {
+    // since in the frontend we need the fields as label for the name and value for the id thats why we need to do this transformation thing here
+    userProfileObj = userProfileInfo.toObject();
+
+    // Safely transform clubs if they exist and are not empty
+    if (userProfileObj.clubs && userProfileObj.clubs.length > 0) {
+      userProfileObj.clubs = userProfileObj.clubs.map((club) => ({
+        label: club.name,
+        value: club._id.toString(),
+      }));
+    }
+  }
+
   const userEducationInfo = await UserEducation.findOne({
     user_id: userId,
   }).select("institution_name degree field_of_study graduation_year -_id");
@@ -212,7 +236,7 @@ export const getMyExtendedProfile = asyncHandler(async (req, res) => {
   }).select("github_url twitter_url linkedin_url -_id");
 
   return res.status(200).json({
-    userProfileInfo: userProfileInfo,
+    userProfileInfo: userProfileObj,
     userEducationInfo: userEducationInfo,
     userSkills: userSkills,
     userSocialLinks: userSocialLinks,
