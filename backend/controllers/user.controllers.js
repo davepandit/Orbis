@@ -326,3 +326,28 @@ export const updateSocialLinks = asyncHandler(async (req, res) => {
     message: "User social links updated successfully!!!",
   });
 });
+
+//@description     Update user roles
+//@route           POST /api/users/update-user-roles
+//@access          Private
+export const updateUserRoles = asyncHandler(async (req, res) => {
+  const user = await User.findOne({ username: req.user.username });
+
+  if (!user) {
+    return res.status(400).json({
+      message: "User not found!!!",
+    });
+  }
+
+  // add a new role
+  const newRole = "ieee-admin";
+  if (!user.role.includes(newRole)) {
+    user.role.push(newRole);
+    await user.save();
+    return res.status(200).json({ message: "Role added successfully!!!" });
+  } else {
+    return res.status(200).json({
+      message: "This role is already assigned to the user!!!",
+    });
+  }
+});
