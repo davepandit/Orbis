@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FaUser, FaBars, FaTimes, FaArrowRight, FaCheck } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Avatar } from "flowbite-react";
 
 const ProfileNavbar = () => {
   const location = useLocation();
@@ -14,6 +15,8 @@ const ProfileNavbar = () => {
   const [activeSecondaryTab, setActiveSecondaryTab] = useState("About");
   const navigate = useNavigate();
   const { userBasicInfo } = useSelector((state) => state.auth);
+  const dropdownRef = useRef(null);
+  const [open, setOpen] = useState(false); // this one is for modal opening
 
   const primaryNavItems = [
     { title: "Profile", link: "/profile" },
@@ -50,6 +53,16 @@ const ProfileNavbar = () => {
       setActiveTab("Projects");
     }
   }, [location]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className="bg-white shadow-sm border-b border-gray-200">
@@ -88,16 +101,37 @@ const ProfileNavbar = () => {
 
           {/* User Info - Desktop */}
           {userBasicInfo && userBasicInfo.role.includes("admin") ? (
-            <div
-              className="hidden md:flex items-center space-x-3 hover:cursor-pointer"
-              onClick={() => navigate("/dashboard")}
-            >
-              <span className="text-gray-700 font-medium">
-                {userBasicInfo ? userBasicInfo.username : null}
-              </span>
-              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                <FaUser className="text-gray-600 text-sm" />
+            <div className="relative inline-block" ref={dropdownRef}>
+              <div
+                onClick={() => setOpen(!open)}
+                className="hover:cursor-pointer"
+              >
+                <Avatar
+                  placeholderInitials={userBasicInfo.username.slice(0, 3)}
+                  rounded
+                />
               </div>
+
+              {open && (
+                <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-md z-50">
+                  <ul className="py-1 text-sm text-gray-700">
+                    <li>
+                      <Link
+                        to="/profile"
+                        className="block px-4 py-2 hover:bg-red-100 text-red-500 hover:cursor-pointer"
+                        onClick={() => setOpen(false)}
+                      >
+                        My Profile
+                      </Link>
+                    </li>
+                    <li>
+                      <button className="w-full text-left px-4 py-2 hover:bg-red-100 text-red-500 hover:cursor-pointer">
+                        Logout
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
             </div>
           ) : (
             <div className="hidden md:flex items-center space-x-3">
@@ -105,7 +139,10 @@ const ProfileNavbar = () => {
                 {userBasicInfo ? userBasicInfo.username : null}
               </span>
               <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                <FaUser className="text-gray-600 text-sm" />
+                <Avatar
+                  placeholderInitials={userBasicInfo.username.slice(0, 3)}
+                  rounded
+                />
               </div>
             </div>
           )}
@@ -145,7 +182,10 @@ const ProfileNavbar = () => {
               {/* Mobile User Info */}
               <div className="flex items-center space-x-3 px-4 py-3 border-t border-gray-200 mt-2">
                 <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                  <FaUser className="text-gray-600 text-sm" />
+                  <Avatar
+                    placeholderInitials={userBasicInfo.username.slice(0, 3)}
+                    rounded
+                  />
                 </div>
                 <span className="text-gray-700 font-medium">
                   {userBasicInfo ? userBasicInfo.username : null}
