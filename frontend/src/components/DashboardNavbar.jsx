@@ -9,7 +9,6 @@ const DashboardNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Profile");
 
-  const [activeSecondaryTab, setActiveSecondaryTab] = useState("About");
   const navigate = useNavigate();
   const { userBasicInfo } = useSelector((state) => state.auth);
 

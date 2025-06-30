@@ -35,6 +35,12 @@ const userProfileSchema = new mongoose.Schema(
     state: {
       type: String,
     },
+    clubs: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Club",
+      },
+    ],
   },
   {
     timestamps: true,

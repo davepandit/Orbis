@@ -6,6 +6,7 @@ import UserProfile from "../models/user_profile.models.js";
 import UserEducation from "../models/user_education.models.js";
 import UserSkills from "../models/user_skills.models.js";
 import mongoose from "mongoose";
+import Club from "../models/club.models.js";
 
 //@description     Register a user
 //@route           POST /api/users/register
@@ -130,6 +131,14 @@ export const completeUserProfile = asyncHandler(async (req, res) => {
     graduation_year: userEducationInfo.graduation_year,
   });
 
+  // some pre-processing to generate the club object ids
+  const clubNames = userProfile.clubs.map((club) => club.label);
+
+  const matchedClubs = await Club.find({ name: { $in: clubNames } }).select(
+    "_id"
+  );
+
+  const clubObjectIds = matchedClubs.map((club) => club._id);
   // creating the user profile object
   const userProfile = new UserProfile({
     user_id: req.user._id,
@@ -140,6 +149,7 @@ export const completeUserProfile = asyncHandler(async (req, res) => {
     phone_number: userProfileInfo.phone_number,
     city: userProfileInfo.city,
     state: userProfileInfo.state,
+    clubs: clubObjectIds,
   });
 
   // creating the user's social profile object
@@ -215,6 +225,19 @@ export const getMyExtendedProfile = asyncHandler(async (req, res) => {
 export const updateProfileInfo = asyncHandler(async (req, res) => {
   const user = await UserProfile.findOne({ user_id: req.user._id });
 
+  const clubNames = req.body.clubs.map((club) => club.label);
+
+  const matchedClubs = await Club.find({ name: { $in: clubNames } }).select(
+    "_id"
+  );
+
+  const clubObjectIds = matchedClubs.map((club) => club._id);
+
+  // TESTING - This console logs are for testing only
+  // console.log("Request body :", req.body);
+  // console.log("Clubs:", matchedClubs);
+  // console.log("ClubobjectIds:", clubObjectIds);
+
   if (user) {
     user.first_name = req.body.first_name || user.first_name;
     user.last_name = req.body.last_name || user.last_name;
@@ -223,6 +246,7 @@ export const updateProfileInfo = asyncHandler(async (req, res) => {
     user.phone_number = req.body.phone_number || user.phone_number;
     user.city = req.body.city || user.city;
     user.state = req.body.state || user.state;
+    user.clubs = clubObjectIds || user.clubs;
   }
 
   const updatedUser = await user.save();
@@ -234,6 +258,7 @@ export const updateProfileInfo = asyncHandler(async (req, res) => {
     phone_number: updatedUser.phone_number,
     city: updatedUser.city,
     state: updatedUser.state,
+    clubs: req.body.clubs,
     message: "User profile updated successfully!!!",
   });
 });

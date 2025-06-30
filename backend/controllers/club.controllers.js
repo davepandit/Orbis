@@ -7,7 +7,7 @@ import Club from "../models/club.models.js";
 export const createClub = asyncHandler(async (req, res) => {
   const { name, description } = req.body;
 
-//   create an object
+  //   create an object
   const club = new Club({
     user_id: req.user._id,
     name: name,
@@ -19,5 +19,16 @@ export const createClub = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     message: "Club created successfully!!!",
+  });
+});
+
+//@description     Get club info
+//@route           POST /api/club/get-club-info
+//@access          Private
+export const getClubInfo = asyncHandler(async (req, res) => {
+  const clubs = await Club.find().select("_id name");
+
+  return res.status(200).json({
+    clubs: clubs,
   });
 });
