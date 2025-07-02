@@ -16,6 +16,7 @@ import Links from "./pages/Links";
 import LoginRedirect from "./pages/LoginRedirect";
 import DashboardLayout from "./pages/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
+import ApproveRequests from "./pages/ApproveRequests";
 import Testing from "./pages/Testing";
 
 // toast import
@@ -33,7 +34,14 @@ function App() {
 
         {/* DashBoard  */}
         <Route element={<DashboardLayout />}>
-          <Route path="/dashboard/:admin" element={<Dashboard />} />
+          <Route
+            path="/dashboard/:admin/manage-users"
+            element={<Dashboard />}
+          />
+          <Route
+            path="/dashboard/:admin/approve-requests"
+            element={<ApproveRequests />}
+          />
         </Route>
 
         {/* Profile  */}

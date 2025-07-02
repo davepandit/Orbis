@@ -122,7 +122,7 @@ const ProfileNavbar = () => {
                       .map((role) => (
                         <li key={role}>
                           <Link
-                            to={`/dashboard/${role}`} // example: /dashboard/wec-admin
+                            to={`/dashboard/${role}/manage-users`} // example: /dashboard/wec-admin
                             className="block px-4 py-2 hover:bg-red-100 text-red-500 hover:cursor-pointer capitalize"
                             onClick={() => setOpen(false)}
                           >

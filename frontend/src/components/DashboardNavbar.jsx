@@ -1,128 +1,142 @@
-import { useState, useEffect } from "react";
-import { FaUser, FaBars, FaTimes, FaArrowRight, FaCheck } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { Avatar } from "flowbite-react";
+import { useState } from "react";
+import { Outlet, Link } from "react-router-dom";
+import {
+  FaHome,
+  FaUser,
+  FaCog,
+  FaChartBar,
+  FaEnvelope,
+  FaBars,
+  FaTimes,
+} from "react-icons/fa";
 
-const DashboardNavbar = () => {
-  const location = useLocation();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("Profile");
+// here also we need to get the /:admin part because based on that we need to redirect the user
+import { useParams } from "react-router-dom";
 
-  const navigate = useNavigate();
-  const { userBasicInfo } = useSelector((state) => state.auth);
+export default function ResponsiveSidebar() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [selectedTab, setSelectedTab] = useState("Manage Members");
+  const { admin } = useParams();
 
-  const primaryNavItems = [
-    { title: "Profile", link: "/profile" },
-    { title: "Events", link: "/my-registered-events" },
-    { title: "Projects", link: "/my-projects" },
+  const menuItems = [
+    {
+      icon: FaHome,
+      label: "Manage Members",
+      path: `/dashboard/${admin}/manage-users`,
+    },
+    {
+      icon: FaUser,
+      label: "Approve requests",
+      path: `/dashboard/${admin}/approve-requests`,
+    },
+    { icon: FaChartBar, label: "Analytics", path: "/analytics" },
+    { icon: FaEnvelope, label: "Messages", path: "/messages" },
+    { icon: FaCog, label: "Settings", path: "/settings" },
   ];
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
-  useEffect(() => {
-    if (location.pathname.includes("/profile")) {
-      setActiveTab("Profile");
-    } else if (location.pathname === "/my-registered-events") {
-      setActiveTab("Events");
-    } else if (location.pathname === "/my-projects") {
-      setActiveTab("Projects");
-    }
-  }, [location]);
-
   return (
-    <div className="bg-white shadow-sm border-b border-gray-200">
-      {/* Main Navigation */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-red-500 rounded flex items-center justify-center">
-              <span className="text-white font-bold text-lg">O</span>
-            </div>
-            <Link to="/">
-              <span className="text-xl font-semibold text-gray-900">Orbis</span>
-            </Link>
-          </div>
+    <div className="flex h-screen bg-gray-100">
+      {/* Mobile menu button */}
+      <button
+        onClick={toggleSidebar}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-gray-800 text-white rounded-md"
+      >
+        {isSidebarOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+      </button>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
-            {primaryNavItems.map((item) => (
-              <button
-                key={item.title}
-                onClick={() => {
-                  setActiveTab(item.title);
-                  navigate(`${item.link}`);
-                }}
-                className={`px-6 py-2 text-sm font-medium rounded-md transition-colors duration-200 hover:cursor-pointer ${
-                  activeTab === item.title
-                    ? "bg-red-500 text-white"
-                    : "text-gray-600 hover:text-red-500 hover:bg-red-50"
-                }`}
-              >
-                {item.title}
-              </button>
-            ))}
-          </div>
-
-          {/* User Info - Desktop */}
-          <div className="hidden md:flex items-center space-x-3">
-            <Avatar
-              placeholderInitials={userBasicInfo?.username.slice(0, 3)}
-              rounded
-            />
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button
-              onClick={toggleMobileMenu}
-              className="p-2 rounded-md text-gray-600 hover:text-red-500 hover:bg-red-50 transition-colors duration-200"
-            >
-              {isMobileMenuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
-            </button>
-          </div>
+      {/* Sidebar */}
+      <div
+        className={`
+          fixed lg:static inset-y-0 left-0 z-30
+          w-64 text-black bg-gray-200
+          transform transition-transform duration-300 ease-in-out
+          ${
+            isSidebarOpen
+              ? "translate-x-0"
+              : "-translate-x-full lg:translate-x-0"
+          }
+        `}
+      >
+        {/* Logo/Brand */}
+        <div className="flex items-center justify-center h-16">
+          <Link to="/">
+            <h1 className="text-xl font-bold">Orbis</h1>
+          </Link>
         </div>
 
-        {/* Mobile Navigation Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
-            <div className="flex flex-col space-y-2">
-              {primaryNavItems.map((item) => (
-                <button
-                  key={item.title}
-                  onClick={() => {
-                    setActiveTab(item.title);
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className={`px-4 py-3 text-left text-sm font-medium rounded-md transition-colors duration-200 ${
-                    activeTab === item.title
-                      ? "bg-red-500 text-white"
-                      : "text-gray-600 hover:text-red-500 hover:bg-red-50"
-                  }`}
-                >
-                  {item.title}
-                </button>
-              ))}
+        {/* Navigation Menu */}
+        <nav className="mt-8">
+          <ul className="space-y-2 px-4">
+            {menuItems.map((item, index) => {
+              const IconComponent = item.icon;
+              return (
+                <li key={index}>
+                  <Link
+                    to={item.path}
+                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200  ${
+                      selectedTab == item.label
+                        ? "bg-gray-500 text-white"
+                        : "hover:bg-gray-500 hover:text-white"
+                    }`}
+                    onClick={() => setSelectedTab(item.label)} // Close sidebar on mobile after click
+                  >
+                    <IconComponent size={20} />
+                    <span className="font-medium">{item.label}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
 
-              {/* Mobile User Info */}
-              <div className="flex items-center space-x-3 px-4 py-3 border-t border-gray-200 mt-2">
-                <Avatar
-                  placeholderInitials={userBasicInfo?.username.slice(0, 3)}
-                  rounded
-                />
-              </div>
+        {/* Bottom section */}
+        <div className="absolute bottom-0 w-full p-4">
+          <div className="flex items-center space-x-3 px-4 py-3 rounded-lg">
+            <div className="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center">
+              <FaUser size={16} />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium">John Doe</p>
+              <p className="text-xs text-gray-800">john@example.com</p>
             </div>
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Secondary Navigation */}
+      {/* Overlay for mobile */}
+      {isSidebarOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-20 bg-black bg-opacity-50"
+          onClick={toggleSidebar}
+        />
+      )}
+
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
+        {/* Header */}
+        <header className="bg-white shadow-sm border-b border-gray-200 lg:ml-0">
+          <div className="flex items-center justify-between px-6 py-4">
+            <div className="ml-12 lg:ml-0">
+              <h2 className="text-2xl font-semibold text-gray-800">
+                Welcome Back!
+              </h2>
+              <p className="text-gray-600">Here's what's happening today</p>
+            </div>
+          </div>
+        </header>
+
+        {/* Main content with Router Outlet */}
+        <main className="flex-1 overflow-auto p-6">
+          <div className="max-w-7xl mx-auto">
+            {/* React Router Outlet - This is where your routed components will render */}
+            <Outlet />
+          </div>
+        </main>
+      </div>
     </div>
   );
-};
-
-export default DashboardNavbar;
+}
