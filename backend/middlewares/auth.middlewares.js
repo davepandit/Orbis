@@ -33,11 +33,34 @@ export const eventAdminCheck = asyncHandler(async (req, res, next) => {
     if (eventPeople?.role == "event-admin") {
       next();
     } else {
-      return res.status(401).json({ message: "Not authorized as event admin" });
+      return res
+        .status(401)
+        .json({ message: "Not authorized as event admin!!!" });
     }
   } else {
     return res
       .status(401)
-      .json({ message: "You are not signed in. Please log in to proceed." });
+      .json({ message: "You are not signed in. Please log in to proceed!!!" });
+  }
+});
+
+// This checks whether the user is a club admin or not that can be any of the admins - wec-admin, ieee-admin
+export const clubAdminCheck = asyncHandler(async (req, res, next) => {
+  if (req.user) {
+    const adminType = req.params.admin;
+
+    // check whether the logged in user is an admin of the type adminType or not
+    if (req.user.role.includes(adminType)) {
+      // call next
+      next();
+    } else {
+      return res
+        .status(401)
+        .json({ message: "You are not authorised to access this route!!!" });
+    }
+  } else {
+    return res
+      .status(401)
+      .json({ message: "You are not signed in. Please log in to proceed!!!" });
   }
 });

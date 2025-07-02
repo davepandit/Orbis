@@ -375,3 +375,75 @@ export const updateUserRoles = asyncHandler(async (req, res) => {
     });
   }
 });
+
+//@description     Get all uses
+//@route           POST /api/users/:admin/get-all-users
+//@access          Private
+export const getAllUsers = asyncHandler(async (req, res) => {
+  let { admin } = req.params;
+  const requiredClub = admin.split("-")[0];
+
+  console.log("Club name:", requiredClub);
+
+  // return all the users to who belong to that club to the frontend
+
+  const userProfiles = await UserProfile.find({})
+    .select("user_id first_name last_name phone_number clubs")
+    .populate("clubs");
+
+  // filter the users who belong to the club as asked by the admin from the frontend
+  const filteredUsers = userProfiles.filter((userProfile) =>
+    userProfile.clubs.some((club) => club.name == requiredClub)
+  );
+
+  const userIds = filteredUsers.map((user) => user.user_id);
+
+  // need to get branch, passing year
+  const userEducationInfo = await UserEducation.find({
+    user_id: { $in: userIds },
+  }).select("user_id field_of_study graduation_year");
+
+  // need to get the username of the user too
+  const userInfo = await User.find({
+    _id: { $in: userIds },
+  }).select("username");
+
+  // NOTE - In terminals the populated object gets collapsed🐣
+  // console.log("user profile:", userProfile);
+
+  // send a unified response such that it becomes easy for to render that in the front-end
+  const educationMap = new Map();
+  userEducationInfo.forEach((edu) => {
+    educationMap.set(edu.user_id.toString(), {
+      graduation_year: edu.graduation_year,
+      field_of_study: edu.field_of_study,
+    });
+  });
+
+  const userInfoMap = new Map();
+  userInfo.forEach((info) => {
+    userInfoMap.set(info._id.toString(), {
+      username: info.username,
+    });
+  });
+
+  const finalUsers = filteredUsers.map((user) => {
+    const userIdStr = user.user_id.toString();
+
+    const education = educationMap.get(userIdStr) || {};
+    const basicInfo = userInfoMap.get(userIdStr) || {};
+
+    return {
+      username: basicInfo.username || null,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      graduation_year: education.graduation_year || null,
+      field_of_study: education.field_of_study || null,
+    };
+  });
+
+  return res.json({
+    finalUsers: finalUsers,
+    message: "Users data fetched successfully!!!",
+  });
+});
