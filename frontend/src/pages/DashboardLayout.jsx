@@ -6,9 +6,6 @@ const DashboardLayout = () => {
   return (
     <>
       <DashboardNavbar />
-      <div className="mt-5">
-        <Outlet />
-      </div>
     </>
   );
 };

@@ -1,18 +1,38 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { useGetAllClubMembersQuery } from "../slices/clubAdminSlice";
+import {
+  useGetAllClubMembersQuery,
+  useRemoveUserFromClubMutation,
+} from "../slices/clubAdminSlice";
 import SpinnerAnimation from "../utils/Spinner";
 import Table from "../utils/Table";
+import { toast } from "react-toastify";
 
 const Dashboard = () => {
   const { admin } = useParams();
-  const { data: allClubMembers, isLoading: allClubMembersLoading } =
-    useGetAllClubMembersQuery(admin);
+  const {
+    data: allClubMembers,
+    isLoading: allClubMembersLoading,
+    refetch,
+  } = useGetAllClubMembersQuery(admin);
+  const [removeUserFromClub] = useRemoveUserFromClubMutation();
 
   console.log("All club members:", allClubMembers);
 
-  const handleRemove = (user) => {
+  const handleRemove = async (user) => {
     console.log("Remove user:", user);
+    const username = user.username;
+    try {
+      const res = await removeUserFromClub({ admin, username }).unwrap();
+      refetch();
+      toast.success(`${res.message}`, {
+        autoClose: 2000,
+      });
+    } catch (error) {
+      toast.error(`${error.data.message}`, {
+        autoClose: 2000,
+      });
+    }
   };
 
   if (allClubMembersLoading) {

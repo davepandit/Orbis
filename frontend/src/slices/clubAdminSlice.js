@@ -9,7 +9,14 @@ const clubAdminSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    removeUserFromClub: builder.mutation({
+      query: ({admin, username}) => ({
+        url: `${USERS_URL}/${admin}/remove-user/${username}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
-export const { useGetAllClubMembersQuery } = clubAdminSlice;
+export const { useGetAllClubMembersQuery, useRemoveUserFromClubMutation } =
+  clubAdminSlice;

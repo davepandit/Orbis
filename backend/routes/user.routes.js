@@ -13,7 +13,7 @@ import {
   updateSocialLinks,
   updateUserRoles,
   getAllClubMembers,
-  removeUserFromClub
+  removeUserFromClub,
 } from "../controllers/user.controllers.js";
 import {
   clubAdminCheck,
@@ -44,7 +44,12 @@ router.get(
   clubAdminCheck,
   getAllClubMembers
 );
-router.delete("/:admin/remove-user/:username", validateToken, clubAdminCheck, removeUserFromClub)
+router.delete(
+  "/:admin/remove-user/:username",
+  validateToken,
+  clubAdminCheck,
+  removeUserFromClub
+);
 
 // TESTING - The below routes are testing routes
 router.patch("/update-user-roles", validateToken, updateUserRoles);
