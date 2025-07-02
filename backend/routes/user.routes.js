@@ -12,9 +12,12 @@ import {
   updateSkills,
   updateSocialLinks,
   updateUserRoles,
-  getAllUsers
+  getAllClubMembers,
 } from "../controllers/user.controllers.js";
-import { clubAdminCheck, validateToken } from "../middlewares/auth.middlewares.js";
+import {
+  clubAdminCheck,
+  validateToken,
+} from "../middlewares/auth.middlewares.js";
 
 const router = express.Router();
 
@@ -33,8 +36,13 @@ router.put("/update-education-info", validateToken, updateEducationInfo);
 router.put("/update-skills", validateToken, updateSkills);
 router.put("/update-social-links", validateToken, updateSocialLinks);
 
-// club-admin routes 
-router.get("/:admin/get-all-users", validateToken, clubAdminCheck, getAllUsers)
+// club-admin routes
+router.get(
+  "/:admin/get-all-club-members",
+  validateToken,
+  clubAdminCheck,
+  getAllClubMembers
+);
 
 // TESTING - The below routes are testing routes
 router.patch("/update-user-roles", validateToken, updateUserRoles);

@@ -379,7 +379,7 @@ export const updateUserRoles = asyncHandler(async (req, res) => {
 //@description     Get all uses
 //@route           POST /api/users/:admin/get-all-users
 //@access          Private
-export const getAllUsers = asyncHandler(async (req, res) => {
+export const getAllClubMembers = asyncHandler(async (req, res) => {
   let { admin } = req.params;
   const requiredClub = admin.split("-")[0];
 
