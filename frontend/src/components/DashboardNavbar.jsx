@@ -9,6 +9,8 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { Avatar } from "flowbite-react";
 
 // here also we need to get the /:admin part because based on that we need to redirect the user
 import { useParams } from "react-router-dom";
@@ -17,6 +19,7 @@ export default function ResponsiveSidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("Manage Members");
   const { admin } = useParams();
+  const { userBasicInfo } = useSelector((state) => state.auth);
 
   const menuItems = [
     {
@@ -97,11 +100,14 @@ export default function ResponsiveSidebar() {
         <div className="absolute bottom-0 w-full p-4">
           <div className="flex items-center space-x-3 px-4 py-3 rounded-lg">
             <div className="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center">
-              <FaUser size={16} />
+              <Avatar
+                placeholderInitials={userBasicInfo.username.slice(0, 3)}
+                rounded
+              />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium">John Doe</p>
-              <p className="text-xs text-gray-800">john@example.com</p>
+              <p className="text-sm font-medium">{userBasicInfo?.username}</p>
+              <p className="text-xs text-gray-800">{userBasicInfo?.email}</p>
             </div>
           </div>
         </div>

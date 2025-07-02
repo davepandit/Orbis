@@ -21,7 +21,9 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="text-center font-bold text-2xl mb-5">{admin} Dashboard</div>
+      <div className="text-center font-bold text-2xl mb-5">
+        {admin} Dashboard
+      </div>
       <Table users={allClubMembers.finalUsers} onRemove={handleRemove} />
     </>
   );

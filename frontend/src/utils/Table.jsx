@@ -8,8 +8,9 @@ const Table = ({ users, onRemove }) => {
         <thead className="bg-gray-500 text-white">
           <tr>
             <th className="px-6 py-3">Username</th>
+            <th className="px-6 py-3">Email</th>
             <th className="px-6 py-3">First Name</th>
-            <th className="px-6 py-3">Last Name</th>
+            <th className="px-6 py-3">Phone Number</th>
             <th className="px-6 py-3">Branch</th>
             <th className="px-6 py-3">Passout Year</th>
             <th className="px-6 py-3">Action</th>
@@ -21,8 +22,9 @@ const Table = ({ users, onRemove }) => {
               <td className="px-6 py-4 font-medium text-gray-800">
                 {user.username}
               </td>
+              <td className="px-6 py-4">{user.email}</td>
               <td className="px-6 py-4">{user.first_name}</td>
-              <td className="px-6 py-4">{user.last_name}</td>
+              <td className="px-6 py-4">{user.phone_number}</td>
               <td className="px-6 py-4">{user.field_of_study}</td>
               <td className="px-6 py-4">{user.graduation_year}</td>
               <td className="px-6 py-4">

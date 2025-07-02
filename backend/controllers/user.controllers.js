@@ -383,7 +383,7 @@ export const getAllClubMembers = asyncHandler(async (req, res) => {
   let { admin } = req.params;
   const requiredClub = admin.split("-")[0];
 
-  console.log("Club name:", requiredClub);
+  // console.log("Club name:", requiredClub);
 
   // return all the users to who belong to that club to the frontend
 
@@ -406,7 +406,7 @@ export const getAllClubMembers = asyncHandler(async (req, res) => {
   // need to get the username of the user too
   const userInfo = await User.find({
     _id: { $in: userIds },
-  }).select("username");
+  }).select("username email");
 
   // NOTE - In terminals the populated object gets collapsed🐣
   // console.log("user profile:", userProfile);
@@ -424,6 +424,7 @@ export const getAllClubMembers = asyncHandler(async (req, res) => {
   userInfo.forEach((info) => {
     userInfoMap.set(info._id.toString(), {
       username: info.username,
+      email: info.email,
     });
   });
 
@@ -435,7 +436,9 @@ export const getAllClubMembers = asyncHandler(async (req, res) => {
 
     return {
       username: basicInfo.username || null,
+      email: basicInfo.email || null,
       first_name: user.first_name,
+      phone_number: user.phone_number,
       last_name: user.last_name,
       graduation_year: education.graduation_year || null,
       field_of_study: education.field_of_study || null,
@@ -445,5 +448,51 @@ export const getAllClubMembers = asyncHandler(async (req, res) => {
   return res.json({
     finalUsers: finalUsers,
     message: "Users data fetched successfully!!!",
+  });
+});
+
+export const removeUserFromClub = asyncHandler(async (req, res) => {
+  let { admin } = req.params;
+  const requiredClub = admin.split("-")[0];
+  const { username } = req.params;
+
+  // console.log("Required club:", requiredClub);
+  // console.log("Username:", username);
+
+  // find the userid using the username
+  const user = await User.findOne({ username: username }).select("_id");
+  if (!user) {
+    return res.status(404).json({
+      message: "User not found!!!",
+    });
+  }
+  // console.log("user:", user);
+
+  // get the club id using the club name
+  const club = await Club.findOne({ name: requiredClub }).select("_id");
+  if (!club) {
+    return res.status(404).json({
+      message: "Club not found!!!",
+    });
+  }
+  // console.log("club:", club);
+
+  let userProfile = await UserProfile.findOne({ user_id: user._id });
+  if (!userProfile) {
+    return res.status(404).json({
+      message:
+        "User profile info not found, Please fill in user profile details first!!!",
+    });
+  }
+
+  userProfile.clubs = userProfile.clubs.filter(
+    (clubId) => clubId.toString() !== club._id.toString()
+  );
+
+  // save the updated details
+  await userProfile.save();
+
+  return res.json({
+    message: "Removed user from club!!!",
   });
 });
