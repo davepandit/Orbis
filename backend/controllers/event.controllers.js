@@ -14,8 +14,6 @@ export const createEvent = asyncHandler(async (req, res) => {
   let { admin } = req.params;
   const requiredClub = admin.split("-")[0];
 
-  console.log("required club:", requiredClub);
-
   // create a dummy event
   const dummyEvent = new Event({
     created_by: req.user._id,

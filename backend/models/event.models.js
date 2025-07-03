@@ -44,8 +44,8 @@ const eventSchema = new mongoose.Schema(
     },
     event_visibility: {
       type: String,
-      enum: ["internal", "external"],
-      default: "external", // or "internal", depending on your preferred default
+      enum: ["internal", "external", "open to all"],
+      default: "open to all", // or "internal", depending on your preferred default
     },
   },
   { timestamps: true }

@@ -46,7 +46,7 @@ const ManageEvents = () => {
   }
   return (
     <>
-      <div>hey there dave here</div>
+      <div className="text-center font-bold text-2xl">Manage Events</div>
       <div className="relative mb-16">
         <Button
           pill
