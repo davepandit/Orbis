@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const eventSchema = new mongoose.Schema(
   {
+    created_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     name: {
       type: String,
     },

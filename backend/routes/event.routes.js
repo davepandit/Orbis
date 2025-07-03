@@ -7,13 +7,13 @@ import {
 import {
   validateToken,
   eventAdminCheck,
-  superAdminCheck,
+  clubAdminCheck,
 } from "../middlewares/auth.middlewares.js";
 
 const router = express.Router();
 
 router.get("/", getEvents);
-router.post("/create-event", validateToken, createEvent);
+router.post("/:admin/create-event", validateToken, clubAdminCheck, createEvent);
 router.post(
   "/complete-event-details/:eventId",
   validateToken,
