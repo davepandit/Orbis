@@ -1,5 +1,5 @@
 import { apiSlice } from "./apiSlice";
-import { USERS_URL } from "../constants";
+import { CLUBS_URL, EVENTS_URL, USERS_URL } from "../constants";
 
 const clubAdminSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -10,13 +10,22 @@ const clubAdminSlice = apiSlice.injectEndpoints({
       }),
     }),
     removeUserFromClub: builder.mutation({
-      query: ({admin, username}) => ({
+      query: ({ admin, username }) => ({
         url: `${USERS_URL}/${admin}/remove-user/${username}`,
         method: "DELETE",
+      }),
+    }),
+    createEvent: builder.mutation({
+      query: (adminType) => ({
+        url: `${EVENTS_URL}/${adminType}/create-event`,
+        method: "POST",
       }),
     }),
   }),
 });
 
-export const { useGetAllClubMembersQuery, useRemoveUserFromClubMutation } =
-  clubAdminSlice;
+export const {
+  useGetAllClubMembersQuery,
+  useRemoveUserFromClubMutation,
+  useCreateEventMutation,
+} = clubAdminSlice;

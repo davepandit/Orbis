@@ -7,12 +7,12 @@ const EventsTable = ({ events, onRemove }) => {
       <table className="min-w-full divide-y divide-gray-200 text-sm text-left">
         <thead className="bg-gray-500 text-white">
           <tr>
-            <th className="px-6 py-3">Name of event</th>
-            <th className="px-6 py-3">Start date</th>
+            <th className="px-6 py-3">Name of Event</th>
+            <th className="px-6 py-3">Start Date</th>
+            <th className="px-6 py-3">End Date</th>
             <th className="px-6 py-3">Status</th>
             <th className="px-6 py-3">Mode</th>
-            <th className="px-6 py-3">Venue</th>
-            <th className="px-6 py-3">Created at</th>
+            <th className="px-6 py-3">Event Visibility</th>
             <th className="px-6 py-3">Action</th>
           </tr>
         </thead>
@@ -20,13 +20,13 @@ const EventsTable = ({ events, onRemove }) => {
           {events?.map((event, index) => (
             <tr key={index} className="hover:bg-gray-50">
               <td className="px-6 py-4 font-medium text-gray-800">
-                {event.username}
+                {event.name}
               </td>
-              <td className="px-6 py-4">{event.email}</td>
-              <td className="px-6 py-4">{event.first_name}</td>
-              <td className="px-6 py-4">{event.phone_number}</td>
-              <td className="px-6 py-4">{event.field_of_study}</td>
-              <td className="px-6 py-4">{event.graduation_year}</td>
+              <td className="px-6 py-4">{event.event_start}</td>
+              <td className="px-6 py-4">{event.event_end}</td>
+              <td className="px-6 py-4">{event.status}</td>
+              <td className="px-6 py-4">{event.mode}</td>
+              <td className="px-6 py-4">{event.event_visibilty}</td>
               <td className="px-6 py-4">
                 <button
                   onClick={() => onRemove(user)}

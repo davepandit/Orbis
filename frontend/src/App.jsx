@@ -18,7 +18,7 @@ import DashboardLayout from "./pages/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import ApproveRequests from "./pages/ApproveRequests";
 import ManageAdmins from "./pages/ManageAdmins";
-import CreateEvent from "./pages/ManageEvents";
+import ManageEvents from "./pages/ManageEvents";
 import Testing from "./pages/Testing";
 
 // toast import
@@ -50,7 +50,7 @@ function App() {
           />
           <Route
             path="/dashboard/:admin/manage-events"
-            element={<CreateEvent />}
+            element={<ManageEvents />}
           />
         </Route>
 

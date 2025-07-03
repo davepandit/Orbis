@@ -9,7 +9,13 @@ const eventSlice = apiSlice.injectEndpoints({
         url: `${EVENTS_URL}?limit=4&sort=latest`,
       }),
     }),
+    getClubEvents: builder.query({
+      query: (adminType) => ({
+        url: `${EVENTS_URL}/${adminType}/get-club-events`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useGetLatestEventsQuery } = eventSlice;
+export const { useGetLatestEventsQuery, useGetClubEventsQuery } = eventSlice;

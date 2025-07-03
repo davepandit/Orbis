@@ -9,7 +9,7 @@ const eventSchema = new mongoose.Schema(
     name: {
       type: String,
     },
-    type: {
+    mode: {
       type: String,
       enum: ["offline", "online"],
     },
@@ -33,10 +33,19 @@ const eventSchema = new mongoose.Schema(
       enum: ["upcoming", "ended", "ongoing"],
       default: "upcoming",
     },
-    publicationStatus: {
+    publication_status: {
       type: String,
       enum: ["draft", "published"],
       default: "draft",
+    },
+    organised_by: {
+      type: [String],
+      enum: ["wec", "ieee", "acm"],
+    },
+    event_visibility: {
+      type: String,
+      enum: ["internal", "external"],
+      default: "external", // or "internal", depending on your preferred default
     },
   },
   { timestamps: true }

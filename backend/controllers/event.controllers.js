@@ -11,9 +11,15 @@ import EventSponsors from "../models/event_sponsors.models.js";
 //@route           POST /api/events/create-event
 //@access          Private
 export const createEvent = asyncHandler(async (req, res) => {
+  let { admin } = req.params;
+  const requiredClub = admin.split("-")[0];
+
+  console.log("required club:", requiredClub);
+
   // create a dummy event
   const dummyEvent = new Event({
     created_by: req.user._id,
+    organised_by: requiredClub,
   });
 
   await dummyEvent.save();
@@ -107,7 +113,7 @@ export const completeEventDetails = asyncHandler(async (req, res) => {
 });
 
 //@description     Get all events
-//@route           GET /api/event/get-all
+//@route           GET /api/events/get-all
 //@access          Public
 export const getEvents = asyncHandler(async (req, res) => {
   let { limit, sort } = req.query;
@@ -142,4 +148,66 @@ export const getEvents = asyncHandler(async (req, res) => {
   );
 
   return res.status(200).json(enrichedEvents);
+});
+
+//@description     Get all events
+//@route           GET /api/events/get-club-events
+//@access          Private
+export const getClubEvents = asyncHandler(async (req, res) => {
+  let { admin } = req.params;
+  const requiredClub = admin.split("-")[0];
+
+  // create a sort options
+  let sortOptions = {
+    createdAt: -1,
+  };
+
+  // get the events that are organisd by requiredClub
+  const filteredEvents = await Event.find({
+    organised_by: requiredClub,
+  }).sort(sortOptions);
+
+  if (filteredEvents.length == 0) {
+    return res.status(404).json({
+      message: `No events created by ${requiredClub}!!!`,
+    });
+  }
+
+  // now need to get some info from event timeline like the start date and the end date
+  // but in order to do that, need to have the ids of the filtered events
+  const eventIds = filteredEvents.map((event) => event._id);
+
+  // in order to get the filtered events, can use $in operator
+  const eventTimelines = await EventTimeline.find({
+    event_id: { $in: eventIds },
+  }).select("event_id event_start event_end");
+
+  const eventTimelinesMap = new Map();
+  eventTimelines.forEach((eventTimeline) => {
+    eventTimelinesMap.set(eventTimeline.event_id.toString(), {
+      event_start: eventTimeline.event_start,
+      event_end: eventTimeline.event_end,
+    });
+  });
+
+  const finalEvents = filteredEvents.map((event) => {
+    const eventIdStr = event._id.toString();
+
+    const eventTimeline = eventTimelinesMap.get(eventIdStr) || {};
+
+    return {
+      _id: event._id,
+      name: event?.name || "Yet to be updated",
+      mode: event?.mode || "Yet to be updated",
+      status: event?.status || "Yet to be updated",
+      event_visibilty: event?.event_visibility || "Yet to be updated",
+      event_start: eventTimeline?.event_start || "Yet to be updated",
+      event_end: eventTimeline?.event_end || "Yet to be updated",
+    };
+  });
+
+  return res.status(200).json({
+    finalEvents: finalEvents,
+    message: "Events fetched successfully!!!",
+  });
 });

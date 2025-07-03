@@ -19,6 +19,9 @@ const eventScheduleItemsSchema = new mongoose.Schema(
     end_time: {
       type: Date,
     },
+    venue: {
+      type: String,
+    },
   },
   {
     timestamps: true,
