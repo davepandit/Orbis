@@ -1,32 +1,32 @@
 import React from "react";
 import { FaTrashAlt } from "react-icons/fa";
 
-const Table = ({ users, onRemove }) => {
+const EventsTable = ({ events, onRemove }) => {
   return (
     <div className="overflow-x-auto rounded-xl shadow-md border border-gray-200">
       <table className="min-w-full divide-y divide-gray-200 text-sm text-left">
         <thead className="bg-gray-500 text-white">
           <tr>
-            <th className="px-6 py-3">Username</th>
-            <th className="px-6 py-3">Email</th>
-            <th className="px-6 py-3">First Name</th>
-            <th className="px-6 py-3">Phone Number</th>
-            <th className="px-6 py-3">Branch</th>
-            <th className="px-6 py-3">Passout Year</th>
+            <th className="px-6 py-3">Name of event</th>
+            <th className="px-6 py-3">Start date</th>
+            <th className="px-6 py-3">Status</th>
+            <th className="px-6 py-3">Mode</th>
+            <th className="px-6 py-3">Venue</th>
+            <th className="px-6 py-3">Created at</th>
             <th className="px-6 py-3">Action</th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-100">
-          {users?.map((user, index) => (
+          {events?.map((event, index) => (
             <tr key={index} className="hover:bg-gray-50">
               <td className="px-6 py-4 font-medium text-gray-800">
-                {user.username}
+                {event.username}
               </td>
-              <td className="px-6 py-4">{user.email}</td>
-              <td className="px-6 py-4">{user.first_name}</td>
-              <td className="px-6 py-4">{user.phone_number}</td>
-              <td className="px-6 py-4">{user.field_of_study}</td>
-              <td className="px-6 py-4">{user.graduation_year}</td>
+              <td className="px-6 py-4">{event.email}</td>
+              <td className="px-6 py-4">{event.first_name}</td>
+              <td className="px-6 py-4">{event.phone_number}</td>
+              <td className="px-6 py-4">{event.field_of_study}</td>
+              <td className="px-6 py-4">{event.graduation_year}</td>
               <td className="px-6 py-4">
                 <button
                   onClick={() => onRemove(user)}
@@ -38,7 +38,7 @@ const Table = ({ users, onRemove }) => {
               </td>
             </tr>
           ))}
-          {users?.length === 0 && (
+          {events?.length === 0 && (
             <tr>
               <td colSpan="6" className="text-center py-6 text-gray-400">
                 No users found.
@@ -51,4 +51,4 @@ const Table = ({ users, onRemove }) => {
   );
 };
 
-export default Table;
+export default EventsTable;

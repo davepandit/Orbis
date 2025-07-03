@@ -5,7 +5,7 @@ import {
   useRemoveUserFromClubMutation,
 } from "../slices/clubAdminSlice";
 import SpinnerAnimation from "../utils/Spinner";
-import Table from "../utils/Table";
+import MembersTable from "../utils/MembersTable";
 import { toast } from "react-toastify";
 
 const Dashboard = () => {
@@ -44,7 +44,7 @@ const Dashboard = () => {
       <div className="text-center font-bold text-2xl mb-5">
         {admin} Dashboard
       </div>
-      <Table users={allClubMembers.finalUsers} onRemove={handleRemove} />
+      <MembersTable users={allClubMembers.finalUsers} onRemove={handleRemove} />
     </>
   );
 };

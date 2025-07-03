@@ -17,6 +17,8 @@ import LoginRedirect from "./pages/LoginRedirect";
 import DashboardLayout from "./pages/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import ApproveRequests from "./pages/ApproveRequests";
+import ManageAdmins from "./pages/ManageAdmins";
+import CreateEvent from "./pages/ManageEvents";
 import Testing from "./pages/Testing";
 
 // toast import
@@ -39,8 +41,16 @@ function App() {
             element={<Dashboard />}
           />
           <Route
+            path="/dashboard/:admin/manage-admins"
+            element={<ManageAdmins />}
+          />
+          <Route
             path="/dashboard/:admin/approve-requests"
             element={<ApproveRequests />}
+          />
+          <Route
+            path="/dashboard/:admin/manage-events"
+            element={<CreateEvent />}
           />
         </Route>
 

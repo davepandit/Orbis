@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Outlet, Link } from "react-router-dom";
 import {
   FaHome,
@@ -9,6 +10,11 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
+import {
+  MdAdminPanelSettings,
+  MdManageAccounts,
+  MdEventNote,
+} from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar } from "flowbite-react";
 
@@ -17,20 +23,43 @@ import { useParams } from "react-router-dom";
 
 export default function ResponsiveSidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [selectedTab, setSelectedTab] = useState("Manage Members");
+  const [selectedTab, setSelectedTab] = useState("Manage members");
   const { admin } = useParams();
   const { userBasicInfo } = useSelector((state) => state.auth);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname.includes("/manage-users")) {
+      setSelectedTab("Manage members");
+    } else if (location.pathname.includes("/manage-admins")) {
+      setSelectedTab("Manage admins");
+    } else if (location.pathname.includes("/approve-requests")) {
+      setSelectedTab("Approve requests");
+    } else if (location.pathname.includes("/manage-event")) {
+      setSelectedTab("Manage events");
+    }
+  }, [location]);
 
   const menuItems = [
     {
-      icon: FaHome,
-      label: "Manage Members",
+      icon: MdManageAccounts,
+      label: "Manage members",
       path: `/dashboard/${admin}/manage-users`,
+    },
+    {
+      icon: MdAdminPanelSettings,
+      label: "Manage admins",
+      path: `/dashboard/${admin}/manage-admins`,
     },
     {
       icon: FaUser,
       label: "Approve requests",
       path: `/dashboard/${admin}/approve-requests`,
+    },
+    {
+      icon: MdEventNote,
+      label: "Manage events",
+      path: `/dashboard/${admin}/manage-events`,
     },
     { icon: FaChartBar, label: "Analytics", path: "/analytics" },
     { icon: FaEnvelope, label: "Messages", path: "/messages" },
