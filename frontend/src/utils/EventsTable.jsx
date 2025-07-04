@@ -1,7 +1,7 @@
 import React from "react";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaTrashAlt, FaEdit } from "react-icons/fa";
 
-const EventsTable = ({ events, onRemove }) => {
+const EventsTable = ({ events, onRemove, onEdit }) => {
   return (
     <div className="overflow-x-auto rounded-xl shadow-md border border-gray-200">
       <table className="min-w-full divide-y divide-gray-200 text-sm text-left">
@@ -27,13 +27,20 @@ const EventsTable = ({ events, onRemove }) => {
               <td className="px-6 py-4">{event.status}</td>
               <td className="px-6 py-4">{event.mode}</td>
               <td className="px-6 py-4">{event.event_visibilty}</td>
-              <td className="px-6 py-4">
+              <td className="px-6 py-4 space-x-9">
                 <button
-                  onClick={() => onRemove(user)}
+                  onClick={() => onRemove(event)}
                   className="text-red-500 hover:text-red-700 transition hover:cursor-pointer"
                   title="Remove User"
                 >
                   <FaTrashAlt size={16} />
+                </button>
+                <button
+                  onClick={() => onEdit(event)}
+                  className="text-red-500 hover:text-red-700 transition hover:cursor-pointer"
+                  title="Remove User"
+                >
+                  <FaEdit size={16} />
                 </button>
               </td>
             </tr>

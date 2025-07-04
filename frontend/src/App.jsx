@@ -19,10 +19,18 @@ import Dashboard from "./pages/Dashboard";
 import ApproveRequests from "./pages/ApproveRequests";
 import ManageAdmins from "./pages/ManageAdmins";
 import ManageEvents from "./pages/ManageEvents";
+import EditBasicEventInfo from "./pages/EditBasicEventInfo";
+import EditEventLayout from "./pages/EditEventLayout";
+import EditEventDetailedSchedule from "./pages/EditEventDetailedSchedule";
+import EditEventPeople from "./pages/EditEventPeople";
+import EditEventPrizes from "./pages/EditEventPrizes";
+import EditEventTimeline from "./pages/EditEventTimeline";
 import Testing from "./pages/Testing";
 
 // toast import
 import { ToastContainer } from "react-toastify";
+import EditEventSponsors from "./pages/EditEventSponsors";
+import EditEventFaqs from "./pages/EditEventFaqs";
 
 function App() {
   return (
@@ -51,6 +59,38 @@ function App() {
           <Route
             path="/dashboard/:admin/manage-events"
             element={<ManageEvents />}
+          />
+        </Route>
+
+        {/* Edit events  */}
+        <Route element={<EditEventLayout />}>
+          <Route
+            path="/:admin/edit-basic-event-info/:eventId"
+            element={<EditBasicEventInfo />}
+          />
+          <Route
+            path="/:admin/edit-event-timeline/:eventId"
+            element={<EditEventTimeline />}
+          />
+          <Route
+            path="/:admin/edit-event-detailed-schedule/:eventId"
+            element={<EditEventDetailedSchedule />}
+          />
+          <Route
+            path="/:admin/edit-event-people/:eventId"
+            element={<EditEventPeople />}
+          />
+          <Route
+            path="/:admin/edit-event-sponsors/:eventId"
+            element={<EditEventSponsors />}
+          />
+          <Route
+            path="/:admin/edit-event-prizes/:eventId"
+            element={<EditEventPrizes />}
+          />
+          <Route
+            path="/:admin/edit-event-faqs/:eventId"
+            element={<EditEventFaqs />}
           />
         </Route>
 

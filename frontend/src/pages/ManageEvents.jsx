@@ -6,9 +6,11 @@ import { useGetClubEventsQuery } from "../slices/eventSlice";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import SpinnerAnimation from "../utils/Spinner";
+import { useNavigate } from "react-router-dom";
 
 const ManageEvents = () => {
   const { admin } = useParams();
+  const navigate = useNavigate();
 
   const [createEvent, { isLoading }] = useCreateEventMutation();
   const {
@@ -16,8 +18,6 @@ const ManageEvents = () => {
     isLoading: clubEventsLoading,
     refetch,
   } = useGetClubEventsQuery(admin);
-
-  console.log("Club events data:", clubEvents);
 
   const handleCreateEvent = async () => {
     try {
@@ -37,8 +37,14 @@ const ManageEvents = () => {
       });
     }
   };
-  const handleSomething = () => {
-    console.log("Not sure about the functionality!!!");
+  const handleDeleteEvent = (event) => {
+    console.log("User from remove:", event);
+  };
+
+  const handleEdit = (event) => {
+    console.log("User from edit:", event);
+    // navigate to the edit events page
+    navigate(`/${admin}/edit-basic-event-info/${event._id}`);
   };
 
   if (clubEventsLoading) {
@@ -47,7 +53,7 @@ const ManageEvents = () => {
   return (
     <>
       <div className="text-center font-bold text-2xl">Manage Events</div>
-      <div className="relative mb-16">
+      <div className="relative mt-6 mb-20">
         <Button
           pill
           size="sm"
@@ -58,7 +64,11 @@ const ManageEvents = () => {
           Create new event
         </Button>
       </div>
-      <EventsTable events={clubEvents.finalEvents} onRemove={handleSomething} />
+      <EventsTable
+        events={clubEvents?.finalEvents || []}
+        onRemove={handleDeleteEvent}
+        onEdit={handleEdit}
+      />
     </>
   );
 };
