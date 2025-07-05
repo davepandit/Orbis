@@ -254,7 +254,7 @@ export const getEventDetails = asyncHandler(async (req, res) => {
 });
 
 //@description     Edit basic event info events
-//@route           GET /api/events/:admin/edit-basic-event-info/:eventInfo
+//@route           GET /api/events/:admin/edit-basic-event-info/:eventId
 //@access          Private
 export const editBasicEventInfo = asyncHandler(async (req, res) => {
   const { eventId, admin } = req.params;
@@ -284,5 +284,78 @@ export const editBasicEventInfo = asyncHandler(async (req, res) => {
   return res.json({
     event: event,
     message: "Cool this is working!!!",
+  });
+});
+
+//@description     Edit event timeline
+//@route           GET /api/events/:admin/edit-event-timeline/:eventId
+//@access          Private
+export const editEventTimeline = asyncHandler(async (req, res) => {
+  const { eventId } = req.params;
+
+  const {
+    timezone,
+    applicationStart,
+    applicationEnd,
+    rsvpDeadline,
+    eventStart,
+    eventEnd,
+  } = req.body;
+
+  if (!eventId) {
+    return res.status(400).json({ error: "Event ID is required!!!" });
+  }
+
+  const parseDate = (date) => (date ? new Date(date) : null);
+
+  const timelineData = {
+    event_id: eventId,
+    timezone: timezone || "Asia/Kolkata",
+    application_start: parseDate(applicationStart),
+    application_end: parseDate(applicationEnd),
+    rsvp_deadline: parseDate(rsvpDeadline),
+    event_start: parseDate(eventStart),
+    event_end: parseDate(eventEnd),
+  };
+
+  // check if a timeline already exists for this event
+  const existingTimeline = await EventTimeline.findOne({ event_id: eventId });
+
+  let savedTimeline;
+
+  if (existingTimeline) {
+    // update existing timeline
+    existingTimeline.set(timelineData);
+    savedTimeline = await existingTimeline.save();
+  } else {
+    // create new timeline
+    const newTimeline = new EventTimeline(timelineData);
+    savedTimeline = await newTimeline.save();
+  }
+
+  return res.status(200).json({
+    message: "Event timeline saved successfully!!!",
+    timeline: savedTimeline,
+  });
+});
+
+export const getEventTimeline = asyncHandler(async (req, res) => {
+  const { eventId } = req.params;
+
+  if (!eventId) {
+    return res.status(400).json({ error: "Event ID is required" });
+  }
+
+  const timeline = await EventTimeline.findOne({ event_id: eventId });
+
+  if (!timeline) {
+    return res
+      .status(404)
+      .json({ message: "Timeline not found for this event." });
+  }
+
+  return res.status(200).json({
+    message: "Timeline fetched successfully!!!",
+    timeline: timeline,
   });
 });

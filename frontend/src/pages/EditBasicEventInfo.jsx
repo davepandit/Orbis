@@ -268,7 +268,7 @@ const EditBasicEventInfo = () => {
               onClick={handleEditBasicEventInfo}
               className="bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white px-8 py-2 rounded-md font-medium transition-colors"
             >
-              Save And Next
+              Save
             </button>
           </div>
         </form>

@@ -28,6 +28,19 @@ const eventSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    editEventTimeline: builder.mutation({
+      query: ({ data, admin, eventId }) => ({
+        url: `${EVENTS_URL}/${admin}/edit-event-timeline/${eventId}`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    getEventTimeline: builder.query({
+      query: (eventId) => ({
+        url: `${EVENTS_URL}/get-event-timeline/${eventId}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -36,4 +49,6 @@ export const {
   useGetClubEventsQuery,
   useGetSpecificEventDetailsQuery,
   useEditBasicEventInfoMutation,
+  useEditEventTimelineMutation,
+  useGetEventTimelineQuery,
 } = eventSlice;

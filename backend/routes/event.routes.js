@@ -5,7 +5,9 @@ import {
   getEvents,
   getClubEvents,
   getEventDetails,
-  editBasicEventInfo
+  editBasicEventInfo,
+  editEventTimeline,
+  getEventTimeline,
 } from "../controllers/event.controllers.js";
 import {
   validateToken,
@@ -17,7 +19,8 @@ const router = express.Router();
 
 router.get("/", getEvents);
 
-router.get('/get-event-details/:eventId', getEventDetails)
+router.get("/get-event-details/:eventId", getEventDetails);
+router.get("/get-event-timeline/:eventId", getEventTimeline);
 
 // club admin routes
 router.post("/:admin/create-event", validateToken, clubAdminCheck, createEvent);
@@ -33,7 +36,17 @@ router.post(
   eventAdminCheck,
   completeEventDetails
 ); // NOTE - This also needs an event admin middleware
-router.post("/:admin/edit-basic-event-info/:eventId", validateToken, clubAdminCheck, editBasicEventInfo);
-
+router.post(
+  "/:admin/edit-basic-event-info/:eventId",
+  validateToken,
+  clubAdminCheck,
+  editBasicEventInfo
+);
+router.post(
+  "/:admin/edit-event-timeline/:eventId",
+  validateToken,
+  clubAdminCheck,
+  editEventTimeline
+);
 
 export default router;
