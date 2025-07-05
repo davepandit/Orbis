@@ -153,7 +153,7 @@ export const getEvents = asyncHandler(async (req, res) => {
   return res.status(200).json(enrichedEvents);
 });
 
-//@description     Get all events
+//@description     Get club specific events
 //@route           GET /api/events/get-club-events
 //@access          Private
 export const getClubEvents = asyncHandler(async (req, res) => {
@@ -249,6 +249,40 @@ export const getEventDetails = asyncHandler(async (req, res) => {
     status: eventDetails?.status || "",
     organised_by: modifiedOrganisingClubs,
     event_visibility: eventDetails?.event_visibility || "",
+    message: "Cool this is working!!!",
+  });
+});
+
+//@description     Edit basic event info events
+//@route           GET /api/events/:admin/edit-basic-event-info/:eventInfo
+//@access          Private
+export const editBasicEventInfo = asyncHandler(async (req, res) => {
+  const { eventId, admin } = req.params;
+  console.log(req.body);
+
+  // need to do some processing with the organised by thing otherwise its fine
+  const organisingClubsNames = req.body.organised_by.map((club) => club.label);
+
+  const organisingClubsIds = await Club.find({
+    name: { $in: organisingClubsNames },
+  }).select("_id");
+
+  const event = await Event.findOne({ _id: eventId });
+
+  event.name = req.body.name || "";
+  event.mode = req.body.mode || "";
+  event.tagline = req.body.tagline;
+  event.about = req.body.about;
+  event.max_participants = Number(req.body.max_participants) || 100;
+  event.min_team_size = Number(req.body.min_team_size) || 2;
+  event.max_team_size = Number(req.body.max_team_size) || 5;
+  event.event_visibility = req.body.event_visibility;
+  event.organised_by = organisingClubsIds;
+
+  await event.save();
+
+  return res.json({
+    event: event,
     message: "Cool this is working!!!",
   });
 });

@@ -7,11 +7,12 @@ import SpinnerAnimation from "../utils/Spinner";
 import { useGetClubInfoQuery } from "../slices/clubSlice";
 import AsyncSelect from "react-select/async";
 import { useGetSpecificEventDetailsQuery } from "../slices/eventSlice";
+import { useEditBasicEventInfoMutation } from "../slices/eventSlice";
 import _ from "lodash";
 
 const EditBasicEventInfo = () => {
   const dispatch = useDispatch();
-  const { eventId } = useParams();
+  const { eventId, admin } = useParams();
   const { userProfileInfo } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const { data: clubInfo, isLoading: clubInfoLoading } = useGetClubInfoQuery();
@@ -20,6 +21,8 @@ const EditBasicEventInfo = () => {
     isLoading: eventInfoLoading,
     refetch,
   } = useGetSpecificEventDetailsQuery(eventId);
+  const [editBasicEventInfo, { isLoading: editBasicInfoLoading }] =
+    useEditBasicEventInfoMutation();
 
   const [name, setName] = useState("");
   const [mode, setMode] = useState("");
@@ -82,6 +85,31 @@ const EditBasicEventInfo = () => {
   if (eventInfoLoading) {
     return <SpinnerAnimation size="xl" color="failure" />;
   }
+
+  const handleEditBasicEventInfo = async () => {
+    const data = {
+      name: name,
+      mode: mode,
+      tagline: tagline,
+      about: about,
+      max_participants: maxParticipants,
+      min_team_size: minTeamsize,
+      max_team_size: maxTeamsize,
+      organised_by: organisedBy,
+      event_visibility: eventVisibility,
+    };
+    try {
+      const res = await editBasicEventInfo({ data, admin, eventId }).unwrap();
+
+      toast.success(`${res.message}`, {
+        autoClose: 2000,
+      });
+    } catch (error) {
+      toast.error(`${error.data.message}`, {
+        autoClose: 2000,
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -217,7 +245,7 @@ const EditBasicEventInfo = () => {
               {/* Event visibility */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-600 uppercase tracking-wide">
-                  I Identify As
+                  Event visibility
                 </label>
                 <select
                   value={eventVisibility}
@@ -237,7 +265,7 @@ const EditBasicEventInfo = () => {
           <div className="mt-6 flex justify-end">
             <button
               type="button"
-              onClick={() => console.log("this is save and next")}
+              onClick={handleEditBasicEventInfo}
               className="bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white px-8 py-2 rounded-md font-medium transition-colors"
             >
               Save And Next

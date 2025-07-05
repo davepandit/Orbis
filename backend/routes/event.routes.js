@@ -4,7 +4,8 @@ import {
   completeEventDetails,
   getEvents,
   getClubEvents,
-  getEventDetails
+  getEventDetails,
+  editBasicEventInfo
 } from "../controllers/event.controllers.js";
 import {
   validateToken,
@@ -32,6 +33,7 @@ router.post(
   eventAdminCheck,
   completeEventDetails
 ); // NOTE - This also needs an event admin middleware
+router.post("/:admin/edit-basic-event-info/:eventId", validateToken, clubAdminCheck, editBasicEventInfo);
 
 
 export default router;

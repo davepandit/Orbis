@@ -21,6 +21,13 @@ const eventSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    editBasicEventInfo: builder.mutation({
+      query: ({ data, admin, eventId }) => ({
+        url: `${EVENTS_URL}/${admin}/edit-basic-event-info/${eventId}`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -28,4 +35,5 @@ export const {
   useGetLatestEventsQuery,
   useGetClubEventsQuery,
   useGetSpecificEventDetailsQuery,
+  useEditBasicEventInfoMutation,
 } = eventSlice;
