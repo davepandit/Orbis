@@ -33,18 +33,21 @@ const eventSchema = new mongoose.Schema(
       enum: ["upcoming", "ended", "ongoing"],
       default: "upcoming",
     },
+    // TODO - There should be a service in the backend that can toggle the status to ongoing at the date when the event starts and should also be able to mark it as ended once the events has ended
     publication_status: {
       type: String,
       enum: ["draft", "published"],
       default: "draft",
     },
-    organised_by: {
-      type: [String],
-      enum: ["wec", "ieee", "acm"],
-    },
+    organised_by: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Club",
+      },
+    ],
     event_visibility: {
       type: String,
-      enum: ["internal", "external", "open to all"],
+      enum: ["internal", "open to all"],
       default: "open to all", // or "internal", depending on your preferred default
     },
   },

@@ -6,6 +6,7 @@ import EventTimeline from "../models/event_timeline.models.js";
 import EventTheme from "../models/event_theme.models.js";
 import Theme from "../models/theme.models.js";
 import EventSponsors from "../models/event_sponsors.models.js";
+import Club from "../models/club.models.js";
 
 //@description     Create an event
 //@route           POST /api/events/create-event
@@ -14,10 +15,14 @@ export const createEvent = asyncHandler(async (req, res) => {
   let { admin } = req.params;
   const requiredClub = admin.split("-")[0];
 
+  // find the id of the club whose name is required club
+  const clubId = await Club.findOne({ name: requiredClub }).select("_id");
+  console.log("Club Id:", clubId);
+
   // create a dummy event
   const dummyEvent = new Event({
     created_by: req.user._id,
-    organised_by: requiredClub,
+    organised_by: clubId._id,
   });
 
   await dummyEvent.save();
@@ -159,10 +164,12 @@ export const getClubEvents = asyncHandler(async (req, res) => {
   let sortOptions = {
     createdAt: -1,
   };
+  // get the id of the required club
+  const clubId = await Club.findOne({ name: requiredClub }).select("_id");
 
   // get the events that are organisd by requiredClub
   const filteredEvents = await Event.find({
-    organised_by: requiredClub,
+    organised_by: clubId._id,
   }).sort(sortOptions);
 
   if (filteredEvents.length == 0) {
@@ -207,5 +214,41 @@ export const getClubEvents = asyncHandler(async (req, res) => {
   return res.status(200).json({
     finalEvents: finalEvents,
     message: "Events fetched successfully!!!",
+  });
+});
+
+//@description     Get all events
+//@route           GET /api/events/get-event-details/:eventId
+//@access          Public
+export const getEventDetails = asyncHandler(async (req, res) => {
+  const { eventId } = req.params;
+
+  // get the event details specific to this event
+  const eventDetails = await Event.findOne({ _id: eventId });
+
+  // before sending the object need to send do a bit of pre-processing on the eventDetails.organised_by
+  const organisingClubs = await Club.find({
+    _id: { $in: eventDetails.organised_by },
+  }).select("name");
+
+  const modifiedOrganisingClubs = organisingClubs.map((club) => {
+    return {
+      label: club.name,
+      value: club._id,
+    };
+  });
+
+  return res.json({
+    name: eventDetails?.name || "",
+    mode: eventDetails?.mode || "",
+    tagline: eventDetails?.tagline || "",
+    about: eventDetails?.about || "",
+    max_participants: eventDetails?.max_participants || 100,
+    min_team_size: eventDetails?.min_team_size || 2,
+    max_team_size: eventDetails?.max_team_size || 5,
+    status: eventDetails?.status || "",
+    organised_by: modifiedOrganisingClubs,
+    event_visibility: eventDetails?.event_visibility || "",
+    message: "Cool this is working!!!",
   });
 });

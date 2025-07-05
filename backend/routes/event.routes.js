@@ -4,6 +4,7 @@ import {
   completeEventDetails,
   getEvents,
   getClubEvents,
+  getEventDetails
 } from "../controllers/event.controllers.js";
 import {
   validateToken,
@@ -14,6 +15,8 @@ import {
 const router = express.Router();
 
 router.get("/", getEvents);
+
+router.get('/get-event-details/:eventId', getEventDetails)
 
 // club admin routes
 router.post("/:admin/create-event", validateToken, clubAdminCheck, createEvent);
@@ -29,5 +32,6 @@ router.post(
   eventAdminCheck,
   completeEventDetails
 ); // NOTE - This also needs an event admin middleware
+
 
 export default router;

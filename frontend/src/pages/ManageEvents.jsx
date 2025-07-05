@@ -24,6 +24,7 @@ const ManageEvents = () => {
       const res = await createEvent(admin).unwrap();
 
       const { message, ...cleanRes } = res;
+      console.log("Cleaned response:", cleanRes);
       // refetch the club events again so that the data in the table gets updated
       refetch();
 

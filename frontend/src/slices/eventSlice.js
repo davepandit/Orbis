@@ -1,4 +1,4 @@
-import { EVENTS_URL } from "../constants";
+import { CLUBS_URL, EVENTS_URL } from "../constants";
 import { apiSlice } from "./apiSlice";
 
 const eventSlice = apiSlice.injectEndpoints({
@@ -15,7 +15,17 @@ const eventSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getSpecificEventDetails: builder.query({
+      query: (eventId) => ({
+        url: `${EVENTS_URL}/get-event-details/${eventId}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useGetLatestEventsQuery, useGetClubEventsQuery } = eventSlice;
+export const {
+  useGetLatestEventsQuery,
+  useGetClubEventsQuery,
+  useGetSpecificEventDetailsQuery,
+} = eventSlice;
