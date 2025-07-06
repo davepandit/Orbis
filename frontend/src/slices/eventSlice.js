@@ -48,6 +48,12 @@ const eventSlice = apiSlice.injectEndpoints({
         body: days,
       }),
     }),
+    getEventSchedule: builder.query({
+      query: (eventId) => ({
+        url: `${EVENTS_URL}/get-event-schedule/${eventId}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -59,4 +65,5 @@ export const {
   useEditEventTimelineMutation,
   useGetEventTimelineQuery,
   useEditEventScheduleMutation,
+  useGetEventScheduleQuery,
 } = eventSlice;

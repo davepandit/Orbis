@@ -371,6 +371,8 @@ export const editEventSchedule = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Invalid request format!!!" });
   }
 
+  await EventSchedule.deleteMany({ event_id: eventId }); // i realised that i need this later while testing
+
   const scheduleEntries = [];
 
   days.forEach((day) => {
@@ -393,5 +395,44 @@ export const editEventSchedule = asyncHandler(async (req, res) => {
 
   return res.status(201).json({
     message: "Event schedule updated successfully!!!",
+  });
+});
+
+export const getEventSchedule = asyncHandler(async (req, res) => {
+  const { eventId } = req.params;
+
+  if (!eventId) {
+    return res.status(400).json({ error: "Event ID is required!!!" });
+  }
+
+  // all schedules for the event
+  const scheduleItems = await EventSchedule.find({ event_id: eventId });
+
+  // grouping the items by date
+  const groupedByDate = {};
+
+  scheduleItems.forEach((item) => {
+    const dateKey = item.date.toISOString().split("T")[0]; // e.g., '2025-07-06'
+
+    if (!groupedByDate[dateKey]) {
+      groupedByDate[dateKey] = [];
+    }
+
+    groupedByDate[dateKey].push({
+      start_time: item.start_time,
+      end_time: item.end_time,
+      title: item.title,
+      description: item.description,
+    });
+  });
+
+  const response = Object.keys(groupedByDate).map((date) => ({
+    date,
+    items: groupedByDate[date],
+  }));
+
+  return res.status(200).json({
+    schedule: response,
+    message: "Event schedule fetched successfully!!!",
   });
 });

@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { useEditEventScheduleMutation } from "../slices/eventSlice";
 import { toast } from "react-toastify";
+import SpinnerAnimation from "../utils/Spinner";
+import { useGetEventScheduleQuery } from "../slices/eventSlice";
 
 const EditEventDetailedSchedule = () => {
   const { admin, eventId } = useParams();
   const [editEventSchedule, { isLoading }] = useEditEventScheduleMutation();
+  const { data, isLoading: dataLoading } = useGetEventScheduleQuery(eventId);
+  const schedule = data?.schedule ?? [];
 
   const [days, setDays] = useState([
     {
@@ -40,15 +44,23 @@ const EditEventDetailedSchedule = () => {
   };
 
   const handleAddSchedule = (dayIndex) => {
-    const updated = [...days];
-    updated[dayIndex].items.push({
-      start_time: "",
-      end_time: "",
-      title: "",
-      description: "",
-    });
-    setDays(updated);
-  };
+  const updated = days.map((day, i) => {
+    if (i === dayIndex) {
+      return {
+        ...day,
+        items: [...day.items, {
+          start_time: "",
+          end_time: "",
+          title: "",
+          description: "",
+        }],
+      };
+    }
+    return { ...day, items: [...day.items] }; // clone all items safely
+  });
+
+  setDays(updated);
+};
 
   const handleChange = (dayIndex, field, value) => {
     const updated = [...days];
@@ -78,6 +90,18 @@ const EditEventDetailedSchedule = () => {
       });
     }
   };
+
+  useEffect(() => {
+    if (schedule.length > 0) {
+      setDays(schedule);
+    }
+
+    console.log("days:", days);
+  }, [schedule]);
+
+  if (dataLoading) {
+    return <SpinnerAnimation size="xl" color="failure" />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
