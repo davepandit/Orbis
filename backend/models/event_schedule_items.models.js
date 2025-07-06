@@ -7,19 +7,23 @@ const eventScheduleItemsSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Event",
     },
-    title: {
-      type: String,
-    },
-    description: {
-      type: String,
+    date: {
+      type: Date, // only the date part matters (e.g. 2025-07-11)
+      required: true,
     },
     start_time: {
-      type: Date,
+      type: String, // e.g. "08:00 AM"
+      required: true,
     },
     end_time: {
-      type: Date,
+      type: String, // e.g. "10:00 AM"
+      required: true,
     },
-    venue: {
+    title: {
+      type: String,
+      required: true,
+    },
+    description: {
       type: String,
     },
   },
