@@ -107,3 +107,6 @@ app.use(express.urlencoded({ limit: "5mb", extended: true }));
 
 - Event creation flow
 ![Event creation flow](./images/image10.png)
+
+- Small catch in the database(don't get confused, I got😅🐣😂)
+![alt text](./images/image11.png)

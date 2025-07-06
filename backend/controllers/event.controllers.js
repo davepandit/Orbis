@@ -6,6 +6,7 @@ import EventTimeline from "../models/event_timeline.models.js";
 import EventTheme from "../models/event_theme.models.js";
 import Theme from "../models/theme.models.js";
 import EventSponsors from "../models/event_sponsors.models.js";
+import EventSchedule from "../models/event_schedule_items.models.js";
 import Club from "../models/club.models.js";
 
 //@description     Create an event
@@ -357,5 +358,40 @@ export const getEventTimeline = asyncHandler(async (req, res) => {
   return res.status(200).json({
     message: "Timeline fetched successfully!!!",
     timeline: timeline,
+  });
+});
+
+export const editEventSchedule = asyncHandler(async (req, res) => {
+  const { eventId } = req.params;
+  const days = req.body;
+
+  console.log("days:", days);
+
+  if (!eventId || !Array.isArray(days)) {
+    return res.status(400).json({ message: "Invalid request format!!!" });
+  }
+
+  const scheduleEntries = [];
+
+  days.forEach((day) => {
+    const { date, items } = day;
+
+    items.forEach((item) => {
+      scheduleEntries.push({
+        event_id: eventId,
+        date: new Date(date), // ISO date string to Date object
+        start_time: item.start_time,
+        end_time: item.end_time,
+        title: item.title,
+        description: item.description || "",
+      });
+    });
+  });
+
+  // insert the data
+  const inserted = await EventSchedule.insertMany(scheduleEntries);
+
+  return res.status(201).json({
+    message: "Event schedule updated successfully!!!",
   });
 });

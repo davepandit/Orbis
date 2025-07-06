@@ -8,6 +8,7 @@ import {
   editBasicEventInfo,
   editEventTimeline,
   getEventTimeline,
+  editEventSchedule,
 } from "../controllers/event.controllers.js";
 import {
   validateToken,
@@ -47,6 +48,12 @@ router.post(
   validateToken,
   clubAdminCheck,
   editEventTimeline
+);
+router.post(
+  "/:admin/edit-event-schedule/:eventId",
+  validateToken,
+  clubAdminCheck,
+  editEventSchedule
 );
 
 export default router;
