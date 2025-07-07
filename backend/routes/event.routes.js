@@ -13,6 +13,8 @@ import {
   editEventpeople,
   getEventPeople,
   editEventSponsors,
+  editEventPrizes,
+  getEventPrizes,
 } from "../controllers/event.controllers.js";
 import {
   validateToken,
@@ -30,6 +32,7 @@ router.get("/get-event-details/:eventId", getEventDetails);
 router.get("/get-event-timeline/:eventId", getEventTimeline);
 router.get("/get-event-schedule/:eventId", getEventSchedule);
 router.get("/get-event-people/:eventId", getEventPeople);
+router.get("/get-event-prizes/:eventId", getEventPrizes);
 
 // club admin routes
 router.post("/:admin/create-event", validateToken, clubAdminCheck, createEvent);
@@ -76,6 +79,13 @@ router.post(
   clubAdminCheck,
   upload.any(),
   editEventSponsors
+);
+
+router.post(
+  "/:admin/edit-event-prizes/:eventId",
+  validateToken,
+  clubAdminCheck,
+  editEventPrizes
 );
 
 export default router;

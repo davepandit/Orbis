@@ -6,10 +6,6 @@ const prizesSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "Event",
     },
-    track_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Tracks",
-    },
     position: {
       type: String,
       enum: ["first", "second", "third"],
@@ -23,5 +19,5 @@ const prizesSchema = new mongoose.Schema(
   }
 );
 
-const Prizes = mongoose.model("Prizes", prizesSchema);
-export default Prizes;
+const Prize = mongoose.model("Prize", prizesSchema);
+export default Prize;

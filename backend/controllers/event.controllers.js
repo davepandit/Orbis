@@ -10,6 +10,7 @@ import EventSchedule from "../models/event_schedule_items.models.js";
 import Club from "../models/club.models.js";
 import User from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import Prize from "../models/prizes.models.js";
 
 //@description     Create an event
 //@route           POST /api/events/create-event
@@ -516,20 +517,19 @@ export const editEventSponsors = asyncHandler(async (req, res) => {
 
   let sponsorsRaw = req.body.sponsors;
 
-  // Normalize to an array
   if (!Array.isArray(sponsorsRaw)) {
-    sponsorsRaw = [sponsorsRaw]; // convert to array if only one sponsor
+    sponsorsRaw = [sponsorsRaw];
   }
 
-  // Step 1: Extract sponsor metadata from req.body.sponsors (each is a JSON string)
+  // Step 1: extract sponsor metadata from req.body.sponsors (each is a JSON string)
   const sponsorDataArray = sponsorsRaw.map((sponsor) => JSON.parse(sponsor));
 
-  // Step 2: Match files by index (files are in same order)
+  // Step 2: match files by index (files are in same order)
   const files = req.files;
 
   if (sponsorDataArray.length !== files.length) {
     return res.status(400).json({
-      message: "Mismatch between sponsor data and uploaded files.",
+      message: "Mismatch between sponsor data and uploaded files!!!",
     });
   }
 
@@ -539,13 +539,13 @@ export const editEventSponsors = asyncHandler(async (req, res) => {
     const sponsor = sponsorDataArray[i];
     const file = files[i];
 
-    // Step 3: Upload file to Cloudinary
+    // Step 3: upload file to Cloudinary
     const cloudinaryResponse = await uploadOnCloudinary(file.path);
     if (!cloudinaryResponse) {
-      return res.status(500).json({ message: "Image upload failed" });
+      return res.status(500).json({ message: "Image upload failed!!!" });
     }
 
-    // Step 4: Save to DB
+    // Step 4: save to DB
     const newSponsor = await EventSponsors.create({
       event_id: eventId,
       name: sponsor.name,
@@ -558,7 +558,51 @@ export const editEventSponsors = asyncHandler(async (req, res) => {
   }
 
   return res.status(201).json({
-    message: "Sponsors added successfully",
+    message: "Sponsors added successfully!!!",
     sponsors: savedSponsors,
   });
+});
+
+export const editEventPrizes = asyncHandler(async (req, res) => {
+  const { eventId } = req.params;
+  const prizes = req.body;
+
+  console.log("prizes: ", prizes);
+
+  if (!Array.isArray(prizes)) {
+    return res.status(400).json({ message: "Invalid data format!!!" });
+  }
+
+  // delete existing prize data got this after a lot of testing while updating the doc
+  await Prize.deleteMany({ event_id: eventId });
+
+  const createdPrizes = [];
+
+  for (const prize of prizes) {
+    const newPrize = await Prize.create({
+      event_id: eventId,
+      position: prize.position,
+      prize_value: prize.prize_value,
+    });
+    createdPrizes.push(newPrize);
+  }
+
+  res.status(201).json({
+    message: "Prizes saved successfully!!!",
+    data: createdPrizes,
+  });
+});
+
+export const getEventPrizes = asyncHandler(async (req, res) => {
+  const { eventId } = req.params;
+
+  const prizes = await Prize.find({ event_id: eventId }).select(
+    "position prize_value -_id"
+  );
+
+  // sort prizes by position
+  const positionOrder = { first: 1, second: 2, third: 3 };
+  prizes.sort((a, b) => positionOrder[a.position] - positionOrder[b.position]);
+
+  res.status(200).json(prizes);
 });

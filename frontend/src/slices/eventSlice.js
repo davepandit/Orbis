@@ -74,6 +74,19 @@ const eventSlice = apiSlice.injectEndpoints({
         body: formData,
       }),
     }),
+    editEventPrizes: builder.mutation({
+      query: ({ prizes, admin, eventId }) => ({
+        url: `${EVENTS_URL}/${admin}/edit-event-prizes/${eventId}`,
+        method: "POST",
+        body: prizes,
+      }),
+    }),
+    getEventPrizes: builder.query({
+      query: (eventId) => ({
+        url: `${EVENTS_URL}/get-event-prizes/${eventId}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -89,4 +102,6 @@ export const {
   useEditEventPeopleMutation,
   useGetEventPeopleQuery,
   useEditEventSponsorsMutation,
+  useEditEventPrizesMutation,
+  useGetEventPrizesQuery,
 } = eventSlice;
