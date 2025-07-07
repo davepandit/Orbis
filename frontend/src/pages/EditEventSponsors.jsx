@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
+import { useEditEventSponsorsMutation } from "../slices/eventSlice";
+import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import SpinnerAnimation from "../utils/Spinner";
 
 const EditEventSponsors = () => {
+  const { admin, eventId } = useParams();
+  const [editEventSponsors, { isLoading }] = useEditEventSponsorsMutation();
   const [sponsors, setSponsors] = useState([
     {
       name: "",
@@ -43,7 +49,40 @@ const EditEventSponsors = () => {
 
   const handleSave = async () => {
     console.log("sponsors:", sponsors);
+    const formData = new FormData();
+
+    sponsors.forEach((sponsor) => {
+      formData.append(
+        "sponsors",
+        JSON.stringify({
+          name: sponsor.name,
+          tier: sponsor.tier,
+          website_url: sponsor.website_url,
+        })
+      );
+      formData.append("logo_file", sponsor.logo_file);
+    });
+
+    try {
+      const res = await editEventSponsors({
+        formData,
+        admin,
+        eventId,
+      }).unwrap();
+
+      toast.success(`${res.message}`, {
+        autoClose: 2000,
+      });
+    } catch (error) {
+      toast.error(`${error.data.message}`, {
+        autoClose: 2000,
+      });
+    }
   };
+
+  if (isLoading) {
+    return <SpinnerAnimation size="xl" color="failure" />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">

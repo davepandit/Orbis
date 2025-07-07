@@ -12,12 +12,15 @@ import {
   getEventSchedule,
   editEventpeople,
   getEventPeople,
+  editEventSponsors,
 } from "../controllers/event.controllers.js";
 import {
   validateToken,
   eventAdminCheck,
   clubAdminCheck,
 } from "../middlewares/auth.middlewares.js";
+
+import { upload } from "../middlewares/multer.middleware.js";
 
 const router = express.Router();
 
@@ -63,7 +66,16 @@ router.post(
 router.post(
   "/:admin/edit-event-people/:eventId",
   validateToken,
+  clubAdminCheck,
   editEventpeople
+);
+
+router.post(
+  "/:admin/edit-event-sponsors/:eventId",
+  validateToken,
+  clubAdminCheck,
+  upload.any(),
+  editEventSponsors
 );
 
 export default router;

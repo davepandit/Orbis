@@ -67,6 +67,13 @@ const eventSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    editEventSponsors: builder.mutation({
+      query: ({ formData, admin, eventId }) => ({
+        url: `${EVENTS_URL}/${admin}/edit-event-sponsors/${eventId}`,
+        method: "POST",
+        body: formData,
+      }),
+    }),
   }),
 });
 
@@ -81,4 +88,5 @@ export const {
   useGetEventScheduleQuery,
   useEditEventPeopleMutation,
   useGetEventPeopleQuery,
+  useEditEventSponsorsMutation,
 } = eventSlice;

@@ -5,6 +5,7 @@ import express from "express";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import path from 'path'
 
 // middlewares
 import "./middlewares/passport.middlewares.js";
@@ -34,6 +35,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(passport.initialize());
+
+export const __dirname = path.resolve()
 
 // TESTING - This needs to be removed later
 app.get("/", (req, res) => {

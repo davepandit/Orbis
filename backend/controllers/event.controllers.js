@@ -9,6 +9,7 @@ import EventSponsors from "../models/event_sponsors.models.js";
 import EventSchedule from "../models/event_schedule_items.models.js";
 import Club from "../models/club.models.js";
 import User from "../models/user.models.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 //@description     Create an event
 //@route           POST /api/events/create-event
@@ -507,4 +508,57 @@ export const getEventPeople = asyncHandler(async (req, res) => {
   const filteredPeople = populatedPeople.filter(Boolean);
 
   return res.status(200).json({ people: filteredPeople });
+});
+
+export const editEventSponsors = asyncHandler(async (req, res) => {
+  const { eventId } = req.params;
+  console.log("request body:", req.body);
+
+  let sponsorsRaw = req.body.sponsors;
+
+  // Normalize to an array
+  if (!Array.isArray(sponsorsRaw)) {
+    sponsorsRaw = [sponsorsRaw]; // convert to array if only one sponsor
+  }
+
+  // Step 1: Extract sponsor metadata from req.body.sponsors (each is a JSON string)
+  const sponsorDataArray = sponsorsRaw.map((sponsor) => JSON.parse(sponsor));
+
+  // Step 2: Match files by index (files are in same order)
+  const files = req.files;
+
+  if (sponsorDataArray.length !== files.length) {
+    return res.status(400).json({
+      message: "Mismatch between sponsor data and uploaded files.",
+    });
+  }
+
+  const savedSponsors = [];
+
+  for (let i = 0; i < sponsorDataArray.length; i++) {
+    const sponsor = sponsorDataArray[i];
+    const file = files[i];
+
+    // Step 3: Upload file to Cloudinary
+    const cloudinaryResponse = await uploadOnCloudinary(file.path);
+    if (!cloudinaryResponse) {
+      return res.status(500).json({ message: "Image upload failed" });
+    }
+
+    // Step 4: Save to DB
+    const newSponsor = await EventSponsors.create({
+      event_id: eventId,
+      name: sponsor.name,
+      tier: sponsor.tier,
+      website_url: sponsor.website_url,
+      logo_url: cloudinaryResponse.url,
+    });
+
+    savedSponsors.push(newSponsor);
+  }
+
+  return res.status(201).json({
+    message: "Sponsors added successfully",
+    sponsors: savedSponsors,
+  });
 });
