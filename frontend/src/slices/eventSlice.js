@@ -54,6 +54,19 @@ const eventSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    editEventPeople: builder.mutation({
+      query: ({ people, admin, eventId }) => ({
+        url: `${EVENTS_URL}/${admin}/edit-event-people/${eventId}`,
+        method: "POST",
+        body: people,
+      }),
+    }),
+    getEventPeople: builder.query({
+      query: (eventId) => ({
+        url: `${EVENTS_URL}/get-event-people/${eventId}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -66,4 +79,6 @@ export const {
   useGetEventTimelineQuery,
   useEditEventScheduleMutation,
   useGetEventScheduleQuery,
+  useEditEventPeopleMutation,
+  useGetEventPeopleQuery,
 } = eventSlice;

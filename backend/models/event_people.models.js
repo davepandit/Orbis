@@ -15,9 +15,6 @@ const eventPeopleSchema = new mongoose.Schema(
       type: [String], // Array of strings
       eum: ["event-admin", "judge", "speaker"],
     },
-    bio: {
-      type: String,
-    },
   },
   {
     timestamps: true,

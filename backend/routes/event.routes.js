@@ -10,6 +10,8 @@ import {
   getEventTimeline,
   editEventSchedule,
   getEventSchedule,
+  editEventpeople,
+  getEventPeople,
 } from "../controllers/event.controllers.js";
 import {
   validateToken,
@@ -24,6 +26,7 @@ router.get("/", getEvents);
 router.get("/get-event-details/:eventId", getEventDetails);
 router.get("/get-event-timeline/:eventId", getEventTimeline);
 router.get("/get-event-schedule/:eventId", getEventSchedule);
+router.get("/get-event-people/:eventId", getEventPeople);
 
 // club admin routes
 router.post("/:admin/create-event", validateToken, clubAdminCheck, createEvent);
@@ -56,6 +59,11 @@ router.post(
   validateToken,
   clubAdminCheck,
   editEventSchedule
+);
+router.post(
+  "/:admin/edit-event-people/:eventId",
+  validateToken,
+  editEventpeople
 );
 
 export default router;

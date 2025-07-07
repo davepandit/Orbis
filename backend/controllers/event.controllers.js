@@ -8,6 +8,7 @@ import Theme from "../models/theme.models.js";
 import EventSponsors from "../models/event_sponsors.models.js";
 import EventSchedule from "../models/event_schedule_items.models.js";
 import Club from "../models/club.models.js";
+import User from "../models/user.models.js";
 
 //@description     Create an event
 //@route           POST /api/events/create-event
@@ -435,4 +436,75 @@ export const getEventSchedule = asyncHandler(async (req, res) => {
     schedule: response,
     message: "Event schedule fetched successfully!!!",
   });
+});
+
+export const editEventpeople = asyncHandler(async (req, res) => {
+  const { eventId } = req.params;
+  const people = req.body;
+
+  console.log("request body:", people);
+
+  if (!eventId || !Array.isArray(people)) {
+    return res.status(400).json({ message: "Invalid request body!!!" });
+  }
+
+  // delete previous events this will help later when the admin edits the page
+  await EventPeople.deleteMany({ event_id: eventId });
+
+  const eventPeopleToSave = [];
+
+  for (const person of people) {
+    const { username, roles } = person;
+
+    if (!username || !Array.isArray(roles)) {
+      continue;
+    }
+
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      console.log(`User not found: ${username}`);
+      continue; // or return error if strict validation is needed
+    }
+
+    eventPeopleToSave.push({
+      event_id: eventId,
+      user_id: user._id,
+      role: roles,
+    });
+  }
+
+  const savedPeople = await EventPeople.insertMany(eventPeopleToSave);
+
+  return res.status(200).json({
+    message: "Event people updated successfully!!!",
+  });
+});
+
+export const getEventPeople = asyncHandler(async (req, res) => {
+  const { eventId } = req.params;
+
+  if (!eventId) {
+    return res.status(400).json({ message: "Event ID is required!!!" });
+  }
+
+  const people = await EventPeople.find({ event_id: eventId });
+
+  // NOTE - async in map behaves very differently than the normal one
+  const populatedPeople = await Promise.all(
+    people.map(async (person) => {
+      const user = await User.findById(person.user_id);
+      if (!user) return null;
+
+      return {
+        username: user.username,
+        roles: person.role,
+      };
+    })
+  );
+
+  // filter out null people if they are not found
+  const filteredPeople = populatedPeople.filter(Boolean);
+
+  return res.status(200).json({ people: filteredPeople });
 });
