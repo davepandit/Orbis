@@ -231,6 +231,16 @@ export const getEventDetails = asyncHandler(async (req, res) => {
   // get the event details specific to this event
   const eventDetails = await Event.findOne({ _id: eventId });
 
+  const eventTheme = await EventTheme.findOne({ event_id: eventId });
+
+  let found = true;
+
+  if (!eventTheme) {
+    found = false;
+  }
+
+  const theme = await Theme.findById(eventTheme.theme_id);
+
   // before sending the object need to send do a bit of pre-processing on the eventDetails.organised_by
   const organisingClubs = await Club.find({
     _id: { $in: eventDetails.organised_by },
@@ -254,7 +264,9 @@ export const getEventDetails = asyncHandler(async (req, res) => {
     status: eventDetails?.status || "",
     organised_by: modifiedOrganisingClubs,
     event_visibility: eventDetails?.event_visibility || "",
-    message: "Cool this is working!!!",
+    themeName: found == true ? theme.name : "",
+    themeDescription: found == true ? theme.description : "",
+    message: "Event details fetched successfully!!!",
   });
 });
 
@@ -263,6 +275,7 @@ export const getEventDetails = asyncHandler(async (req, res) => {
 //@access          Private
 export const editBasicEventInfo = asyncHandler(async (req, res) => {
   const { eventId, admin } = req.params;
+  const { themeName, themeDescription } = req.body;
   console.log(req.body);
 
   // need to do some processing with the organised by thing otherwise its fine
@@ -273,6 +286,32 @@ export const editBasicEventInfo = asyncHandler(async (req, res) => {
   }).select("_id");
 
   const event = await Event.findOne({ _id: eventId });
+
+  // check if an EventTheme already exists for this event
+  const existingEventTheme = await EventTheme.findOne({ event_id: eventId });
+
+  if (existingEventTheme) {
+    // update the associated theme
+    await Theme.findByIdAndUpdate(
+      existingEventTheme.theme_id,
+      { name: themeName, description: themeDescription },
+      { new: true }
+    );
+  } else {
+    // create a new theme
+    const newTheme = new Theme({
+      name: themeName,
+      description: themeDescription,
+    });
+    const savedTheme = await newTheme.save();
+
+    // create a new EventTheme document
+    const newEventTheme = new EventTheme({
+      event_id: eventId,
+      theme_id: savedTheme._id,
+    });
+    await newEventTheme.save();
+  }
 
   event.name = req.body.name || "";
   event.mode = req.body.mode || "";
@@ -288,7 +327,7 @@ export const editBasicEventInfo = asyncHandler(async (req, res) => {
 
   return res.json({
     event: event,
-    message: "Cool this is working!!!",
+    message: "Event details updated successfully!!!",
   });
 });
 
@@ -467,7 +506,9 @@ export const editEventpeople = asyncHandler(async (req, res) => {
 
     if (!user) {
       console.log(`User not found: ${username}`);
-      continue; // or return error if strict validation is needed
+      return res
+        .status(404)
+        .json({ message: "Username of one of the users not found!!!" }); // or return error if strict validation is needed
     }
 
     eventPeopleToSave.push({

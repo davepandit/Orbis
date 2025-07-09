@@ -33,6 +33,8 @@ const EditBasicEventInfo = () => {
   const [maxTeamsize, setMaxTeamSize] = useState(5);
   const [organisedBy, setOrganisedBy] = useState([]);
   const [eventVisibility, setEventVisibility] = useState("");
+  const [themeName, setThemeName] = useState("");
+  const [themeDescription, setThemeDescription] = useState("");
 
   useEffect(() => {
     if (eventInfo) {
@@ -45,6 +47,8 @@ const EditBasicEventInfo = () => {
       setMaxTeamSize(eventInfo.max_team_size || 5);
       setOrganisedBy(eventInfo.organised_by || []);
       setEventVisibility(eventInfo.event_visibility || "");
+      setThemeName(eventInfo.themeName || "");
+      setThemeDescription(eventInfo.themeDescription || "");
     }
   }, [eventInfo]);
 
@@ -97,6 +101,8 @@ const EditBasicEventInfo = () => {
       max_team_size: maxTeamsize,
       organised_by: organisedBy,
       event_visibility: eventVisibility,
+      themeName: themeName,
+      themeDescription: themeDescription,
     };
     try {
       const res = await editBasicEventInfo({ data, admin, eventId }).unwrap();
@@ -259,8 +265,37 @@ const EditBasicEventInfo = () => {
                   <option value="open to all">Open to all</option>
                 </select>
               </div>
+
+              {/* theme name  */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-600 uppercase tracking-wide">
+                  Theme
+                </label>
+                <textarea
+                  placeholder="Add theme name"
+                  value={themeName}
+                  onChange={(e) => setThemeName(e.target.value)}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 resize-none"
+                />
+              </div>
+
+              {/* theme description  */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-600 uppercase tracking-wide">
+                  Theme Description
+                </label>
+                <textarea
+                  placeholder="Add theme name"
+                  value={themeDescription}
+                  onChange={(e) => setThemeDescription(e.target.value)}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 resize-none"
+                />
+              </div>
             </div>
           </div>
+
           {/* Submit Button */}
           <div className="mt-6 flex justify-end">
             <button
