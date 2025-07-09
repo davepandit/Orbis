@@ -119,6 +119,18 @@ const eventSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getEventPeopleDetailedInfo: builder.query({
+      query: (eventId) => ({
+        url: `${EVENTS_URL}/get-event-people-detailed-info/${eventId}`,
+        method: "GET",
+      }),
+    }),
+    getEventSponsors: builder.query({
+      query: (eventId) => ({
+        url: `${EVENTS_URL}/get-event-sponsors/${eventId}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -141,4 +153,6 @@ export const {
   useDeleteEventMutation,
   useGetFilteredEventsQuery,
   useGetUserEventsQuery,
+  useGetEventPeopleDetailedInfoQuery,
+  useGetEventSponsorsQuery,
 } = eventSlice;

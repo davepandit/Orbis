@@ -21,6 +21,7 @@ import {
   getFilteredEvents,
   getUserEvents,
   getEventPeopleDetailedInfo,
+  getEventSponsors
 } from "../controllers/event.controllers.js";
 import {
   validateToken,
@@ -44,6 +45,7 @@ router.get(
 router.get("/get-event-people/:eventId", getEventPeople);
 router.get("/get-event-prizes/:eventId", getEventPrizes);
 router.get("/get-event-faqs/:eventId", getEventFaqs);
+router.get("/get-event-sponsors/:eventId", getEventSponsors);
 
 // getting the home page events that are upcoming and are marked as published
 router.get("/get-filtered-events", getFilteredEvents);

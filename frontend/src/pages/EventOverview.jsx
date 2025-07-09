@@ -3,12 +3,22 @@ import { Link } from "react-router-dom";
 import { useGetSpecificEventDetailsQuery } from "../slices/eventSlice";
 import { useGetEventTimelineQuery } from "../slices/eventSlice";
 import { useGetEventScheduleQuery } from "../slices/eventSlice";
+import { useGetEventPeopleDetailedInfoQuery } from "../slices/eventSlice";
+import { useGetEventSponsorsQuery } from "../slices/eventSlice";
+import { useGetEventPrizesQuery } from "../slices/eventSlice";
+import { useGetEventFaqsQuery } from "../slices/eventSlice";
+
+import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 
 import { useParams } from "react-router-dom";
 import SpinnerAnimation from "../utils/Spinner";
 
 const EventOverview = () => {
   const { eventId } = useParams();
+  const { data: prizes, isLoading: prizeLoading } =
+    useGetEventPrizesQuery(eventId);
+  const { data: faqs, isLoading: faqsLoading } = useGetEventFaqsQuery(eventId);
+
   const {
     data: event,
     isLoading: eventInfoLoading,
@@ -19,6 +29,13 @@ const EventOverview = () => {
     useGetEventTimelineQuery(eventId);
   const { data: eventSchedule, isLoading: scheduleLoading } =
     useGetEventScheduleQuery(eventId);
+  const {
+    data: eventPeople,
+    isLoading: eventPeopleLoading,
+    error,
+  } = useGetEventPeopleDetailedInfoQuery(eventId);
+  const { data: sponsorsData, isLoading: sponsorsDataLoading } =
+    useGetEventSponsorsQuery(eventId);
 
   if (eventInfoLoading) {
     return <SpinnerAnimation size="xl" color="failure" />;
@@ -31,7 +48,19 @@ const EventOverview = () => {
   if (scheduleLoading) {
     return <SpinnerAnimation size="xl" color="failure" />;
   }
+  if (eventPeopleLoading) {
+    return <SpinnerAnimation size="xl" color="failure" />;
+  }
+  if (faqsLoading) {
+    return <SpinnerAnimation size="xl" color="failure" />;
+  }
 
+  if (sponsorsDataLoading) {
+    return <SpinnerAnimation size="xl" color="failure" />;
+  }
+  if (prizeLoading) {
+    return <SpinnerAnimation size="xl" color="failure" />;
+  }
   return (
     <>
       <div className="text-center mt-3 text-red-500 hover:cursor-pointer font-bold text-2xl mb-11">
@@ -230,7 +259,239 @@ const EventOverview = () => {
       </div>
 
       {/* event people  */}
-      
+      <div className="max-w-5xl mx-auto px-4 py-10">
+        <div className="bg-white rounded-xl p-6 mt-8 shadow border border-gray-200">
+          <h2 className="text-2xl font-bold text-ired mb-6">Event People</h2>
+
+          {/* Event Admins */}
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+              Event Admins
+            </h3>
+            <div className="flex flex-wrap gap-6">
+              {eventPeople.people["event-admin"].map((person, index) => (
+                <div
+                  key={index}
+                  className="border rounded-lg p-4 w-full sm:w-60 shadow-sm bg-gray-50"
+                >
+                  <p className="text-lg font-semibold text-gray-700">
+                    {person.first_name}
+                  </p>
+                  <p className="text-sm text-gray-500 mb-3">{person.bio}</p>
+                  <div className="flex space-x-3 text-ired text-lg">
+                    {person.social_links.github && (
+                      <a
+                        href={person.social_links.github}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <FaGithub />
+                      </a>
+                    )}
+                    {person.social_links.twitter && (
+                      <a
+                        href={person.social_links.twitter}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <FaTwitter />
+                      </a>
+                    )}
+                    {person.social_links.linkedin && (
+                      <a
+                        href={person.social_links.linkedin}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <FaLinkedin />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Judges */}
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Judges</h3>
+            <div className="flex flex-wrap gap-6">
+              {eventPeople.people["judge"].map((person, index) => (
+                <div
+                  key={index}
+                  className="border rounded-lg p-4 w-full sm:w-60 shadow-sm bg-gray-50"
+                >
+                  <p className="text-lg font-semibold text-gray-700">
+                    {person.first_name}
+                  </p>
+                  <p className="text-sm text-gray-500 mb-3">{person.bio}</p>
+                  <div className="flex space-x-3 text-ired text-lg">
+                    {person.social_links.github && (
+                      <a
+                        href={person.social_links.github}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <FaGithub />
+                      </a>
+                    )}
+                    {person.social_links.twitter && (
+                      <a
+                        href={person.social_links.twitter}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <FaTwitter />
+                      </a>
+                    )}
+                    {person.social_links.linkedin && (
+                      <a
+                        href={person.social_links.linkedin}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <FaLinkedin />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Speakers */}
+          <div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+              Speakers
+            </h3>
+            <div className="flex flex-wrap gap-6">
+              {eventPeople.people["speaker"].map((person, index) => (
+                <div
+                  key={index}
+                  className="border rounded-lg p-4 w-full sm:w-60 shadow-sm bg-gray-50"
+                >
+                  <p className="text-lg font-semibold text-gray-700">
+                    {person.first_name}
+                  </p>
+                  <p className="text-sm text-gray-500 mb-3">{person.bio}</p>
+                  <div className="flex space-x-3 text-ired text-lg">
+                    {person.social_links.github && (
+                      <a
+                        href={person.social_links.github}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <FaGithub />
+                      </a>
+                    )}
+                    {person.social_links.twitter && (
+                      <a
+                        href={person.social_links.twitter}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <FaTwitter />
+                      </a>
+                    )}
+                    {person.social_links.linkedin && (
+                      <a
+                        href={person.social_links.linkedin}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <FaLinkedin />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* event sponsors  */}
+      <div className="max-w-5xl mx-auto px-4 py-10">
+        <h2 className="text-2xl font-semibold text-ired pb-2 mb-8 border-b w-full">
+          Our Sponsors
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {sponsorsData?.sponsors?.map((sponsor) => (
+            <a
+              href={`${sponsor.website_url}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              key={sponsor._id}
+              className="flex flex-col items-center bg-white shadow-md rounded-xl p-6 border hover:shadow-lg transition duration-300"
+            >
+              <img
+                src={sponsor.logo_url}
+                alt={sponsor.name}
+                className="h-24 w-auto object-contain mb-4"
+              />
+              <h3 className="text-lg font-medium text-gray-800">
+                {sponsor.name}
+              </h3>
+              <span
+                className={`mt-1 text-sm font-semibold uppercase px-3 py-1 rounded-full ${
+                  sponsor.tier === "gold"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : sponsor.tier === "silver"
+                    ? "bg-gray-100 text-gray-700"
+                    : "bg-orange-100 text-orange-700"
+                }`}
+              >
+                {sponsor.tier}
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* event prizes  */}
+      <div className="max-w-5xl mx-auto px-4 py-10">
+        <h2 className="text-2xl font-semibold text-ired pb-2 mb-6 border-b w-full">
+          Prizes
+        </h2>
+
+        <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
+          {prizes?.map((prize, index) => (
+            <div
+              key={index}
+              className="border border-gray-200 rounded-xl shadow-md p-6 text-center hover:shadow-lg transition"
+            >
+              <h3 className="text-xl font-bold text-ired capitalize">
+                🏆 {prize.position} Prize
+              </h3>
+              <p className="text-gray-700 mt-2 text-lg font-medium">
+                {prize.prize_value}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* event faqs  */}
+      <div className="max-w-5xl mx-auto px-4 py-10">
+        <h2 className="text-2xl font-semibold text-ired pb-2 mb-6 border-b w-full">
+          Frequently Asked Questions
+        </h2>
+
+        <div className="space-y-6">
+          {faqs?.map((faq) => (
+            <div
+              key={faq._id}
+              className="border border-gray-200 rounded-xl shadow-sm p-5 hover:shadow-md transition"
+            >
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                ❓ {faq.question}
+              </h3>
+              <p className="text-gray-700 leading-relaxed">{faq.answer}</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </>
   );
 };

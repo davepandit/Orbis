@@ -788,3 +788,17 @@ export const getEventPeopleDetailedInfo = asyncHandler(async (req, res) => {
     people: categorizedPeople,
   });
 });
+
+export const getEventSponsors = asyncHandler(async (req, res) => {
+  const { eventId } = req.params;
+
+  const sponsors = await EventSponsors.find(
+    { event_id: eventId },
+    "-cover_image_url" // Exclude the cover_image_url field
+  );
+
+  res.status(200).json({
+    message: "Sponsors fetched successfully!",
+    sponsors,
+  });
+});
