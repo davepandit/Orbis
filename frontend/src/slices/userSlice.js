@@ -70,6 +70,20 @@ const userSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    makeAdmin: builder.mutation({
+      query: ({ user, admin }) => ({
+        url: `${USERS_URL}/${admin}/make-admin`,
+        method: "PUT",
+        body: user,
+      }),
+    }),
+    removeAdmin: builder.mutation({
+      query: ({ user, admin }) => ({
+        url: `${USERS_URL}/${admin}/remove-as-admin`,
+        method: "PUT",
+        body: user,
+      }),
+    }),
   }),
 });
 
@@ -84,4 +98,6 @@ export const {
   useUpdateEducationInfoMutation,
   useUpdateSocialLinksMutation,
   useUpdateUserSKillsMutation,
+  useMakeAdminMutation,
+  useRemoveAdminMutation,
 } = userSlice;

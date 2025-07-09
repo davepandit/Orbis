@@ -14,6 +14,8 @@ import {
   updateUserRoles,
   getAllClubMembers,
   removeUserFromClub,
+  makeAdmin,
+  removeasAdmin,
 } from "../controllers/user.controllers.js";
 import {
   clubAdminCheck,
@@ -49,6 +51,15 @@ router.delete(
   validateToken,
   clubAdminCheck,
   removeUserFromClub
+);
+
+// make memeber as admin
+router.put("/:admin/make-admin", validateToken, clubAdminCheck, makeAdmin);
+router.put(
+  "/:admin/remove-as-admin",
+  validateToken,
+  clubAdminCheck,
+  removeasAdmin
 );
 
 // TESTING - The below routes are testing routes

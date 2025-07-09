@@ -1,7 +1,7 @@
 import React from "react";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaTrashAlt, FaCheck, FaTimes } from "react-icons/fa";
 
-const MembersTable = ({ users, onRemove }) => {
+const MembersTable = ({ users, onRemove, onRight, onCross, adminType }) => {
   return (
     <div className="overflow-x-auto rounded-xl shadow-md border border-gray-200">
       <table className="min-w-full divide-y divide-gray-200 text-sm text-left">
@@ -28,13 +28,35 @@ const MembersTable = ({ users, onRemove }) => {
               <td className="px-6 py-4">{user.field_of_study}</td>
               <td className="px-6 py-4">{user.graduation_year}</td>
               <td className="px-6 py-4">
-                <button
-                  onClick={() => onRemove(user)}
-                  className="text-red-500 hover:text-red-700 transition hover:cursor-pointer"
-                  title="Remove User"
-                >
-                  <FaTrashAlt size={16} />
-                </button>
+                <div className="flex items-center gap-5">
+                  {user.role?.includes(adminType) ? (
+                    <button
+                      onClick={() => onCross(user)}
+                      className="text-red-500 hover:text-red-700 transition hover:cursor-pointer"
+                      title="Remove User"
+                    >
+                      <FaTimes
+                        className="text-red-500"
+                        title="remove as admin"
+                      />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => onRight(user)}
+                      className="text-red-500 hover:text-red-700 transition hover:cursor-pointer"
+                      title="Remove User"
+                    >
+                      <FaCheck className="text-green-600" title="make admin" />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => onRemove(user)}
+                    className="text-red-500 hover:text-red-700 transition hover:cursor-pointer"
+                    title="Remove User"
+                  >
+                    <FaTrashAlt size={16} />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

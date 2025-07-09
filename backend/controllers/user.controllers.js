@@ -406,7 +406,7 @@ export const getAllClubMembers = asyncHandler(async (req, res) => {
   // need to get the username of the user too
   const userInfo = await User.find({
     _id: { $in: userIds },
-  }).select("username email");
+  }).select("username email role");
 
   // NOTE - In terminals the populated object gets collapsed🐣
   // console.log("user profile:", userProfile);
@@ -425,6 +425,7 @@ export const getAllClubMembers = asyncHandler(async (req, res) => {
     userInfoMap.set(info._id.toString(), {
       username: info.username,
       email: info.email,
+      role: info.role,
     });
   });
 
@@ -436,6 +437,7 @@ export const getAllClubMembers = asyncHandler(async (req, res) => {
 
     return {
       username: basicInfo.username || null,
+      role: basicInfo.role || [],
       email: basicInfo.email || null,
       first_name: user.first_name,
       phone_number: user.phone_number,
@@ -495,4 +497,45 @@ export const removeUserFromClub = asyncHandler(async (req, res) => {
   return res.json({
     message: "Removed user from club!!!",
   });
+});
+
+export const makeAdmin = asyncHandler(async (req, res) => {
+  console.log(req.body);
+  const { username } = req.body;
+  const { admin } = req.params;
+
+  if (!username || !admin) {
+    return res
+      .status(400)
+      .json({ message: "Username and clubRole are required!!!" });
+  }
+
+  const user = await User.findOne({ username });
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found!!!" });
+  }
+
+  if (!user.role.includes(admin)) {
+    user.role.push(admin);
+    await user.save();
+  }
+
+  res.status(200).json({ message: `${username} is now a ${admin}!!!` });
+});
+
+export const removeasAdmin = asyncHandler(async (req, res) => {
+  const { username } = req.body;
+  const { admin } = req.params;
+
+  const user = await User.findOne({ username });
+  if (!user) {
+    return res.status(404).json({ message: "User not found!!!" });
+  }
+
+  user.role = user.role.filter((role) => role !== admin);
+
+  await user.save();
+
+  res.status(200).json({ message: "Admin role removed successfully!!!" });
 });
