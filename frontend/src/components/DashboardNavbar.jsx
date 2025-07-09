@@ -8,7 +8,9 @@ import {
   FaChartBar,
   FaEnvelope,
   FaBars,
+  FaUsersCog,
   FaTimes,
+  FaUsers
 } from "react-icons/fa";
 import {
   MdAdminPanelSettings,
@@ -42,17 +44,13 @@ export default function ResponsiveSidebar() {
 
   const menuItems = [
     {
-      icon: MdManageAccounts,
+      icon: FaUsersCog,
       label: "Manage members",
       path: `/dashboard/${admin}/manage-users`,
     },
+
     {
-      icon: MdAdminPanelSettings,
-      label: "Manage admins",
-      path: `/dashboard/${admin}/manage-admins`,
-    },
-    {
-      icon: FaUser,
+      icon: FaUsers,
       label: "Approve requests",
       path: `/dashboard/${admin}/approve-requests`,
     },

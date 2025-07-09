@@ -462,7 +462,7 @@ export const removeUserFromClub = asyncHandler(async (req, res) => {
   // console.log("Username:", username);
 
   // find the userid using the username
-  const user = await User.findOne({ username: username }).select("_id");
+  const user = await User.findOne({ username: username }).select("_id role");
   if (!user) {
     return res.status(404).json({
       message: "User not found!!!",
@@ -493,6 +493,13 @@ export const removeUserFromClub = asyncHandler(async (req, res) => {
 
   // save the updated details
   await userProfile.save();
+
+  // also we need to check that whether the user is an admin of the same club or not if yes then we remove that also from the user collection
+  if (user.role.includes(admin)) {
+    user.role = user.role.filter((role) => role !== admin);
+
+    await user.save();
+  }
 
   return res.json({
     message: "Removed user from club!!!",
