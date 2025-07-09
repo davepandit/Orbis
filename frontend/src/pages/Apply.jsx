@@ -1,9 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGetSpecificEventDetailsQuery } from "../slices/eventSlice";
 import { useParams } from "react-router-dom";
 import SpinnerAnimation from "../utils/Spinner";
+import { useCreateTeamMutation } from "../slices/teamSlice";
+import { useGetUserTeamForEventQuery } from "../slices/teamSlice";
+import { toast } from "react-toastify";
 
 const Apply = () => {
   const { eventId } = useParams();
@@ -11,22 +14,43 @@ const Apply = () => {
   const [inviteCode, setInviteCode] = useState("");
   const [createdTeamId, setCreatedTeamId] = useState(null);
   const [creating, setCreating] = useState(false);
+
+  const {
+    data,
+    isLoading: userteamLoading,
+    isSuccess,
+  } = useGetUserTeamForEventQuery(eventId);
   const {
     data: event,
     isLoading: eventInfoLoading,
     refetch,
   } = useGetSpecificEventDetailsQuery(eventId);
 
+  const [createTeam, { isLoading }] = useCreateTeamMutation();
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      setCreatedTeamId(data.team_id);
+      setTeamName(data.name);
+    }
+  }, [data, isSuccess]);
+
   const handleCreate = async () => {
     if (!teamName.trim()) return alert("Team name is required!");
 
     setCreating(true);
     try {
-      const id = await onCreateTeam(teamName); // Call backend via RTK query or API
-      setCreatedTeamId(id);
+      const res = await createTeam({ name: teamName, eventId }).unwrap();
+      setCreatedTeamId(res.team_id);
       setTeamName("");
+      toast.success(`${res.message}`, {
+        autoClose: 2000,
+      });
     } catch (error) {
-      alert("Team creation failed. Make sure the name is unique.");
+      console.log("Error:", error);
+      // toast.error(`${error.data.message}`, {
+      //   autoClose: 2000,
+      // });
     } finally {
       setCreating(false);
     }
@@ -38,6 +62,10 @@ const Apply = () => {
   };
 
   if (eventInfoLoading) {
+    return <SpinnerAnimation size="xl" color="failure" />;
+  }
+
+  if (userteamLoading) {
     return <SpinnerAnimation size="xl" color="failure" />;
   }
 

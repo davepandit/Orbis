@@ -4,6 +4,8 @@ const teamsSchema = new mongoose.Schema(
   {
     name: {
       type: String,
+      required: true,
+      unique: true,
     },
     event_id: {
       type: mongoose.Schema.Types.ObjectId,

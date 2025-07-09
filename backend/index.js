@@ -5,7 +5,7 @@ import express from "express";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import path from 'path'
+import path from "path";
 
 // middlewares
 import "./middlewares/passport.middlewares.js";
@@ -18,6 +18,7 @@ import userRouter from "./routes/user.routes.js";
 import passportRouter from "./routes/passport.routes.js";
 import eventRouter from "./routes/event.routes.js";
 import clubRouter from "./routes/club.routes.js";
+import teamRouter from "./routes/team.routes.js";
 
 connectToDatabase();
 
@@ -36,7 +37,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(passport.initialize());
 
-export const __dirname = path.resolve()
+export const __dirname = path.resolve();
 
 // TESTING - This needs to be removed later
 app.get("/", (req, res) => {
@@ -48,6 +49,7 @@ app.use("/api/users", userRouter);
 app.use("/api/auth", passportRouter); // this specific route is for sign in with google
 app.use("/api/events", eventRouter);
 app.use("/api/club", clubRouter);
+app.use("/api/teams", teamRouter);
 
 // error handling middleware
 // NOTE - This middleware will be hit if anything goes wrong inside the express-async-handler
