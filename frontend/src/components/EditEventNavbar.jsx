@@ -63,7 +63,7 @@ const EditEventNavbar = () => {
     } else if (location.pathname.includes("/edit-event-prizes")) {
       setActiveSecondaryTab("Event prizes");
     } else if (location.pathname.includes("/edit-event-faqs")) {
-      setActiveSecondaryTab("Edit faqs");
+      setActiveSecondaryTab("Event faqs");
     }
   }, [location]);
 

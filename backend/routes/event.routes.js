@@ -15,6 +15,8 @@ import {
   editEventSponsors,
   editEventPrizes,
   getEventPrizes,
+  editEventFaqs,
+  getEventFaqs,
 } from "../controllers/event.controllers.js";
 import {
   validateToken,
@@ -33,6 +35,7 @@ router.get("/get-event-timeline/:eventId", getEventTimeline);
 router.get("/get-event-schedule/:eventId", getEventSchedule);
 router.get("/get-event-people/:eventId", getEventPeople);
 router.get("/get-event-prizes/:eventId", getEventPrizes);
+router.get("/get-event-faqs/:eventId", getEventFaqs);
 
 // club admin routes
 router.post("/:admin/create-event", validateToken, clubAdminCheck, createEvent);
@@ -86,6 +89,13 @@ router.post(
   validateToken,
   clubAdminCheck,
   editEventPrizes
+);
+
+router.post(
+  "/:admin/edit-event-faqs/:eventId",
+  validateToken,
+  clubAdminCheck,
+  editEventFaqs
 );
 
 export default router;

@@ -11,6 +11,7 @@ import Club from "../models/club.models.js";
 import User from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import Prize from "../models/prizes.models.js";
+import Faqs from "../models/event_faqs.models.js";
 
 //@description     Create an event
 //@route           POST /api/events/create-event
@@ -605,4 +606,33 @@ export const getEventPrizes = asyncHandler(async (req, res) => {
   prizes.sort((a, b) => positionOrder[a.position] - positionOrder[b.position]);
 
   res.status(200).json(prizes);
+});
+
+export const editEventFaqs = asyncHandler(async (req, res) => {
+  const { eventId } = req.params;
+  const faqs = req.body;
+
+  if (!Array.isArray(faqs)) {
+    return res.status(400).json({ message: "FAQs should be an array!!!" });
+  }
+
+  // remove the previous docs, did this because this wont create duplicate copies when the user updates the faqs
+  await Faqs.deleteMany({ event_id: eventId });
+
+  const faqsWithEvent = faqs.map((faq) => ({
+    ...faq,
+    event_id: eventId,
+  }));
+
+  await Faqs.insertMany(faqsWithEvent);
+
+  res.status(200).json({ message: "FAQs updated successfully!!!" });
+});
+
+export const getEventFaqs = asyncHandler(async (req, res) => {
+  const { eventId } = req.params;
+
+  const faqs = await Faqs.find({ event_id: eventId }).select("question answer");
+
+  res.status(200).json(faqs);
 });
