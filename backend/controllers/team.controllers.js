@@ -1,6 +1,8 @@
 import TeamMembers from "../models/team_members.models.js";
 import Teams from "../models/teams.models.js";
 import asyncHandler from "express-async-handler";
+import Event from "../models/event.models.js";
+import mongoose from "mongoose";
 
 export const createTeam = asyncHandler(async (req, res) => {
   const { name } = req.body;
@@ -61,4 +63,45 @@ export const getUserTeamForEvent = asyncHandler(async (req, res) => {
     team_id: team._id,
     name: team.name,
   });
+});
+
+export const joinTeam = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const teamId = new mongoose.Types.ObjectId(req.body.team_id);
+
+  const currentCount = await TeamMembers.countDocuments({ team_id: teamId });
+
+  const team = await Teams.findById(teamId);
+  if (!team) {
+    return res.status(404).json({ message: "Team not found" });
+  }
+
+  const event = await Event.findById(team.event_id);
+  if (!event) {
+    return res.status(404).json({ message: "Associated event not found" });
+  }
+
+  if (currentCount >= event.max_participants) {
+    return res.status(400).json({ message: "Team is already full" });
+  }
+
+  const alreadyMember = await TeamMembers.findOne({
+    user_id: userId,
+    team_id: teamId,
+  });
+  if (alreadyMember) {
+    return res
+      .status(400)
+      .json({ message: "You are already a member of this team" });
+  }
+
+  const newMember = new TeamMembers({
+    team_id: teamId,
+    user_id: userId,
+    role: "member",
+  });
+
+  await newMember.save();
+
+  res.status(201).json({ message: "Joined team successfully!" });
 });

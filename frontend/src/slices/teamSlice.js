@@ -13,7 +13,18 @@ const teamSlice = apiSlice.injectEndpoints({
     getUserTeamForEvent: builder.query({
       query: (eventId) => `${TEAMS_URL}/get-user-team/${eventId}`,
     }),
+    joinTeam: builder.mutation({
+      query: (team_id) => ({
+        url: `${TEAMS_URL}/join-team`,
+        method: "POST",
+        body: { team_id },
+      }),
+    }),
   }),
 });
 
-export const { useCreateTeamMutation, useGetUserTeamForEventQuery } = teamSlice;
+export const {
+  useCreateTeamMutation,
+  useGetUserTeamForEventQuery,
+  useJoinTeamMutation,
+} = teamSlice;

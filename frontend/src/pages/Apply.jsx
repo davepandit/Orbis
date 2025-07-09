@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import SpinnerAnimation from "../utils/Spinner";
 import { useCreateTeamMutation } from "../slices/teamSlice";
 import { useGetUserTeamForEventQuery } from "../slices/teamSlice";
+import { useJoinTeamMutation } from "../slices/teamSlice";
 import { toast } from "react-toastify";
 
 const Apply = () => {
@@ -15,6 +16,7 @@ const Apply = () => {
   const [createdTeamId, setCreatedTeamId] = useState(null);
   const [creating, setCreating] = useState(false);
 
+  const [joinTeam, { isLoading: jointeamLoading }] = useJoinTeamMutation();
   const {
     data,
     isLoading: userteamLoading,
@@ -56,9 +58,15 @@ const Apply = () => {
     }
   };
 
-  const handleJoin = () => {
+  const handleJoin = async () => {
     if (!inviteCode.trim()) return alert("Please enter a valid invite code!");
-    onJoinTeam(inviteCode); // Call backend with invite code
+    try {
+      const res = await joinTeam(inviteCode).unwrap();
+      toast.success(res.message);
+    } catch (err) {
+      console.log("Erorr:", err);
+      toast.error(err?.data?.message || "Failed to join team");
+    }
   };
 
   if (eventInfoLoading) {
@@ -66,6 +74,9 @@ const Apply = () => {
   }
 
   if (userteamLoading) {
+    return <SpinnerAnimation size="xl" color="failure" />;
+  }
+  if (jointeamLoading) {
     return <SpinnerAnimation size="xl" color="failure" />;
   }
 
