@@ -27,6 +27,7 @@ import EditEventPrizes from "./pages/EditEventPrizes";
 import EditEventTimeline from "./pages/EditEventTimeline";
 import Events from "./pages/Events";
 import EventOverview from "./pages/EventOverview";
+import Apply from "./pages/Apply";
 import Testing from "./pages/Testing";
 
 // toast import
@@ -44,6 +45,7 @@ function App() {
         <Route path="/login-redirect" element={<LoginRedirect />} />
         <Route path="/all-events" element={<Events />} />
         <Route path="/overview/:eventId" element={<EventOverview />} />
+        <Route path="/apply/:eventId" element={<Apply />} />
         <Route path="/testing" element={<Testing />} />
 
         {/* DashBoard  */}
