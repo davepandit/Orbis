@@ -12,6 +12,7 @@ import User from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import Prize from "../models/prizes.models.js";
 import Faqs from "../models/event_faqs.models.js";
+import UserSocialProfiles from "../models/user_social_profiles.models.js";
 
 //@description     Create an event
 //@route           POST /api/events/create-event
@@ -739,4 +740,51 @@ export const getUserEvents = asyncHandler(async (req, res) => {
   const sortedEvents = [...upcoming, ...ongoing, ...ended];
 
   res.status(200).json({ events: sortedEvents });
+});
+
+export const getEventPeopleDetailedInfo = asyncHandler(async (req, res) => {
+  const { eventId } = req.params;
+
+  // Find all people related to the event
+  const people = await EventPeople.find({ event_id: eventId });
+
+  const categorizedPeople = {
+    "event-admin": [],
+    judge: [],
+    speaker: [],
+  };
+
+  for (const person of people) {
+    const userId = person.user_id;
+
+    // Fetch user profile
+    const profile = await UserProfile.findOne({ user_id: userId });
+    // Fetch user social links
+    const social = await UserSocialProfiles.findOne({ user_id: userId });
+
+    if (!profile) continue; // skip if no profile
+
+    const userInfo = {
+      first_name: profile.first_name || "",
+      bio: profile.bio || "",
+      avatar_url: profile.avatar_url || "",
+      social_links: {
+        github: social?.github_url || "",
+        twitter: social?.twitter_url || "",
+        linkedin: social?.linkedin_url || "",
+      },
+    };
+
+    // Push this user into each role they belong to
+    for (const role of person.role) {
+      if (categorizedPeople[role]) {
+        categorizedPeople[role].push(userInfo);
+      }
+    }
+  }
+
+  res.status(200).json({
+    message: "Event people fetched successfully!",
+    people: categorizedPeople,
+  });
 });

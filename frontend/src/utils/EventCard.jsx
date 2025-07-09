@@ -14,7 +14,9 @@ const EventCard = ({
   return (
     <div className="rounded-xl border border-gray-200 shadow-md p-5 w-full max-w-md bg-white hover:shadow-lg transition-all duration-300">
       {/* Event Name */}
-      <h2 className="text-xl font-semibold text-gray-900 mb-1">{name}</h2>
+      <Link to={`/overview/${applicationLink}`}>
+        <h2 className="text-xl font-semibold text-gray-900 mb-1">{name}</h2>
+      </Link>
 
       {/* Tagline */}
       <p className="text-gray-600 text-sm mb-4">{tagline}</p>
@@ -41,7 +43,7 @@ const EventCard = ({
       {/* Button */}
       {userBasicInfo ? (
         <Link
-          to={applicationLink}
+          to={`/apply/${applicationLink}`}
           className="mt-5 inline-block bg-ired text-white text-sm font-medium py-2 px-4 rounded-md bg-red-500 transition hover:bg-red-600 duration-300"
         >
           Go to application

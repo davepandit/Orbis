@@ -22,7 +22,7 @@ const Events = () => {
               mode={event.mode}
               type={event.event_visibility}
               status={event.status}
-              applicationLink={`/apply/${event._id}`}
+              applicationLink={`${event._id}`}
             />
           ))}
         </div>

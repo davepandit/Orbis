@@ -20,6 +20,7 @@ import {
   deleteEventAndAllData,
   getFilteredEvents,
   getUserEvents,
+  getEventPeopleDetailedInfo,
 } from "../controllers/event.controllers.js";
 import {
   validateToken,
@@ -36,6 +37,10 @@ router.get("/", getEvents);
 router.get("/get-event-details/:eventId", getEventDetails);
 router.get("/get-event-timeline/:eventId", getEventTimeline);
 router.get("/get-event-schedule/:eventId", getEventSchedule);
+router.get(
+  "/get-event-people-detailed-info/:eventId",
+  getEventPeopleDetailedInfo
+);
 router.get("/get-event-people/:eventId", getEventPeople);
 router.get("/get-event-prizes/:eventId", getEventPrizes);
 router.get("/get-event-faqs/:eventId", getEventFaqs);
