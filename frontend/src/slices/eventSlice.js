@@ -100,6 +100,12 @@ const eventSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    deleteEvent: builder.mutation({
+      query: ({ admin, eventId }) => ({
+        url: `${EVENTS_URL}/${admin}/delete-event/${eventId}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
@@ -119,4 +125,5 @@ export const {
   useGetEventPrizesQuery,
   useEditEventFaqsMutation,
   useGetEventFaqsQuery,
+  useDeleteEventMutation,
 } = eventSlice;

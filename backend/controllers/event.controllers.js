@@ -636,3 +636,28 @@ export const getEventFaqs = asyncHandler(async (req, res) => {
 
   res.status(200).json(faqs);
 });
+
+export const deleteEventAndAllData = asyncHandler(async (req, res) => {
+  const { eventId } = req.params;
+
+  // delete the core event
+  const deletedEvent = await Event.findByIdAndDelete(eventId);
+
+  if (!deletedEvent) {
+    return res.status(404).json({ message: "Event not found!!!" });
+  }
+
+  // delete the associated events
+  await Promise.all([
+    EventTimeline.deleteMany({ event_id: eventId }),
+    EventSchedule.deleteMany({ event_id: eventId }),
+    EventPeople.deleteMany({ event_id: eventId }),
+    EventSponsors.deleteMany({ event_id: eventId }),
+    Prize.deleteMany({ event_id: eventId }),
+    Faqs.deleteMany({ event_id: eventId }),
+  ]);
+
+  res
+    .status(200)
+    .json({ message: "Event and all related data deleted successfully!!!" });
+});

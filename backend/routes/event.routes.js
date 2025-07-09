@@ -17,6 +17,7 @@ import {
   getEventPrizes,
   editEventFaqs,
   getEventFaqs,
+  deleteEventAndAllData,
 } from "../controllers/event.controllers.js";
 import {
   validateToken,
@@ -96,6 +97,13 @@ router.post(
   validateToken,
   clubAdminCheck,
   editEventFaqs
+);
+
+router.delete(
+  "/:admin/delete-event/:eventId",
+  validateToken,
+  clubAdminCheck,
+  deleteEventAndAllData
 );
 
 export default router;

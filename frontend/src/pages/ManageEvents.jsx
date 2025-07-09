@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import SpinnerAnimation from "../utils/Spinner";
 import { useNavigate } from "react-router-dom";
+import { useDeleteEventMutation } from "../slices/eventSlice";
 
 const ManageEvents = () => {
   const { admin } = useParams();
@@ -18,6 +19,9 @@ const ManageEvents = () => {
     isLoading: clubEventsLoading,
     refetch,
   } = useGetClubEventsQuery(admin);
+
+  const [deleteEvent, { isLoading: deleteEventLoading }] =
+    useDeleteEventMutation();
 
   const handleCreateEvent = async () => {
     try {
@@ -38,8 +42,21 @@ const ManageEvents = () => {
       });
     }
   };
-  const handleDeleteEvent = (event) => {
-    console.log("User from remove:", event);
+  const handleDeleteEvent = async (event) => {
+    console.log("Event to be removed:", event);
+    const eventId = event._id;
+
+    try {
+      const res = await deleteEvent({ admin, eventId }).unwrap();
+
+      toast.success(`${res.message}`, {
+        autoClose: 2000,
+      });
+    } catch (error) {
+      toast.error(`${error.data.message}`, {
+        autoClose: 2000,
+      });
+    }
   };
 
   const handleEdit = (event) => {
