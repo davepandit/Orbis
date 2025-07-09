@@ -18,6 +18,8 @@ import {
   editEventFaqs,
   getEventFaqs,
   deleteEventAndAllData,
+  getFilteredEvents,
+  getUserEvents,
 } from "../controllers/event.controllers.js";
 import {
   validateToken,
@@ -37,6 +39,12 @@ router.get("/get-event-schedule/:eventId", getEventSchedule);
 router.get("/get-event-people/:eventId", getEventPeople);
 router.get("/get-event-prizes/:eventId", getEventPrizes);
 router.get("/get-event-faqs/:eventId", getEventFaqs);
+
+// getting the home page events that are upcoming and are marked as published
+router.get("/get-filtered-events", getFilteredEvents);
+
+// get all the events for the users to see whether ended, ongoing or upcoming
+router.get("/get-user-events", getUserEvents);
 
 // club admin routes
 router.post("/:admin/create-event", validateToken, clubAdminCheck, createEvent);

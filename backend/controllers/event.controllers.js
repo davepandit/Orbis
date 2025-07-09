@@ -702,3 +702,41 @@ export const deleteEventAndAllData = asyncHandler(async (req, res) => {
     .status(200)
     .json({ message: "Event and all related data deleted successfully!!!" });
 });
+
+export const getFilteredEvents = asyncHandler(async (req, res) => {
+  const { status, publication_status } = req.query;
+
+  const filters = {};
+  if (status) filters.status = status;
+  if (publication_status) filters.publication_status = publication_status;
+
+  const events = await Event.find(filters).select(
+    "name tagline mode status event_visibility publication_status _id"
+  );
+
+  res.status(200).json({
+    success: true,
+    events,
+  });
+});
+
+export const getUserEvents = asyncHandler(async (req, res) => {
+  const events = await Event.find({ publication_status: "published" }).select([
+    "_id",
+    "name",
+    "tagline",
+    "mode",
+    "status",
+    "event_visibility",
+  ]);
+
+  // group events by status
+  const upcoming = events.filter((event) => event.status === "upcoming");
+  const ongoing = events.filter((event) => event.status === "ongoing");
+  const ended = events.filter((event) => event.status === "ended");
+
+  // combine in desired order
+  const sortedEvents = [...upcoming, ...ongoing, ...ended];
+
+  res.status(200).json({ events: sortedEvents });
+});

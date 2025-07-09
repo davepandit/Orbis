@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import Hero from "../components/Hero";
 import LatestEvents from "../components/LatestEvents";
 import TopCategories from "../components/TopCat";
+import { Link } from "react-router-dom";
 
 // hooks from RTK
 
@@ -23,9 +24,12 @@ const Home = () => {
               support, get out of their comfort zones, and pursue their
               passions, together. Membership is free.
             </p>
-            <button className="bg-red-500 text-white font-semibold px-6 py-2 rounded-full hover:bg-red-600 hover:cursor-pointer transition">
+            <Link
+              to="/signup"
+              className="bg-red-500 text-white font-semibold px-6 py-2 rounded-full hover:bg-red-600 hover:cursor-pointer transition"
+            >
               Sign up
-            </button>
+            </Link>
           </div>
 
           {/* Image Section */}

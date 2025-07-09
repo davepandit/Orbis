@@ -106,6 +106,19 @@ const eventSlice = apiSlice.injectEndpoints({
         method: "DELETE",
       }),
     }),
+    getFilteredEvents: builder.query({
+      query: ({ status, publication_status }) => ({
+        url: `${EVENTS_URL}/get-filtered-events`,
+        method: "GET",
+        params: { status, publication_status },
+      }),
+    }),
+    getUserEvents: builder.query({
+      query: () => ({
+        url: `${EVENTS_URL}/get-user-events`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -126,4 +139,6 @@ export const {
   useEditEventFaqsMutation,
   useGetEventFaqsQuery,
   useDeleteEventMutation,
+  useGetFilteredEventsQuery,
+  useGetUserEventsQuery,
 } = eventSlice;
