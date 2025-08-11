@@ -1,3 +1,6 @@
+#### Schema -
+![Orbis-schema](https://github.com/user-attachments/assets/347d5ad0-4b98-444c-adac-6739aaa5d243)
+
 #### Ideation🧠
 
 - How we can make the `skills and proficiency` in the frontend -
