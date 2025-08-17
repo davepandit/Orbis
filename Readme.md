@@ -6,6 +6,10 @@
 - How we can make the `skills and proficiency` in the frontend -
   ![Skills and proficiency handling in the frontend](./images/image1.png)
 
+#### Google Sign in Flow -
+<img width="1856" height="1207" alt="image" src="https://github.com/user-attachments/assets/bedd975d-c011-49ab-ba85-d0d71bbb4684" />
+
+
 #### Frontend🥚
 
 In order to persist state in redux we can use a package called as `redux persist`
