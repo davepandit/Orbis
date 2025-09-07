@@ -21,8 +21,14 @@ import {
   getFilteredEvents,
   getUserEvents,
   getEventPeopleDetailedInfo,
-  getEventSponsors
+  getEventSponsors,
+  markPrizeWinner,
+  getPrizeWinners,
+  removePrizeWinner,
+  getEligibleTeams,
 } from "../controllers/event.controllers.js";
+import { getEventsNeedingStatusUpdate } from "../services/eventStatusService.js";
+import { manualStatusUpdate } from "../services/cronService.js";
 import {
   validateToken,
   eventAdminCheck,
@@ -46,6 +52,7 @@ router.get("/get-event-people/:eventId", getEventPeople);
 router.get("/get-event-prizes/:eventId", getEventPrizes);
 router.get("/get-event-faqs/:eventId", getEventFaqs);
 router.get("/get-event-sponsors/:eventId", getEventSponsors);
+router.get("/get-prize-winners/:eventId", getPrizeWinners);
 
 // getting the home page events that are upcoming and are marked as published
 router.get("/get-filtered-events", getFilteredEvents);
@@ -120,5 +127,29 @@ router.delete(
   clubAdminCheck,
   deleteEventAndAllData
 );
+
+// Prize winner management routes
+router.get(
+  "/:admin/get-eligible-teams/:eventId",
+  validateToken,
+  clubAdminCheck,
+  getEligibleTeams
+);
+router.post(
+  "/:admin/mark-prize-winner/:eventId",
+  validateToken,
+  clubAdminCheck,
+  markPrizeWinner
+);
+router.delete(
+  "/:admin/remove-prize-winner/:eventId/:winnerId",
+  validateToken,
+  clubAdminCheck,
+  removePrizeWinner
+);
+
+// Event status automation routes
+router.get("/status-update", getEventsNeedingStatusUpdate);
+router.post("/manual-status-update", validateToken, manualStatusUpdate);
 
 export default router;

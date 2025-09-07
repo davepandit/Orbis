@@ -7,6 +7,8 @@ import UserEducation from "../models/user_education.models.js";
 import UserSkills from "../models/user_skills.models.js";
 import mongoose from "mongoose";
 import Club from "../models/club.models.js";
+import MembershipRequest from "../models/approve_request.models.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 //@description     Register a user
 //@route           POST /api/users/register
@@ -113,14 +115,18 @@ export const logoutUser = asyncHandler(async (req, res) => {
 //@route           POST /api/users/complete-profile
 //@access          Private
 export const completeUserProfile = asyncHandler(async (req, res) => {
-  // TODO - Avatar URL in the user_profile schema will be coming from cloudinary so we need to write a function that takes the user avatar and uploads the image to cloudinary and saves the url to the database
-
-  // TODO - Skills and proficiency will be sent as a map from the frontend and in the backend later we need to do some sort of parsing may be loop into the map and keep on creating a document for each of the skills and filling the user id as the user who is logged in, because according to the current schema every skill of the user needs to be stored as a separate document
-
-  // TODO - When we make the update user profile then all the form fields should be pre-fetched and filled into the form, so for that we wont be making a call to the backend, rather we need to store all the things in redux state and later fetch them from there itself, so that the user only needs to fill the fields that he wants to update
-
   const { userProfileInfo, userEducationInfo, userSkills, userSocialLinks } =
     req.body;
+
+  let avatarUrl = "";
+
+  // Handle avatar upload if file is provided
+  if (req.file) {
+    const cloudinaryResponse = await uploadOnCloudinary(req.file.path);
+    if (cloudinaryResponse) {
+      avatarUrl = cloudinaryResponse.url;
+    }
+  }
 
   console.log("user social links:", userSocialLinks);
   // creating the user education object
@@ -140,7 +146,14 @@ export const completeUserProfile = asyncHandler(async (req, res) => {
   );
 
   const clubObjectIds = matchedClubs.map((club) => club._id);
-  // creating the user profile object
+
+  // Create membership requests for club approval
+  const membershipRequest = new MembershipRequest({
+    user_id: req.user._id,
+    clubs: clubObjectIds,
+  });
+
+  // creating the user profile object (without clubs initially)
   const userProfile = new UserProfile({
     user_id: req.user._id,
     first_name: userProfileInfo?.first_name || "",
@@ -150,7 +163,8 @@ export const completeUserProfile = asyncHandler(async (req, res) => {
     phone_number: userProfileInfo?.phone_number || "",
     city: userProfileInfo?.city || "",
     state: userProfileInfo?.state || "",
-    clubs: clubObjectIds,
+    avatar_url: avatarUrl,
+    clubs: [], // Start with empty clubs, will be added after approval
   });
 
   // creating the user's social profile object
@@ -174,6 +188,7 @@ export const completeUserProfile = asyncHandler(async (req, res) => {
   await userEducation.save();
   await userProfile.save();
   await userSocialProfiles.save();
+  await membershipRequest.save();
 
   return res.status(200).json({
     message: "User profile updated successfully!!!",
@@ -348,6 +363,33 @@ export const updateSocialLinks = asyncHandler(async (req, res) => {
     twitter_url: updatedUser.twitter_url,
     linkedin_url: updatedUser.linkedin_url,
     message: "User social links updated successfully!!!",
+  });
+});
+
+//@description     Update user avatar
+//@route           POST /api/users/update-avatar
+//@access          Private
+export const updateAvatar = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "No avatar file provided!!!" });
+  }
+
+  // Upload to Cloudinary
+  const cloudinaryResponse = await uploadOnCloudinary(req.file.path);
+  if (!cloudinaryResponse) {
+    return res.status(500).json({ message: "Avatar upload failed!!!" });
+  }
+
+  // Update user profile with new avatar URL
+  const userProfile = await UserProfile.findOne({ user_id: req.user._id });
+  if (userProfile) {
+    userProfile.avatar_url = cloudinaryResponse.url;
+    await userProfile.save();
+  }
+
+  return res.status(200).json({
+    avatar_url: cloudinaryResponse.url,
+    message: "Avatar updated successfully!!!",
   });
 });
 
@@ -545,4 +587,144 @@ export const removeasAdmin = asyncHandler(async (req, res) => {
   await user.save();
 
   res.status(200).json({ message: "Admin role removed successfully!!!" });
+});
+
+//@description     Get pending membership requests for a club
+//@route           GET /api/users/:admin/get-pending-requests
+//@access          Private
+export const getPendingMembershipRequests = asyncHandler(async (req, res) => {
+  const { admin } = req.params;
+  const requiredClub = admin.split("-")[0];
+
+  // Get the club ID
+  const club = await Club.findOne({ name: requiredClub }).select("_id");
+  if (!club) {
+    return res.status(404).json({ message: "Club not found!!!" });
+  }
+
+  // Get all pending membership requests for this club
+  const requests = await MembershipRequest.find({
+    clubs: club._id,
+  }).populate({
+    path: "user_id",
+    select: "username email",
+  });
+
+  // Get user profile information for each request
+  const enrichedRequests = await Promise.all(
+    requests.map(async (request) => {
+      const userProfile = await UserProfile.findOne({
+        user_id: request.user_id._id,
+      }).select("first_name last_name bio");
+
+      return {
+        _id: request._id,
+        user: {
+          _id: request.user_id._id,
+          username: request.user_id.username,
+          email: request.user_id.email,
+          first_name: userProfile?.first_name || "",
+          last_name: userProfile?.last_name || "",
+          bio: userProfile?.bio || "",
+        },
+        requestedAt: request.createdAt,
+      };
+    })
+  );
+
+  return res.status(200).json({
+    requests: enrichedRequests,
+    message: "Pending requests fetched successfully!!!",
+  });
+});
+
+//@description     Approve membership request
+//@route           POST /api/users/:admin/approve-request/:requestId
+//@access          Private
+export const approveMembershipRequest = asyncHandler(async (req, res) => {
+  const { admin, requestId } = req.params;
+  const requiredClub = admin.split("-")[0];
+
+  // Get the club ID
+  const club = await Club.findOne({ name: requiredClub }).select("_id");
+  if (!club) {
+    return res.status(404).json({ message: "Club not found!!!" });
+  }
+
+  // Find the membership request
+  const request = await MembershipRequest.findById(requestId);
+  if (!request) {
+    return res.status(404).json({ message: "Request not found!!!" });
+  }
+
+  // Check if the request is for this club
+  if (!request.clubs.includes(club._id)) {
+    return res.status(400).json({ message: "Request is not for this club!!!" });
+  }
+
+  // Add user to the club in their profile
+  const userProfile = await UserProfile.findOne({ user_id: request.user_id });
+  if (userProfile) {
+    if (!userProfile.clubs.includes(club._id)) {
+      userProfile.clubs.push(club._id);
+      await userProfile.save();
+    }
+  }
+
+  // Remove this club from the request
+  request.clubs = request.clubs.filter(
+    (clubId) => clubId.toString() !== club._id.toString()
+  );
+
+  // If no more clubs in the request, delete it
+  if (request.clubs.length === 0) {
+    await MembershipRequest.findByIdAndDelete(requestId);
+  } else {
+    await request.save();
+  }
+
+  return res.status(200).json({
+    message: "Membership request approved successfully!!!",
+  });
+});
+
+//@description     Reject membership request
+//@route           POST /api/users/:admin/reject-request/:requestId
+//@access          Private
+export const rejectMembershipRequest = asyncHandler(async (req, res) => {
+  const { admin, requestId } = req.params;
+  const requiredClub = admin.split("-")[0];
+
+  // Get the club ID
+  const club = await Club.findOne({ name: requiredClub }).select("_id");
+  if (!club) {
+    return res.status(404).json({ message: "Club not found!!!" });
+  }
+
+  // Find the membership request
+  const request = await MembershipRequest.findById(requestId);
+  if (!request) {
+    return res.status(404).json({ message: "Request not found!!!" });
+  }
+
+  // Check if the request is for this club
+  if (!request.clubs.includes(club._id)) {
+    return res.status(400).json({ message: "Request is not for this club!!!" });
+  }
+
+  // Remove this club from the request
+  request.clubs = request.clubs.filter(
+    (clubId) => clubId.toString() !== club._id.toString()
+  );
+
+  // If no more clubs in the request, delete it
+  if (request.clubs.length === 0) {
+    await MembershipRequest.findByIdAndDelete(requestId);
+  } else {
+    await request.save();
+  }
+
+  return res.status(200).json({
+    message: "Membership request rejected successfully!!!",
+  });
 });

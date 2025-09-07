@@ -42,6 +42,10 @@ const EditEventNavbar = () => {
       link: `/${admin}/edit-event-sponsors/${eventId}`,
     },
     { title: "Event prizes", link: `/${admin}/edit-event-prizes/${eventId}` },
+    {
+      title: "Prize winners",
+      link: `/${admin}/manage-prize-winners/${eventId}`,
+    },
     { title: "Event faqs", link: `/${admin}/edit-event-faqs/${eventId}` },
   ];
 
@@ -62,6 +66,8 @@ const EditEventNavbar = () => {
       setActiveSecondaryTab("Event sponsors");
     } else if (location.pathname.includes("/edit-event-prizes")) {
       setActiveSecondaryTab("Event prizes");
+    } else if (location.pathname.includes("/manage-prize-winners")) {
+      setActiveSecondaryTab("Prize winners");
     } else if (location.pathname.includes("/edit-event-faqs")) {
       setActiveSecondaryTab("Event faqs");
     }
@@ -89,10 +95,10 @@ const EditEventNavbar = () => {
       {/* Secondary Navigation */}
       {showSecondaryTab ? (
         <div className="bg-gray-50 border-t border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-12">
+          <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-20">
+            <div className="flex items-center justify-between h-16">
               {/* Secondary Nav Items */}
-              <div className="flex items-center space-x-1 overflow-x-auto">
+              <div className="flex items-center space-x-2 overflow-x-auto">
                 {secondaryNavItems.map((item) => (
                   <button
                     key={item.title}

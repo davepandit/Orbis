@@ -84,6 +84,31 @@ const userSlice = apiSlice.injectEndpoints({
         body: user,
       }),
     }),
+    getPendingRequests: builder.query({
+      query: (admin) => ({
+        url: `${USERS_URL}/${admin}/get-pending-requests`,
+        method: "GET",
+      }),
+    }),
+    approveRequest: builder.mutation({
+      query: ({ admin, requestId }) => ({
+        url: `${USERS_URL}/${admin}/approve-request/${requestId}`,
+        method: "POST",
+      }),
+    }),
+    rejectRequest: builder.mutation({
+      query: ({ admin, requestId }) => ({
+        url: `${USERS_URL}/${admin}/reject-request/${requestId}`,
+        method: "POST",
+      }),
+    }),
+    updateAvatar: builder.mutation({
+      query: (formData) => ({
+        url: `${USERS_URL}/update-avatar`,
+        method: "POST",
+        body: formData,
+      }),
+    }),
   }),
 });
 
@@ -100,4 +125,8 @@ export const {
   useUpdateUserSKillsMutation,
   useMakeAdminMutation,
   useRemoveAdminMutation,
+  useGetPendingRequestsQuery,
+  useApproveRequestMutation,
+  useRejectRequestMutation,
+  useUpdateAvatarMutation,
 } = userSlice;

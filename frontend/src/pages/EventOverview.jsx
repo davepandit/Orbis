@@ -7,6 +7,7 @@ import { useGetEventPeopleDetailedInfoQuery } from "../slices/eventSlice";
 import { useGetEventSponsorsQuery } from "../slices/eventSlice";
 import { useGetEventPrizesQuery } from "../slices/eventSlice";
 import { useGetEventFaqsQuery } from "../slices/eventSlice";
+import { useGetPrizeWinnersQuery } from "../slices/eventSlice";
 
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 
@@ -18,6 +19,8 @@ const EventOverview = () => {
   const { data: prizes, isLoading: prizeLoading } =
     useGetEventPrizesQuery(eventId);
   const { data: faqs, isLoading: faqsLoading } = useGetEventFaqsQuery(eventId);
+  const { data: prizeWinners, isLoading: winnersLoading } =
+    useGetPrizeWinnersQuery(eventId);
 
   const {
     data: event,
@@ -56,6 +59,9 @@ const EventOverview = () => {
   }
 
   if (sponsorsDataLoading) {
+    return <SpinnerAnimation size="xl" color="failure" />;
+  }
+  if (winnersLoading) {
     return <SpinnerAnimation size="xl" color="failure" />;
   }
   if (prizeLoading) {
@@ -471,6 +477,78 @@ const EventOverview = () => {
           ))}
         </div>
       </div>
+
+      {/* Prize Winners Section */}
+      {prizeWinners?.winners && prizeWinners.winners.length > 0 && (
+        <div className="max-w-5xl mx-auto px-4 py-10">
+          <h2 className="text-2xl font-semibold text-ired pb-2 mb-6 border-b w-full">
+            🏆 Prize Winners
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {prizeWinners.winners.map((winner) => {
+              const getPositionIcon = (position) => {
+                switch (position) {
+                  case "first":
+                    return "🥇";
+                  case "second":
+                    return "🥈";
+                  case "third":
+                    return "🥉";
+                  default:
+                    return "🏆";
+                }
+              };
+
+              const getPositionColor = (position) => {
+                switch (position) {
+                  case "first":
+                    return "bg-gradient-to-r from-yellow-100 to-yellow-200 border-yellow-300";
+                  case "second":
+                    return "bg-gradient-to-r from-gray-100 to-gray-200 border-gray-300";
+                  case "third":
+                    return "bg-gradient-to-r from-orange-100 to-orange-200 border-orange-300";
+                  default:
+                    return "bg-gradient-to-r from-blue-100 to-blue-200 border-blue-300";
+                }
+              };
+
+              return (
+                <div
+                  key={winner._id}
+                  className={`border-2 rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-all duration-300 ${getPositionColor(
+                    winner.position
+                  )}`}
+                >
+                  <div className="text-4xl mb-3">
+                    {getPositionIcon(winner.position)}
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-800 mb-2 capitalize">
+                    {winner.position} Place
+                  </h3>
+                  <h4 className="text-lg font-semibold text-gray-700 mb-2">
+                    {winner.team.name}
+                  </h4>
+                  {winner.team.description && (
+                    <p className="text-gray-600 text-sm mb-3">
+                      {winner.team.description}
+                    </p>
+                  )}
+                  <div className="text-xs text-gray-500 space-y-1">
+                    <p>Awarded by: {winner.awarded_by}</p>
+                    <p>{new Date(winner.awarded_at).toLocaleDateString()}</p>
+                    {winner.notes && (
+                      <p className="italic text-gray-600 mt-2">
+                        "{winner.notes}"
+                      </p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* event faqs  */}
       <div className="max-w-5xl mx-auto px-4 py-10">

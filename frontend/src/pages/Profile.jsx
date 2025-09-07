@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUserProfileCredentials } from "../slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useUpdateProfileInfoMutation } from "../slices/userSlice";
+import {
+  useUpdateProfileInfoMutation,
+  useUpdateAvatarMutation,
+} from "../slices/userSlice";
 import SpinnerAnimation from "../utils/Spinner";
 import _ from "lodash";
 
@@ -16,6 +19,8 @@ export default function RegistrationForm() {
   const { userProfileInfo } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const [updateProfileInfo, { isLoading }] = useUpdateProfileInfoMutation();
+  const [updateAvatar, { isLoading: avatarLoading }] =
+    useUpdateAvatarMutation();
 
   // for storing the selected clubs state
   const [selectedClubs, setSelectedClubs] = useState(
@@ -44,6 +49,7 @@ export default function RegistrationForm() {
   const [state, setState] = useState(
     userProfileInfo ? userProfileInfo.state : ""
   );
+  const [avatar, setAvatar] = useState(userProfileInfo?.avatar_url || "");
 
   const handleCreateUserProfile = async () => {
     const res = {
@@ -99,6 +105,36 @@ export default function RegistrationForm() {
 
   const handleChange = (selectedOptions) => {
     setSelectedClubs(selectedOptions || []);
+  };
+
+  const handleAvatarUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file", { autoClose: 2000 });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File size should be less than 5MB", { autoClose: 2000 });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    try {
+      const res = await updateAvatar(formData).unwrap();
+      setAvatar(res.avatar_url);
+      toast.success(res.message, { autoClose: 2000 });
+    } catch (error) {
+      toast.error(error.data?.message || "Failed to upload avatar", {
+        autoClose: 2000,
+      });
+    }
   };
 
   const handleUpdateUserProfile = async () => {
@@ -284,7 +320,45 @@ export default function RegistrationForm() {
                 </div>
               )}
 
-              {/* File Upload Area */}
+              {/* Avatar Upload Area */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-600 uppercase tracking-wide">
+                  Profile Picture
+                </label>
+                <div className="flex items-center space-x-4">
+                  <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                    {avatar ? (
+                      <img
+                        src={avatar}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-red-500 flex items-center justify-center text-white font-bold text-xl">
+                        {firstName.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarUpload}
+                      className="hidden"
+                      id="avatar-upload"
+                    />
+                    <label
+                      htmlFor="avatar-upload"
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-medium transition-colors cursor-pointer"
+                    >
+                      {avatarLoading ? "Uploading..." : "Upload Avatar"}
+                    </label>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Max size: 5MB, JPG/PNG/GIF
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           {/* Submit Button */}

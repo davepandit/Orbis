@@ -25,6 +25,7 @@ import EditEventDetailedSchedule from "./pages/EditEventDetailedSchedule";
 import EditEventPeople from "./pages/EditEventPeople";
 import EditEventPrizes from "./pages/EditEventPrizes";
 import EditEventTimeline from "./pages/EditEventTimeline";
+import ManagePrizeWinners from "./pages/ManagePrizeWinners";
 import Events from "./pages/Events";
 import EventOverview from "./pages/EventOverview";
 import Apply from "./pages/Apply";
@@ -97,6 +98,10 @@ function App() {
           <Route
             path="/:admin/edit-event-faqs/:eventId"
             element={<EditEventFaqs />}
+          />
+          <Route
+            path="/:admin/manage-prize-winners/:eventId"
+            element={<ManagePrizeWinners />}
           />
         </Route>
 

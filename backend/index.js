@@ -12,6 +12,7 @@ import "./middlewares/passport.middlewares.js";
 
 // functions
 import connectToDatabase from "./config/db.js";
+import { initializeCronJobs } from "./services/cronService.js";
 
 // routes
 import userRouter from "./routes/user.routes.js";
@@ -21,6 +22,9 @@ import clubRouter from "./routes/club.routes.js";
 import teamRouter from "./routes/team.routes.js";
 
 connectToDatabase();
+
+// Initialize cron jobs for automated tasks
+initializeCronJobs();
 
 const app = express();
 

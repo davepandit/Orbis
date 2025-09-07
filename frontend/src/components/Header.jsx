@@ -124,12 +124,12 @@ const Header = () => {
                 </button> */}
 
                 {/* not sure whether i need this message thing or not  */}
-                <Link to="/my-messages">
+                {/* <Link to="/my-messages">
                   <button className="flex flex-col items-center text-gray-600 hover:text-gray-900 hover:cursor-pointer">
                     <FaComments className="h-5 w-5" />
                     <span className="text-xs">Messages</span>
                   </button>
-                </Link>
+                </Link> */}
 
                 {/* not sure whether i need this notifications thing or not  */}
                 {/* <button className="flex flex-col items-center text-gray-600 hover:text-gray-900">
@@ -138,7 +138,7 @@ const Header = () => {
                 </button> */}
 
                 {/* host an event button  */}
-                <Link to={"/create-event"}>
+                {/* <Link to={"/create-event"}>
                   <Button
                     pill
                     size="sm"
@@ -147,7 +147,7 @@ const Header = () => {
                   >
                     + Host
                   </Button>
-                </Link>
+                </Link> */}
 
                 <div className="relative inline-block" ref={dropdownRef}>
                   <div

@@ -14,7 +14,7 @@ const Home = () => {
       <Header />
       <Hero />
       <LatestEvents />
-      <section className="bg-[#f9fafa] rounded-xl max-w-7xl mx-auto">
+      <section className="bg-[#f9fafa] rounded-xl max-w-7xl mx-auto my-11 px-20">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Text Section */}
           <div className="flex-1">

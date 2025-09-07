@@ -131,6 +131,31 @@ const eventSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getPrizeWinners: builder.query({
+      query: (eventId) => ({
+        url: `${EVENTS_URL}/get-prize-winners/${eventId}`,
+        method: "GET",
+      }),
+    }),
+    getEligibleTeams: builder.query({
+      query: ({ admin, eventId }) => ({
+        url: `${EVENTS_URL}/${admin}/get-eligible-teams/${eventId}`,
+        method: "GET",
+      }),
+    }),
+    markPrizeWinner: builder.mutation({
+      query: ({ admin, eventId, team_id, position, notes }) => ({
+        url: `${EVENTS_URL}/${admin}/mark-prize-winner/${eventId}`,
+        method: "POST",
+        body: { team_id, position, notes },
+      }),
+    }),
+    removePrizeWinner: builder.mutation({
+      query: ({ admin, eventId, winnerId }) => ({
+        url: `${EVENTS_URL}/${admin}/remove-prize-winner/${eventId}/${winnerId}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
@@ -155,4 +180,8 @@ export const {
   useGetUserEventsQuery,
   useGetEventPeopleDetailedInfoQuery,
   useGetEventSponsorsQuery,
+  useGetPrizeWinnersQuery,
+  useGetEligibleTeamsQuery,
+  useMarkPrizeWinnerMutation,
+  useRemovePrizeWinnerMutation,
 } = eventSlice;

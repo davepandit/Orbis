@@ -59,9 +59,9 @@ export default function ResponsiveSidebar() {
       label: "Manage events",
       path: `/dashboard/${admin}/manage-events`,
     },
-    { icon: FaChartBar, label: "Analytics", path: "/analytics" },
-    { icon: FaEnvelope, label: "Messages", path: "/messages" },
-    { icon: FaCog, label: "Settings", path: "/settings" },
+    // { icon: FaChartBar, label: "Analytics", path: "/analytics" },
+    // { icon: FaEnvelope, label: "Messages", path: "/messages" },
+    // { icon: FaCog, label: "Settings", path: "/settings" },
   ];
 
   const toggleSidebar = () => {

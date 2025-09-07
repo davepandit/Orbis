@@ -13,6 +13,9 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import Prize from "../models/prizes.models.js";
 import Faqs from "../models/event_faqs.models.js";
 import UserSocialProfiles from "../models/user_social_profiles.models.js";
+import PrizeWinners from "../models/prize_winners.models.js";
+import Teams from "../models/teams.models.js";
+import TeamMembers from "../models/team_members.models.js";
 
 //@description     Create an event
 //@route           POST /api/events/create-event
@@ -28,7 +31,7 @@ export const createEvent = asyncHandler(async (req, res) => {
   // create a dummy event
   const dummyEvent = new Event({
     created_by: req.user._id,
-    organised_by: clubId._id,
+    organised_by: [clubId._id], // organised_by should be an array
   });
 
   await dummyEvent.save();
@@ -800,5 +803,207 @@ export const getEventSponsors = asyncHandler(async (req, res) => {
   res.status(200).json({
     message: "Sponsors fetched successfully!",
     sponsors,
+  });
+});
+
+//@description     Mark team as prize winner
+//@route           POST /api/events/:admin/mark-prize-winner/:eventId
+//@access          Private
+export const markPrizeWinner = asyncHandler(async (req, res) => {
+  const { eventId, admin } = req.params;
+  const { team_id, position, notes } = req.body;
+
+  // Validate required fields
+  if (!team_id || !position) {
+    return res.status(400).json({
+      message: "Team ID and position are required!!!",
+    });
+  }
+
+  // Validate position
+  if (!["first", "second", "third"].includes(position)) {
+    return res.status(400).json({
+      message: "Position must be first, second, or third!!!",
+    });
+  }
+
+  // Check if team exists and belongs to this event
+  const team = await Teams.findById(team_id);
+  if (!team) {
+    return res.status(404).json({ message: "Team not found!!!" });
+  }
+
+  if (team.event_id.toString() !== eventId) {
+    return res.status(400).json({
+      message: "Team does not belong to this event!!!",
+    });
+  }
+
+  // Check if position is already awarded
+  const existingWinner = await PrizeWinners.findOne({
+    event_id: eventId,
+    position: position,
+  });
+
+  if (existingWinner) {
+    return res.status(400).json({
+      message: `${position} position is already awarded to another team!!!`,
+    });
+  }
+
+  // Check if team already won a prize in this event
+  const teamAlreadyWon = await PrizeWinners.findOne({
+    event_id: eventId,
+    team_id: team_id,
+  });
+
+  if (teamAlreadyWon) {
+    return res.status(400).json({
+      message: "This team has already won a prize in this event!!!",
+    });
+  }
+
+  // Create prize winner record
+  const prizeWinner = new PrizeWinners({
+    event_id: eventId,
+    team_id: team_id,
+    position: position,
+    awarded_by: req.user._id,
+    notes: notes || "",
+  });
+
+  await prizeWinner.save();
+
+  // Populate team details for response
+  await prizeWinner.populate({
+    path: "team_id",
+    select: "name description",
+  });
+
+  res.status(201).json({
+    message: `Team marked as ${position} prize winner successfully!!!`,
+    winner: {
+      _id: prizeWinner._id,
+      team: {
+        _id: prizeWinner.team_id._id,
+        name: prizeWinner.team_id.name,
+        description: prizeWinner.team_id.description,
+      },
+      position: prizeWinner.position,
+      awarded_at: prizeWinner.awarded_at,
+      notes: prizeWinner.notes,
+    },
+  });
+});
+
+//@description     Get prize winners for an event
+//@route           GET /api/events/get-prize-winners/:eventId
+//@access          Public
+export const getPrizeWinners = asyncHandler(async (req, res) => {
+  const { eventId } = req.params;
+
+  const winners = await PrizeWinners.find({ event_id: eventId })
+    .populate({
+      path: "team_id",
+      select: "name description",
+    })
+    .populate({
+      path: "awarded_by",
+      select: "username",
+    })
+    .sort({ position: 1 }); // Sort by position (first, second, third)
+
+  // Transform the data for better frontend consumption
+  const transformedWinners = winners.map((winner) => ({
+    _id: winner._id,
+    team: {
+      _id: winner.team_id._id,
+      name: winner.team_id.name,
+      description: winner.team_id.description,
+    },
+    position: winner.position,
+    awarded_by: winner.awarded_by.username,
+    awarded_at: winner.awarded_at,
+    notes: winner.notes,
+  }));
+
+  res.status(200).json({
+    message: "Prize winners fetched successfully!!!",
+    winners: transformedWinners,
+  });
+});
+
+//@description     Remove prize winner
+//@route           DELETE /api/events/:admin/remove-prize-winner/:eventId/:winnerId
+//@access          Private
+export const removePrizeWinner = asyncHandler(async (req, res) => {
+  const { eventId, admin, winnerId } = req.params;
+
+  const winner = await PrizeWinners.findById(winnerId);
+  if (!winner) {
+    return res.status(404).json({ message: "Prize winner not found!!!" });
+  }
+
+  if (winner.event_id.toString() !== eventId) {
+    return res.status(400).json({
+      message: "Prize winner does not belong to this event!!!",
+    });
+  }
+
+  await PrizeWinners.findByIdAndDelete(winnerId);
+
+  res.status(200).json({
+    message: "Prize winner removed successfully!!!",
+  });
+});
+
+//@description     Get teams eligible for prizes (teams that participated in the event)
+//@route           GET /api/events/:admin/get-eligible-teams/:eventId
+//@access          Private
+export const getEligibleTeams = asyncHandler(async (req, res) => {
+  const { eventId, admin } = req.params;
+
+  // Get all teams for this event
+  const teams = await Teams.find({ event_id: eventId })
+    .select("name description createdAt")
+    .sort({ createdAt: -1 });
+
+  // Get teams that have already won prizes
+  const winningTeams = await PrizeWinners.find({ event_id: eventId }).select(
+    "team_id position"
+  );
+
+  const winningTeamIds = winningTeams.map((winner) =>
+    winner.team_id.toString()
+  );
+
+  // Filter out teams that have already won prizes
+  const eligibleTeams = teams.filter(
+    (team) => !winningTeamIds.includes(team._id.toString())
+  );
+
+  // Get member count for each eligible team
+  const teamsWithMemberCount = await Promise.all(
+    eligibleTeams.map(async (team) => {
+      const memberCount = await TeamMembers.countDocuments({
+        team_id: team._id,
+      });
+      return {
+        _id: team._id,
+        name: team.name,
+        description: team.description,
+        member_count: memberCount,
+        created_at: team.createdAt,
+      };
+    })
+  );
+
+  res.status(200).json({
+    message: "Eligible teams fetched successfully!!!",
+    teams: teamsWithMemberCount,
+    alreadyWon: winningTeams.map((winner) => ({
+      team_id: winner.team_id,
+      position: winner.position,
+    })),
   });
 });
