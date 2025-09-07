@@ -14,7 +14,7 @@ const Hero = () => {
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed mb-8 max-w-2xl">
               Whatever your interest, from hiking and reading to networking and
               skill sharing, there are thousands of people who share it on
-              Meetup. Events are happening every day—sign up to join the fun.
+              Orbis. Events are happening every day—sign up to join the fun.
             </p>
 
             <Button

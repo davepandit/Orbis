@@ -18,9 +18,9 @@ const Home = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Text Section */}
           <div className="flex-1">
-            <h2 className="text-2xl md:text-3xl font-bold mb-3">Join Meetup</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-3">Join Orbis</h2>
             <p className="text-gray-700 mb-6 max-w-xl">
-              People use Meetup to meet new people, learn new things, find
+              People use Orbis to meet new people, learn new things, find
               support, get out of their comfort zones, and pursue their
               passions, together. Membership is free.
             </p>
