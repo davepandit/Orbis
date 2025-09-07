@@ -1,128 +1,198 @@
-#### Schema -
-![Orbis-schema](https://github.com/user-attachments/assets/347d5ad0-4b98-444c-adac-6739aaa5d243)
+## Orbis — Event Management & Participation Platform
 
-#### Ideation🧠
+Orbis is a full‑stack platform for organizing, publishing, and participating in events (e.g., hackathons). It supports end‑to‑end flows for participants and organizers, including authentication (email/password and Google OAuth), event creation and editing, team formation, approvals, and automated event status updates via cron.
 
-- How we can make the `skills and proficiency` in the frontend -
-  ![Skills and proficiency handling in the frontend](./images/image1.png)
+### Key Capabilities
 
-#### Google Sign in Flow -
-<img width="1856" height="1207" alt="image" src="https://github.com/user-attachments/assets/bedd975d-c011-49ab-ba85-d0d71bbb4684" />
+- Authentication: Email/password and Google OAuth with secure HTTP‑only cookies.
+- User Profiles: Basic + extended profile (education, skills, social links, avatar).
+- Events: Create, edit, manage timeline/schedule/people/sponsors/prizes/FAQs; publish/draft.
+- Teams: Create teams, join via invite code, enforce min/max team size and deadlines.
+- Clubs & Admins: Club membership requests, approvals, and admin management.
+- Results: Mark and list prize winners per event.
+- Automation: Node‑cron updates event status between upcoming → ongoing → ended.
 
+## Architecture Overview
 
-#### Frontend🥚
+- **Frontend (`frontend/`)**: React + Vite, React Router, Redux Toolkit + RTK Query, Flowbite for UI.
 
-In order to persist state in redux we can use a package called as `redux persist`
+  - State slices in `src/slices/` handle auth, user, events, teams, and admin actions.
+  - Pages in `src/pages/` implement user/admin flows and dashboards.
 
-- When calling register with google from google i was getting this error
-  ![Register width google CORS error](./images/image7.png)
+- **Backend (`backend/`)**: Node.js + Express + Mongoose (MongoDB), JWT, Passport Google OAuth, Multer, Cloudinary, node-cron.
 
-#### Fix to the above problem -
+  - Entry: `backend/index.js` initializes DB, cron jobs, CORS, cookie parser, Passport, and mounts routers.
+  - Routes: `routes/*.routes.js` → Controllers in `controllers/*.controllers.js` → Models in `models/*.models.js`.
+  - Services: `services/cronService.js` and `services/eventStatusService.js` for automation.
+  - Middlewares: Auth (`middlewares/auth.middlewares.js`), Passport (`middlewares/passport.middlewares.js`), Multer for uploads.
 
-- Understanding the problem
-  The error message "Access to fetch at 'https://accounts.google.com/o/oauth2/v2/auth...' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource" indicates that your web application running on http://localhost:5173 is trying to make a request directly to Google's OAuth 2.0 authorization endpoint at https://accounts.google.com.
+- **Database**: MongoDB via Mongoose schemas for users, clubs, events, teams, timelines, schedules, sponsors, prizes, winners, etc.
 
-- This is a Cross-Origin Resource Sharing (CORS) error. Google's OAuth 2.0 authorization endpoint does not support direct AJAX/Fetch requests from a different origin due to security reasons. The browser is blocking the request because the response from Google's server does not include the necessary Access-Control-Allow-Origin header that would permit your origin (http://localhost:5173) to access the resource.
+- **Storage**: Cloudinary for images (`utils/cloudinary.js`).
 
-- Suggested fix
-  Instead of directly fetching or using AJAX/Fetch to call Google's OAuth 2.0 authorization endpoint, you need to initiate the authorization flow by redirecting the user's browser to the Google authorization URL. This is the standard and recommended approach for client-side OAuth 2.0 flows.
+## Technologies Used
 
-This can be achieved this by creating a link or a button that, when clicked, sets the window.location.href to the Google authorization URL.
+- Frontend: React, Vite, React Router, Redux Toolkit, RTK Query, Flowbite, Tailwind CSS.
+- Backend: Express, Mongoose, JWT, cookie‑parser, passport + passport‑google‑oauth20, multer, node‑cron, express‑async‑handler, dotenv, CORS.
+- Database: MongoDB.
+- Media: Cloudinary.
 
-Here's an example using JavaScript:
+## Application Flow — Participant (User)
 
-```js
-function handleGoogleSignIn() {
-  const authUrl =
-    "https://accounts.google.com/o/oauth2/v2/auth?" +
-    "response_type=code&" +
-    "redirect_uri=" +
-    encodeURIComponent("http://localhost:5000/api/auth/google?intent=signup") +
-    "&" +
-    "scope=openid%20email%20profile&" + // Add necessary scopes
-    "client_id=YOUR_CLIENT_ID"; // Replace with your actual client ID
+1. Onboarding & Auth
 
-  window.location.href = authUrl;
-}
+   - Sign up (`POST /api/users/register`) with email/password or Google OAuth via `GET /api/auth/google?intent=signup`.
+   - Login (`POST /api/users/login`) or Google OAuth `?intent=login`.
+   - On success, backend sets a JWT in an HTTP‑only cookie (`token`) for session auth. Frontend stores basic info in Redux (`authSlice`).
+   - After login, the app loads extended profile via `useGetMyExtendedProfileQuery()` and stores `userProfileInfo`, `userEducationInfo`, `userSkills`, `userSocialLinks` in Redux/localStorage (`LoginRedirect.jsx`).
 
-// You would then call this function when a user clicks a "Sign in with Google" button, for example:
-// <button onclick="handleGoogleSignIn()">Sign in with Google</button>
-```
+2. Discover Events
 
-#### While i was making the feature to allow the user to update his skills then i had to check how to detect that the user has actually changed his current skills or not, so earlier i was using this approach -
+   - Browse all events: `GET /api/events` (with filters/sorting). Shown in `src/pages/Events.jsx` via `eventSlice.getUserEvents`/`getLatestEvents`.
+   - Event overview page (`/overview/:eventId`) loads details: `GET /api/events/get-event-details/:eventId`.
 
-![Update user skills approach 1](./images/image9.png)
+3. Apply / Team Formation (`/apply/:eventId`)
 
-#### But then i came across the package called `loadash` which can help me do a deep comparison and here is how it works
+   - Create a team: `POST /api/teams/create-team/:eventId`. Constraints enforced server‑side:
+     - Event must exist and be open (before `EventTimeline.application_end`).
+     - Unique team name per event; name length 3–50.
+     - A user may belong to at most one team per event.
+   - Join a team via invite code (team `_id`): `POST /api/teams/join-team` with `{ team_id }`.
+     - Registration must still be open; team must not exceed `event.max_team_size`.
+   - Current user’s team for an event: `GET /api/teams/get-user-team/:eventId`.
 
-```js
-import _ from "lodash";
+4. During Event
 
-const changed = !_.isEqual(userSkills, skills);
-```
+   - Event status is automatically maintained: `upcoming` → `ongoing` → `ended` based on `EventTimeline.event_start`/`event_end` (see Automation below).
+   - Schedule, people, sponsors, FAQs, etc., are visible based on event setup.
 
-#### Backend🐣
+5. Results & Winners
+   - Organizers can mark prize winners per prize: winners are retrievable via `GET /api/events/get-prize-winners/:eventId` and displayed to users.
 
-- When the user creates an event then a basic info about the event needs to be uploaded, but that should be saved as a draft, and should only be published when all the necessary details about the event has been added by the event admin
+## Application Flow — Organizer/Admin
 
-- Before using the admin check and eventadmincheck validate token middleware needs to be called
+1. Club Admin & Membership Management
 
-- Admin can do the same thing as that of event admin like access to deleting one event and more
+   - Users request membership to clubs; requests recorded in `MembershipRequest` (`models/approve_request.models.js`).
+   - Club admins view pending requests (`getPendingMembershipRequests`) and approve/reject via `POST /api/users/:admin/approve-request/:requestId` or `.../reject-request/:requestId`.
+   - Upon approval, the user is added to the club within `UserProfile.clubs` and the membership request is updated/removed.
 
-- It is not necessary that the people who are judges or speakers in an event need to be in our database right, basically they may or may not have an account. If they don't have an account then the user_id in the field will be marked to null
+2. Event Lifecycle
 
-- Using a library like date-fns or moment (though moment is legacy now) can help to deal with dates
+   - Create event (draft): `POST /api/events/create-event/:admin` creates a “dummy” event with minimal fields and registers the creator as `event-admin` in `EventPeople`.
+   - Edit details via dedicated endpoints:
+     - Basic info: name, tagline, about, mode, visibility, team size, etc. (`/edit-basic-event-info/:eventId`).
+     - Timeline: application window, event start/end (`/edit-event-timeline/:eventId`, `get-event-timeline`).
+     - Schedule: day‑wise items (`/edit-event-schedule/:eventId`, `get-event-schedule`).
+     - People: admins/judges/mentors (`/edit-event-people/:eventId`, `get-event-people`, `get-event-people-detailed-info`).
+     - Sponsors: tiers/logos (`/edit-event-sponsors/:eventId`, `get-event-sponsors`).
+     - Prizes & FAQs: (`/edit-event-prizes/:eventId`, `get-event-prizes`, `/edit-event-faqs/:eventId`, `get-event-faqs`).
+   - Publish vs Draft: `Event.publication_status` controls visibility; default draft until published.
+   - Delete event and all associated data: `DELETE /api/events/:admin/delete-event/:eventId` (implemented server‑side to cascade related collections like people, schedule, sponsors, prizes, timelines, etc.).
 
-`With date-fns:`
+3. Prize Winners
 
-```js
-import { parse } from "date-fns";
+   - Mark winners: `POST /api/events/mark-prize-winner/:eventId` with prize and winning team/user. Remove via `removePrizeWinner`. List via `getPrizeWinners`.
 
-const date = parse("09/08/25", "MM/dd/yy", new Date());
-```
+4. Admin Dashboards (Frontend)
+   - `DashboardLayout` hosts pages:
+     - Manage Users: `/dashboard/:admin/manage-users`
+     - Manage Admins: `/dashboard/:admin/manage-admins`
+     - Approve Requests: `/dashboard/:admin/approve-requests`
+     - Manage Events: `/dashboard/:admin/manage-events` — create, edit, delete; navigates to edit flows like `/:admin/edit-basic-event-info/:eventId`.
 
-- This is how the date is handled -
-  ![Date handling](./images/image2.png)
+## Authentication & Authorization
 
-### This is how we can increase the payload size if needed -
+- JWT via HTTP‑only cookie `token`. Middleware `validateToken` loads `req.user` from JWT.
+- Google OAuth (`/api/auth/google?intent=signup|login`) via `passportGoogle` strategy in `middlewares/passport.middlewares.js`. On callback, issues the same JWT cookie and redirects the SPA to `GoogleRedirect.jsx` with status.
+- Role checks (selected examples):
+  - `clubAdminCheck`, `eventAdminCheck` protect admin/organizer endpoints.
+  - User must be authenticated for profile, team, and application actions.
 
-The size of req.body in an Express.js app doesn’t have a hard default limit set by Node.js itself — instead, the limit depends on the middleware you’re using to parse the request body, usually express.json() or express.urlencoded().
+## Data Model Overview (selected)
 
-🔹 Default Limit with Express:
+- `User`: email, username, password (bcrypt), role, status, provider.
+- `UserProfile`, `UserEducation`, `UserSkills`, `UserSocialProfiles`: extended user info.
+- `Club`: club meta; admins checked by `clubAdminCheck`.
+- `MembershipRequest`: `{ user_id, clubs[] }` for club approvals.
+- `Event`: core event, status (`upcoming|ongoing|ended`), `publication_status` (`draft|published`), `organised_by` clubs, team size constraints.
+- `EventTimeline`: `application_start`, `application_end`, `event_start`, `event_end`.
+- `EventScheduleItems`: day/time items per event.
+- `EventPeople`: people associated with event (e.g., `event-admin`, mentors, judges) with bios.
+- `EventSponsors`, `Prizes`, `PrizeWinners`, `Tracks`, `Theme`: event‑specific content.
+- `Teams`, `TeamMembers`: teams per event; membership with `role: admin|member`.
 
-When using:
+## Automation — Node Cron & Status Service
 
-```js
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-```
+- `initializeCronJobs()` in `services/cronService.js` schedules:
 
-`The default limit is 100kb for express.json() and express.urlencoded().`
+  - Hourly job (`0 * * * *`): calls `updateEventStatuses()` to transition events based on timeline.
+  - Nightly placeholder (`0 0 * * *`): reserved for daily maintenance tasks.
 
-```js
-app.use(express.json({ limit: "5mb" }));
-app.use(express.urlencoded({ limit: "5mb", extended: true }));
-```
+- `updateEventStatuses()` in `services/eventStatusService.js`:
 
-- Flow of event creation -
-  ![Flow of event creation](./images/image3.png)
+  - Loads all events and each event’s `EventTimeline`.
+  - If `now >= event_start` and current status is `upcoming` → set to `ongoing`.
+  - If `now >= event_end` and status is `upcoming|ongoing` → set to `ended`.
+  - Writes updates back to `Event.status` and logs transitions.
 
-- Flow of sign up -
-  ![Flow of sign up](./images/image4.png)
+- Manual/testing endpoints (wired in routes):
+  - `POST /api/events/manual-status-update` triggers `updateEventStatuses()` on demand (admin only).
+  - `GET /api/events/status-update` returns events that would change status, for visibility/testing.
 
-- Problems faced when passing state while using passport?
-  ![Problems faced while setting state](./images/image5.png)
+## Frontend Routing & State
 
-- Soln to the above problem
-  ![Soln to the above problem](./images/image6.png)
+- Router in `src/App.jsx` defines public pages (`/`, `/signup`, `/login`, `/all-events`, `/overview/:eventId`, `/apply/:eventId`) and dashboards.
+- Protected areas use `PrivatePage.jsx` or dashboard layout patterns with Redux `auth.userBasicInfo` to guard access.
+- RTK Query slices:
+  - `eventSlice`: get latest/club events, edit basic info, timeline, schedule, people, sponsors, prizes, FAQs, status checks.
+  - `teamSlice`: create team, get user team, join team.
+  - `userSlice`: login/register, profile CRUD, Google redirects.
+  - `clubAdminSlice`: create events and admin actions.
 
-- Google sign up flow
-  ![Google sign up flow](./images/image8.png)
+## Local Development
 
-- Event creation flow
-  ![Event creation flow](./images/image10.png)
+1. Backend
 
-- Small catch in the database(don't get confused, I got😅🐣😂)
-  ![alt text](./images/image11.png)
+   - `cd backend && npm install`
+   - Create `.env` with `MONGODB_URI`, `JWT_SECRET`, Google OAuth creds, Cloudinary keys.
+   - `npm run dev` (nodemon). Backend defaults to CORS origin `http://localhost:5173`.
 
-- Only club admins are allowed to create and edit an event and hence no need to mark anyone as event admin from the frontend because once we make a user as the club admin then he can automatically can edit the event
+2. Frontend
+   - `cd frontend && npm install`
+   - `npm run dev` (Vite at `http://localhost:5173`).
+
+## How to Explain This to an Interviewer
+
+- Problem: Streamline event hosting and participation, including structured editing, team formation, and automated state transitions.
+- Approach: Clear separation of concerns—React SPA with RTK Query for data fetching and caching; Express API organized by feature; Mongoose for schema‑driven modeling; cron service for time‑driven lifecycle updates.
+- Robustness: Server‑enforced constraints (deadlines, team size, single team per user per event). Admin approval flow for clubs; granular event editing endpoints.
+- Security: HTTP‑only JWT cookies, role guards, OAuth provider integration.
+- Extensibility: New event modules (e.g., tracks, themes) are added as independent models/controllers without impacting core flows.
+
+## Notable Files (by responsibility)
+
+- Backend entry and automation
+
+  - `backend/index.js` — bootstraps server, connects DB, initializes cron, mounts routers.
+  - `backend/services/cronService.js` — schedules jobs; manual trigger handler.
+  - `backend/services/eventStatusService.js` — timeline‑driven status transitions.
+
+- Auth and middleware
+
+  - `backend/middlewares/passport.middlewares.js` — Google OAuth strategy with signup/login intents.
+  - `backend/middlewares/auth.middlewares.js` — `validateToken`, role checks.
+
+- Events and teams
+
+  - `backend/controllers/event.controllers.js`, `backend/routes/event.routes.js` — all event CRUD and sub‑sections.
+  - `backend/controllers/team.controllers.js`, `backend/routes/team.routes.js` — team create/join/membership guardrails.
+
+- Frontend flows
+  - `frontend/src/pages/Login.jsx`, `GoogleRedirect.jsx`, `LoginRedirect.jsx` — auth onboarding.
+  - `frontend/src/pages/Events.jsx`, `EventOverview.jsx`, `Apply.jsx` — browse/apply/team creation.
+  - `frontend/src/pages/ManageEvents.jsx` and edit pages — organizer workflows.
+
+---
+
+If you need a deeper dive into any flow (e.g., prize assignment rules or detailed edit endpoints), see the corresponding controller and slice files referenced above.
