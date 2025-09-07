@@ -1,7 +1,14 @@
+#### Schema -
+![Orbis-schema](https://github.com/user-attachments/assets/347d5ad0-4b98-444c-adac-6739aaa5d243)
+
 #### Ideation🧠
 
 - How we can make the `skills and proficiency` in the frontend -
   ![Skills and proficiency handling in the frontend](./images/image1.png)
+
+#### Google Sign in Flow -
+<img width="1856" height="1207" alt="image" src="https://github.com/user-attachments/assets/bedd975d-c011-49ab-ba85-d0d71bbb4684" />
+
 
 #### Frontend🥚
 
